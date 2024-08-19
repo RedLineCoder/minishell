@@ -1,21 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 20:32:58 by moztop           ###   ########.fr       */
+/*   Created: 2023/12/23 19:40:54 by moztop            #+#    #+#             */
+/*   Updated: 2023/12/25 17:02:55 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <unistd.h>
+#include "libft.h"
 
-int	main(int argc, char **argv, char **env)
+void	ft_putnbr_fd(int n, int fd)
 {
-	(void)argc;
-	(void)argv;
-	(void)env;
-	return (0);
+	long	num;
+
+	num = (long)n;
+	if (num < 0)
+	{
+		ft_putchar_fd('-', fd);
+		num = num * (-1);
+	}
+	if (num < 10)
+	{
+		ft_putchar_fd(num + '0', fd);
+	}
+	else
+	{
+		ft_putnbr_fd(num / 10, fd);
+		ft_putchar_fd(num % 10 + '0', fd);
+	}
 }

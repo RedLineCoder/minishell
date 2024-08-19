@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_striteri.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 20:32:58 by moztop           ###   ########.fr       */
+/*   Created: 2023/12/23 19:31:13 by moztop            #+#    #+#             */
+/*   Updated: 2023/12/23 19:45:46 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-int	main(int argc, char **argv, char **env)
+void	ft_striteri(char *s, void (*f)(unsigned int, char*))
 {
-	(void)argc;
-	(void)argv;
-	(void)env;
-	return (0);
+	unsigned int	loop;
+
+	loop = 0;
+	while (s[loop])
+	{
+		f(loop, &s[loop]);
+		loop++;
+	}
 }

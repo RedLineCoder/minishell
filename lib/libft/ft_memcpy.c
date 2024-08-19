@@ -1,21 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 20:32:58 by moztop           ###   ########.fr       */
+/*   Created: 2023/12/12 16:57:57 by moztop            #+#    #+#             */
+/*   Updated: 2023/12/12 20:38:46 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdlib.h>
 
-int	main(int argc, char **argv, char **env)
+void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	(void)argc;
-	(void)argv;
-	(void)env;
-	return (0);
+	unsigned char		*destination;
+	unsigned const char	*source;
+
+	destination = (unsigned char *)dest;
+	source = (unsigned char *)src;
+	while (n-- && (src || dest))
+		*destination++ = *source++;
+	return (dest);
 }

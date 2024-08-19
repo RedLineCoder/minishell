@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 20:32:58 by moztop           ###   ########.fr       */
+/*   Created: 2023/12/12 16:19:20 by moztop            #+#    #+#             */
+/*   Updated: 2023/12/16 18:48:33 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdlib.h>
 
-int	main(int argc, char **argv, char **env)
+void	*ft_memset(void *s, int c, size_t n)
 {
-	(void)argc;
-	(void)argv;
-	(void)env;
-	return (0);
+	unsigned char	*chr;
+
+	chr = (unsigned char *)s;
+	while (n--)
+		*chr++ = (unsigned char)c;
+	return (s);
 }

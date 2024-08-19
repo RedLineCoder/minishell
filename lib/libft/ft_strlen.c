@@ -1,21 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 20:32:58 by moztop           ###   ########.fr       */
+/*   Created: 2023/12/11 13:39:08 by moztop            #+#    #+#             */
+/*   Updated: 2023/12/12 19:55:49 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdlib.h>
 
-int	main(int argc, char **argv, char **env)
+size_t	ft_strlen(const char *s)
 {
-	(void)argc;
-	(void)argv;
-	(void)env;
-	return (0);
+	size_t	length;
+
+	length = 0;
+	while (*s++)
+	{
+		length++;
+	}
+	return (length);
 }

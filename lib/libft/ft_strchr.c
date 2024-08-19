@@ -1,21 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 20:32:58 by moztop           ###   ########.fr       */
+/*   Created: 2023/12/12 18:29:28 by moztop            #+#    #+#             */
+/*   Updated: 2023/12/25 15:09:17 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdlib.h>
 
-int	main(int argc, char **argv, char **env)
+char	*ft_strchr(const char *s, int c)
 {
-	(void)argc;
-	(void)argv;
-	(void)env;
-	return (0);
+	unsigned char	chr;
+
+	chr = (unsigned char)c;
+	while (*s != chr && *s)
+	{
+		if (*s == chr)
+			return ((char *)s);
+		s++;
+	}
+	if (*s == chr)
+		return ((char *)s);
+	return (NULL);
 }

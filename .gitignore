@@ -1,0 +1,6 @@
+lib/readline
+lib/libft/*.o
+lib/libft/libft.a
+.DS_Store
+*.DSYM
+.vscode
