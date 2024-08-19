@@ -1,6 +1,6 @@
 NAME = minishell
 HEADERS = minishell.h
-SOURCES = main.c
+SOURCES = main.c utils/user.c utils/string_utils.c
 
 READLINE = lib/readline/lib/libreadline.a
 RL_FLAGS = -L${PWD}/lib/readline/lib -I${PWD}/lib/readline/include/readline -lreadline

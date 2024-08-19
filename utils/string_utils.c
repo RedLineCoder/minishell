@@ -1,39 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   string_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 23:12:59 by emyildir         ###   ########.fr       */
+/*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
+/*   Updated: 2024/08/19 23:07:25 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-	
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <limits.h>
-# include <unistd.h>
-# include <stdio.h>
-# include "lib/libft/libft.h"
+#include "../minishell.h"
 
-
-typedef	struct s_msh
+int	str_append(char **s1, char const *s2)
 {
-	char	*user;
-	char	**env;
-}	t_msh;
+	int		s1_len;
+	int		s2_len;
+	char	*str;
+	char	*temp;
 
-typedef struct	s_cmd
-{
-	int	type;
-}	t_cmd;
-
-char	*get_user(t_msh *msh);
-int		str_append(char **s1, char const *s2);
-
-
-#endif
+	s1_len = ft_strlen(*s1);
+	s2_len = ft_strlen(s2);
+	str = (char *) malloc(sizeof(char) * (s1_len + s2_len + 1));
+	if (!str)
+		return (0);
+	ft_strlcpy(str, *s1, s1_len + 1);
+	ft_strlcpy(str + s1_len, s2, s2_len + 1);
+	temp = *s1;
+	*s1 = str;
+	free(temp);
+	return (1);
+}
