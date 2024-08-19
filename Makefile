@@ -3,6 +3,8 @@ HEADERS = minishell.h
 SOURCES = main.c
 
 READLINE = lib/readline/lib/libreadline.a
+RL_FLAGS = -L${PWD}/lib/readline/lib -I${PWD}/lib/readline/include/readline -lreadline
+
 LIBFT = lib/libft/libft.a
 LIBFT_PATH = lib/libft
 
@@ -12,7 +14,7 @@ CFLAGS= -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(READLINE) $(LIBFT) $(SOURCES) $(HEADERS)
-	$(CC) $(READLINE) $(LIBFT) $(CFLAGS) $(SOURCES) -o $(NAME)
+	$(CC) $(RL_FLAGS) $(LIBFT) $(CFLAGS) $(SOURCES) -o $(NAME)
 
 $(READLINE):
 	curl -O https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
