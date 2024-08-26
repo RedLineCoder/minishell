@@ -6,13 +6,13 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/19 23:23:44 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/08/26 05:10:58 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	mini_panic()
+void	mini_panic(void)
 {
 	exit(1);
 }
@@ -20,15 +20,17 @@ void	mini_panic()
 char	*get_prompt(t_msh *msh)
 {
 	char	path[PATH_MAX];
+	char	*buffer;
 
-	(void)msh;
-	(void)path;
-	char	*usr;
-
+	buffer = ft_strjoin(msh->user, " ~ ");
+	if (!buffer)
+		return (0);
 	getcwd(path, PATH_MAX);
-	if (ft_strncmp("/Users", path, 6) == 0)
-		usr = usr + 6 + ft_strlen(msh->user) + 1;
-	return (ft_strjoin("~", " "));
+	if (!str_append(&buffer, path))
+		return (free(buffer), (char *) 0);
+	if (!str_append(&buffer, " % "))
+		return (free(buffer), (char *) 0);
+	return (buffer);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -39,18 +41,14 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	(void)argc;
 	msh->env = env;
-	get_user(msh);
-	/*
+	msh->user = get_user();
 	while (1)
 	{
 		prompt = get_prompt(msh);
 		if (!prompt)
 			mini_panic();
 		prompt = readline(prompt);
-		free(prompt);	
+		free(prompt);
 	}
-	*/
 	return (0);
 }
-
-

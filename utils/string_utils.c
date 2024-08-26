@@ -6,11 +6,21 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/08/19 23:07:25 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/08/26 05:12:06 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	free_string_array(char **arr)
+{
+	int		i;
+
+	i = -1;
+	while (arr[++i])
+		free(arr[i]);
+	free(arr);
+}
 
 int	str_append(char **s1, char const *s2)
 {
