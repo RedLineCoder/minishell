@@ -6,16 +6,28 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/08/26 05:12:06 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/08/26 08:03:23 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+int		str_arr_size(char **arr)
+{
+	int		size;
+
+	size = -1;
+	while (arr[++size])
+		;
+	return (size);
+}
+
 void	free_string_array(char **arr)
 {
 	int		i;
-
+	
+	if (!arr)
+		return ;
 	i = -1;
 	while (arr[++i])
 		free(arr[i]);

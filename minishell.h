@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/26 04:53:52 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/08/26 08:03:34 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ typedef struct	s_cmd
 char	*get_user();
 char	*get_path(char *command);
 int		str_append(char **s1, char const *s2);
+int		str_arr_size(char **arr);
+void	parser(char *prompt);
 void	free_string_array(char **arr);
 void	execute_command(char *command, char **args, char **env);
 
