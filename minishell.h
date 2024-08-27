@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/27 17:47:45 by moztop           ###   ########.fr       */
+/*   Updated: 2024/08/27 19:44:50 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,11 @@
 # define MINISHELL_H
 
 # include "lib/libft/libft.h"
+# include "lib/gnl/get_next_line.h"
 # include <limits.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdbool.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 
@@ -22,9 +26,10 @@
 
 typedef enum e_cmds
 {
+	CMD_NONE,
 	PIPE,
 	COND,
-	EXEC,
+	ARG,
 	BLOCK,
 	REDIR,
 	HDOC,
@@ -39,13 +44,15 @@ typedef enum e_redir
 
 typedef enum e_cond
 {
+	COND_NONE,
 	COND_AND,
 	COND_OR,
 	COND_NEG
 }			t_cond;
 
-// Structs
+# define ARGSEP " \t\n"
 
+// Structs
 typedef struct s_msh
 {
 	char	*user;
@@ -106,7 +113,6 @@ typedef struct s_blockcmd
 }			t_blockcmd;
 
 // Parser
-
 void		parsecmd(void);
 void		parsepipe(void);
 void		parseredir(void);
@@ -114,9 +120,21 @@ void		parseblock(void);
 void		parsehdoc(void);
 void		parsedollar(void);
 
+// Parser Utils
+bool		peek(char *ps, char *charset);
+t_cmds		get_token(char **ps, char **ts, char **te);
+
 // Executor
 void		execcmd(void);
-void		tokenize(void);
 void		mini_panic(void);
+
+// Utils
+char	*get_user();
+char	*get_cmd_path(char *command);
+int		str_append(char **s1, char const *s2);
+int		str_arr_size(char **arr);
+void	parser(char *prompt);
+void	free_string_array(char **arr);
+void	execute_command(char *command, char **args, char **env);
 
 #endif

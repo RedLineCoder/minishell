@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/08/26 08:03:23 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/08/27 18:33:03 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int		str_arr_size(char **arr)
+int	str_arr_size(char **arr)
 {
 	int		size;
 
@@ -25,7 +25,7 @@ int		str_arr_size(char **arr)
 void	free_string_array(char **arr)
 {
 	int		i;
-	
+
 	if (!arr)
 		return ;
 	i = -1;
@@ -39,7 +39,6 @@ int	str_append(char **s1, char const *s2)
 	int		s1_len;
 	int		s2_len;
 	char	*str;
-	char	*temp;
 
 	s1_len = ft_strlen(*s1);
 	s2_len = ft_strlen(s2);
@@ -48,8 +47,6 @@ int	str_append(char **s1, char const *s2)
 		return (0);
 	ft_strlcpy(str, *s1, s1_len + 1);
 	ft_strlcpy(str + s1_len, s2, s2_len + 1);
-	temp = *s1;
-	*s1 = str;
-	free(temp);
+	*s1 = (free(*s1), str);
 	return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 22:20:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/08/26 05:07:30 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/08/27 18:25:30 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ char	*get_user(void)
 {
 	int		p[2];
 	pid_t	pid;
-	char	*buffer;
-	char	**splitted;
+	char	*user;
 
 	if (pipe(p) < 0)
 		return (NULL);
@@ -25,16 +24,13 @@ char	*get_user(void)
 	if (pid == -1)
 		return (close(p[0]), close(p[1]), NULL);
 	else if (!pid && dup2(p[1], STDOUT_FILENO) == STDOUT_FILENO && !close(p[0]))
-		execute_command("who", NULL, NULL);
+		execute_command("whoami", NULL, NULL);
 	waitpid(pid, 0, 0);
 	close(p[1]);
-	buffer = get_next_line(p[0]);
+	user = get_next_line(p[0]);
 	close(p[0]);
-	if (!buffer)
+	if (!user)
 		return (0);
-	splitted = ft_split(buffer, ' ');
-	free(buffer);
-	buffer = ft_strdup(splitted[0]);
-	free_string_array(splitted);
-	return (buffer);
+	user[ft_strlen(user) - 1] = '\0';
+	return (user);
 }
