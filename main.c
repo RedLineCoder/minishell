@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/27 18:26:15 by moztop           ###   ########.fr       */
+/*   Updated: 2024/08/29 19:06:28 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	main(int argc, char **argv, char **env)
 		if (!prompt)
 			mini_panic();
 		line = readline(prompt);
+		add_history(line);
 		parser(line);
 		free(line);
 		free(prompt);

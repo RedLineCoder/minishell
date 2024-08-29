@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/27 19:22:32 by moztop           ###   ########.fr       */
+/*   Updated: 2024/08/29 20:12:57 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,14 @@ t_cmds	get_token(char **ps, char **ts, char **te)
 	str = *ps;
 	while (*str && ft_strchr(ARGSEP, *str))
 		str++;
-	*ts = str;
+	if (ts)
+		*ts = str;
 	while (*str && !ft_strchr(ARGSEP, *str))
 		str++;
-	*te = str;
+	if (te)
+		*te = str;
 	*ps = str;
+	
 	if (!ft_strncmp(*ts, "<<", 2))
 		return HDOC;
 	else if (!ft_strncmp(*ts, "<", 1) || !ft_strncmp(*ts, ">", 1))

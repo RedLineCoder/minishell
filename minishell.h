@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/27 19:44:50 by moztop           ###   ########.fr       */
+/*   Updated: 2024/08/29 20:17:23 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,30 @@ typedef struct s_cmd
 	int		type;
 }			t_cmd;
 
-typedef struct s_exec_cmd
+typedef struct s_binode
+{
+	int		type;
+	char	*ps;
+	char	*pe;
+	t_cmd	*left;
+	t_cmd	*right;
+}	t_binode;
+
+typedef	struct s_unode
+{
+	int		type;
+	char	*ps;
+	char	*pe;
+	t_cmd	*bottom;
+}	t_unode;
+
+typedef struct s_execcmd
 {
 	int		type;
 	char	**args;
 	char	*out_file;
 	char	*in_file;
-}			t_exec_cmd;
+}			t_execcmd;
 
 typedef struct s_redircmd
 {
