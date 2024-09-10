@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/08/27 19:29:34 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 00:16:11 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,15 @@
 
 void	parser(char *prompt)
 {
+	t_binode	*root = ft_calloc(sizeof(t_binode), 1);	
 	char	*ps;
 	char	*ts;
 	char	*te;
 	
+	if (!root)
+		return ;
 	ps = prompt;
-	while (1)
+	while (peek(ps, NULL))
 	{
 		t_cmds type = get_token(&ps, &ts, &te);
 		while (ts < te)
@@ -36,8 +39,6 @@ void	parser(char *prompt)
 		else if (type == ARG)
 			printf(" ARG");
 		printf("\n");
-		if (!peek(ps, "||") || !peek(ps, "&&") || !peek(ps, "|"))
-			break;
 	}
 	//printf("%s\n", prompt);
 }

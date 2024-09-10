@@ -1,32 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   parse_redir.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:29:40 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/10 21:43:02 by emyildir         ###   ########.fr       */
+/*   Created: 2024/09/11 00:17:19 by emyildir          #+#    #+#             */
+/*   Updated: 2024/09/11 00:20:12 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../../minishell.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+t_cmd	*parse_redir(char **ps)
 {
-	unsigned char	*char1;
-	unsigned char	*char2;
+	t_redir	*const redir = ft_calloc(sizeof(t_redir), 1);
 
-	char1 = (unsigned char *)s1;
-	char2 = (unsigned char *)s2;
-	while (*char1 == *char2 && *char1 && n)
-	{
-		char1++;
-		char2++;
-		n--;
-	}
-	if (n)
-		return (*char1 - *char2);
-	else
-		return (0);
+	if (!redir)
+		return (NULL);
+	if (**ps == '>');
 }
