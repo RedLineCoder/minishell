@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 00:36:13 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/11 07:47:52 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,23 @@
 # include <stdio.h>
 # include <unistd.h>
 
-typedef enum e_cmds
+# define SEP "|&()<> \t\n"
+# define OPERATOR "|&<>"
+# define SPACE " \t\n"
+# define REDIRS "<>"
+# define QUOTES "'\""
+# define BLOCKS "()"
+
+typedef enum e_tokens
 {
-	CMD_NONE,
+	TKN_NONE,
 	BLOCK,
 	PIPE,
 	COND,
 	ARG,
 	REDIR,
 	HDOC
-}			t_cmds;
+}			t_tokens;
 
 typedef enum e_redir
 {
@@ -47,6 +54,12 @@ typedef enum e_cond
 	COND_OR,
 	COND_NEG
 }			t_cond;
+
+typedef enum e_quote
+{
+	QUOTE_SINGLE,
+	QUOTE_DOUBLE,
+}			t_quote;
 
 // Structs
 typedef struct s_msh
@@ -127,10 +140,14 @@ void		parsedollar(void);
 
 // Parser Utils
 bool		peek(char *ps, char *charset);
-t_cmds		get_token(char **ps, char **ts, char **te);
+t_tokens	get_token(char **ps, char **ts, char **te);
 
 // Lexer
 int			is_redir(char *ts, char *te);
+int			is_block(char *ts, char *te);
+int			is_hdoc(char *ts, char *te);
+int			is_append(char *ts, char *te);
+int			is_cond(char *ts, char *te);
 
 // Executor
 void		execcmd(void);

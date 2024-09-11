@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 00:16:11 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/11 07:48:12 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	parser(char *prompt)
 	ps = prompt;
 	while (peek(ps, NULL))
 	{
-		t_cmds type = get_token(&ps, &ts, &te);
+		t_tokens type = get_token(&ps, &ts, &te);
 		while (ts < te)
 		{
 			printf("%c", *ts);
@@ -38,6 +38,10 @@ void	parser(char *prompt)
 			printf(" HDOC");
 		else if (type == ARG)
 			printf(" ARG");
+		else if (type == COND)
+			printf(" COND");
+		else if (type == BLOCK)
+			printf(" BLOCK");
 		printf("\n");
 	}
 	//printf("%s\n", prompt);
