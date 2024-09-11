@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parse_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 14:43:05 by emyildir         ###   ########.fr       */
+/*   Created: 2024/09/11 13:50:10 by emyildir          #+#    #+#             */
+/*   Updated: 2024/09/11 14:38:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
-void	parser(char *prompt)
+t_cmd	*parse_cmd(char **ps)
 {
-	t_binode	*root = ft_calloc(sizeof(t_binode), 1);	
-	char	*ps;
+	char			*ts;
+	char			*te;
+	t_tokens		token;
+	t_cmd			*(*funcs[7])(char **, char *, char *);
 	
-	if (!root)
-		return ;
-	ps = prompt;
-	while (peek(ps, NULL))
-	{
-		t_cmd	*cmd = parse_cmd(&ps);
-		(void)cmd;
-	}
+	ft_memset(funcs, 0, sizeof(t_cmd *) * 7);
+	funcs[REDIR] = parse_redir;
+	funcs[HDOC] = parse_hdoc;
+	token = get_token(ps, &ts, &te);
+	if (funcs[token])
+		return (funcs[token](ps, ts, te));
+	return NULL;
 }

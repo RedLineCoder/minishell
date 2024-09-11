@@ -6,11 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/09/11 13:08:38 by emyildir         ###   ########.fr       */
-=======
-/*   Updated: 2024/09/11 11:49:41 by moztop           ###   ########.fr       */
->>>>>>> tokenizer
+/*   Updated: 2024/09/11 14:22:35 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +29,11 @@
 # define QUOTES "'\""
 # define BLOCKS "()"
 
-
+typedef enum e_nodes
+{
+	UNODE,
+	BINODE
+}		t_nodes;
 
 typedef enum e_tokens
 {
@@ -74,6 +74,11 @@ typedef struct s_msh
 	char	**env;
 }			t_msh;
 
+typedef struct s_node 
+{
+	int		type;
+} t_node;
+
 typedef struct s_cmd
 {
 	int		type;
@@ -81,6 +86,7 @@ typedef struct s_cmd
 
 typedef struct s_binode
 {
+	int		type;
 	t_cmd	*cmd;
 	t_cmd	*left;
 	t_cmd	*right;
@@ -88,9 +94,11 @@ typedef struct s_binode
 
 typedef struct s_unode
 {
+	int		type;
 	t_cmd	*cmd;
 	t_cmd	*next;
 }			t_unode;
+
 
 typedef struct s_blockcmd
 {
@@ -101,7 +109,9 @@ typedef struct s_blockcmd
 typedef struct s_execcmd
 {
 	int		type;
-	char	**args;
+	t_list	*args;
+	t_list	*redirs;
+	t_list	*hdocs;
 	char	*out_file;
 	char	*in_file;
 }			t_execcmd;
@@ -119,7 +129,6 @@ typedef struct s_hdoccmd
 {
 	int		type;
 	int		fd;
-	char	*limit;
 	char	*s_limit;
 	char	*e_limit;
 }			t_hdoccmd;
@@ -137,12 +146,12 @@ typedef struct s_pipecmd
 }			t_pipecmd;
 
 // Parser
-void		parsecmd(void);
-void		parsepipe(void);
-void		parseredir(void);
-void		parseblock(void);
-void		parsehdoc(void);
-void		parsedollar(void);
+t_cmd	*parse_cmd(char **ps);
+t_cmd	*parsepipe(void);
+t_cmd	*parse_redir(char **ps, char *ts, char *te);
+t_cmd	*parseblock(void);
+t_cmd	*parse_hdoc(char **ps, char *ts, char *te);
+t_cmd	*parsedollar(void);
 
 // Tokenizer
 bool		peek(char *ps, char *charset);
@@ -157,7 +166,6 @@ int			is_block(char *ts, char *te);
 int			is_hdoc(char *ts, char *te);
 int			is_append(char *ts, char *te);
 int			is_cond(char *ts, char *te);
-t_cmd		*parse_redir(char **ps, char *ts, char *te);
 
 // Executor
 void		execcmd(void);
