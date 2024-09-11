@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:48:04 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 11:49:57 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 14:09:00 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	peek_consecutive(char *ps, char *charset)
 		if (ft_strchr(charset, *ps))
 			return (true);
 		if (ft_strchr(SEP, *ps))
-			return (false);
+			break ;
 		ps++;
 	}
 	return (false);
