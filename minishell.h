@@ -6,7 +6,11 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/09/11 13:08:38 by emyildir         ###   ########.fr       */
+=======
+/*   Updated: 2024/09/11 11:49:41 by moztop           ###   ########.fr       */
+>>>>>>> tokenizer
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,8 +144,9 @@ void		parseblock(void);
 void		parsehdoc(void);
 void		parsedollar(void);
 
-// Parser Utils
+// Tokenizer
 bool		peek(char *ps, char *charset);
+bool		peek_consecutive(char *ps, char *charset);
 t_tokens	get_token(char **ps, char **ts, char **te);
 t_binode	*get_binode(void *left, void *right);
 t_unode		*get_unode(void *next);
