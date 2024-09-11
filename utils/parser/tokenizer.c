@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 08:20:55 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 08:24:22 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ bool	peek_consecutive(char *ps, char *charset)
 	}
 	return (false);
 }
-
 
 int		get_quote(char	**qs)
 {
@@ -76,34 +75,6 @@ void	get_operator(char **ps)
 		str++;
 	*ps = str;
 }
-/*
-t_tokens	get_operator(char *ps, char **ts, char **te)
-{
-	char	*str;
-
-	str = *ps;
-	if (ts)
-		*ts = str;
-	while (*str && !ft_strchr(OPERATOR, *str))
-		str++;
-	// Handle fd error for redirects
-	while (*str && ft_strchr(OPERATOR, *str))
-		str++;
-	if (te)
-		*te = str;
-	*ps = str;
-	if (is_redir(*ts, *te) || is_append(*ts, *te))
-		return (REDIR);
-	else if (is_hdoc(*ts, *te))
-		return (HDOC);
-	else if (!ft_strncmp(*ts, "|", *te - *ts))
-		return (PIPE);
-	else if (is_cond(*ts, *te))
-		return (COND);
-	else
-		return (TKN_NONE);
-}
-*/
 
 t_tokens	get_token(char **ps, char **ts, char **te)
 {
@@ -113,11 +84,6 @@ t_tokens	get_token(char **ps, char **ts, char **te)
 		return (TKN_NONE);
 	while (**ps && ft_strchr(SPACE, **ps))
 		(*ps)++;
-		/*
-	if (ft_strchr(OPERATOR, **ps) || peek(*ps, REDIRS))
-	{
-		return (get_operator(ps, ts, te));
-	} */
 	str = *ps;
 	if (ts)
 		*ts = str;
