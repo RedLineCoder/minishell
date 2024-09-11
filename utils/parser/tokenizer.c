@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 08:24:22 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 09:13:55 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,12 @@ void	get_operator(char **ps)
 	*ps = str;
 }
 
+/*
+	When Esat and I wrote this code only god and us knew how that's working.
+	Now only god knows.
+	Maybe not even god anymore...
+*/
+
 t_tokens	get_token(char **ps, char **ts, char **te)
 {
 	char	*str;
@@ -89,12 +95,14 @@ t_tokens	get_token(char **ps, char **ts, char **te)
 		*ts = str;
 	if (ft_strchr(BLOCKS, *str))
 		str++;
+	else if (ft_strchr(OPERATOR, *str))
+		get_operator(&str);
 	else
-		while (*str && !ft_strchr(SPACE, *str) && !ft_strchr(BLOCKS, *str))
+		while (*str && !ft_strchr(SEP, *str))
 		{
 			if (ft_strchr(QUOTES, *str))
 				get_quote(&str);
-			else if (ft_strchr(OPERATOR, **ps))
+			else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, REDIRS))
 			{
 				get_operator(&str);
 				break;
