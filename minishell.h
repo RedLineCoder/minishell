@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 07:47:52 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 11:49:41 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,8 +138,9 @@ void		parseblock(void);
 void		parsehdoc(void);
 void		parsedollar(void);
 
-// Parser Utils
+// Tokenizer
 bool		peek(char *ps, char *charset);
+bool		peek_consecutive(char *ps, char *charset);
 t_tokens	get_token(char **ps, char **ts, char **te);
 
 // Lexer
