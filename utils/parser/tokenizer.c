@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 08:17:05 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 08:20:55 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,22 +121,20 @@ t_tokens	get_token(char **ps, char **ts, char **te)
 	str = *ps;
 	if (ts)
 		*ts = str;
-	while (*str && !ft_strchr(SPACE, *str))
-	{
-		if (ft_strchr(QUOTES, *str))
-			get_quote(&str);
-		else if(ft_strchr(BLOCKS, *str))
-		{
-			str++;
-			break;
-		}
-		else if (ft_strchr(OPERATOR, **ps))
-		{
-			get_operator(&str);
-			break;
-		}
+	if (ft_strchr(BLOCKS, *str))
 		str++;
-	}
+	else
+		while (*str && !ft_strchr(SPACE, *str) && !ft_strchr(BLOCKS, *str))
+		{
+			if (ft_strchr(QUOTES, *str))
+				get_quote(&str);
+			else if (ft_strchr(OPERATOR, **ps))
+			{
+				get_operator(&str);
+				break;
+			}
+			str++;
+		}
 	if (te)
 		*te = str;
 	*ps = str;
