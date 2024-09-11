@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 12:10:45 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/11 14:45:04 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 int	is_redir(char *ts, char *te)
 {
-	while (ts < te && ft_isdigit(*ts))
+	while (ts < te && !ft_strchr(REDIRS, *ts))
 		ts++;
-	return ((te - 1 == ts) && (*ts == '<' || *ts == '>'));
+	return ((te - 1 == ts) && ft_strchr(REDIRS, *ts));
 }
 
 int	is_block(char *ts, char *te)
 {
-	return (ts == te - 1 && (*ts == '(' || *ts == ')'));
+	return ((ts == te - 1) && ft_strchr(BLOCKS, *ts));
 }
 
 int	is_hdoc(char *ts, char *te)
@@ -29,7 +29,7 @@ int	is_hdoc(char *ts, char *te)
 	int	count;
 
 	count = 0;
-	while (ts < te && ft_isdigit(*ts))
+	while (ts < te && !ft_strchr(REDIRS, *ts))
 		ts++;
 	while (ts < te && *ts == '<')
 	{
@@ -44,7 +44,7 @@ int	is_append(char *ts, char *te)
 	int	count;
 
 	count = 0;
-	while (ts < te && ft_isdigit(*ts))
+	while (ts < te && !ft_strchr(REDIRS, *ts))
 		ts++;
 	while (ts < te && *ts == '>')
 	{

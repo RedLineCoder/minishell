@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:48:04 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 14:41:36 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/11 14:45:00 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	peek_consecutive(char *ps, char *charset)
 		if (ft_strchr(charset, *ps))
 			return (true);
 		if (ft_strchr(SEP, *ps))
-			return (false);
+			break ;
 		ps++;
 	}
 	return (false);

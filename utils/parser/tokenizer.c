@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 11:53:39 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 14:12:23 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,19 +51,19 @@ void	get_quote(char	**qs)
 	*qs = str;
 }
 
-void	get_operator(char **ps)
+void	get_operator(char **pe)
 {
 	char	*str;
-	char	*opt;
+	char	opt;
 
-	str = *ps;
+	str = *pe;
 	while (*str && !ft_strchr(OPERATOR, *str))
 		str++;
 	// Handle fd error for redirects
-	opt = str;
-	while (*str && *str == *opt)
+	opt = *str;
+	while (*str && *str == opt)
 		str++;
-	*ps = str;
+	*pe = str;
 }
 
 void	handle_sep(char **ps, char **ts, char **te)
@@ -82,11 +82,6 @@ void	handle_sep(char **ps, char **ts, char **te)
 		{
 			if (ft_strchr(QUOTES, *str))
 				get_quote(&str);
-			else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, REDIRS))
-			{
-				get_operator(&str);
-				break;
-			}
 			str++;
 		}
 	if (te)
@@ -95,9 +90,7 @@ void	handle_sep(char **ps, char **ts, char **te)
 }
 
 /*
-	When Esat and I wrote this code only god and us knew how that's working.
-	Now only god knows.
-	Maybe not even god anymore...
+	Now everything is clear as a pure glass
 */
 
 t_tokens	get_token(char **ps, char **ts, char **te)
