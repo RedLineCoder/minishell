@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   is_operator.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 07:48:49 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 12:10:45 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

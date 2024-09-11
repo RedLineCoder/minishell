@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 07:47:52 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 13:08:38 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 # define REDIRS "<>"
 # define QUOTES "'\""
 # define BLOCKS "()"
+
+
 
 typedef enum e_tokens
 {
@@ -141,6 +143,8 @@ void		parsedollar(void);
 // Parser Utils
 bool		peek(char *ps, char *charset);
 t_tokens	get_token(char **ps, char **ts, char **te);
+t_binode	*get_binode(void *left, void *right);
+t_unode		*get_unode(void *next);
 
 // Lexer
 int			is_redir(char *ts, char *te);
@@ -148,6 +152,7 @@ int			is_block(char *ts, char *te);
 int			is_hdoc(char *ts, char *te);
 int			is_append(char *ts, char *te);
 int			is_cond(char *ts, char *te);
+t_cmd		*parse_redir(char **ps, char *ts, char *te);
 
 // Executor
 void		execcmd(void);
@@ -156,6 +161,7 @@ void		mini_panic(void);
 // Utils
 char		*get_user(void);
 char		*get_cmd_path(char *command);
+char		*ft_strndup(char *src, int size);
 int			str_append(char **s1, char const *s2);
 int			str_arr_size(char **arr);
 void		parser(char *prompt);
