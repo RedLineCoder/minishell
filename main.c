@@ -3,14 +3,108 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/08/29 19:06:28 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 19:42:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	print_node(t_cmd *cmd, int left, int row)
+{
+	if (!cmd)
+		return ;
+	t_tokens	token = cmd->type;
+	printf("------------------------------------\n\n");
+	printf("%d - ", row);
+	if (left)
+		printf("Left\n");
+	else
+		printf("Right\n");
+	printf("------------------------------------\n\n");
+	if (token == EXEC)
+	{
+		t_execcmd	*exec = (t_execcmd *)cmd;
+		printf("Type : Exec\n");
+		printf("Args : ");
+		while (exec->args)
+		{
+			t_argcmd *arg = exec->args->content;
+			for (int i = 0; arg->s_arg + i  < arg->e_arg; i++)
+				printf("%c", arg->s_arg[i]);
+			printf(" - ");
+			exec->args = exec->args->next;
+		}
+		printf("\n\nRedirects: \n\n");
+		while (exec->redirs)
+		{
+			t_redircmd *redir = exec->redirs->content;
+			printf("File: ");
+			for (int i = 0; redir->s_file + i  < redir->e_file; i++)
+				printf("%c", redir->s_file[i]);
+			printf("\nManipulated fd : %d\n", redir->fd);
+			printf("Redir Type : ");
+			if (redir->redir_type == REDIR_OUTPUT)
+				printf("Output\n");
+			else if(redir->redir_type == REDIR_INPUT)
+				printf("Input\n");
+			else if(redir->redir_type == REDIR_APPEND)
+				printf("Append\n"); 
+			printf("\n");
+			exec->redirs = exec->redirs->next;
+		}
+		printf("\nHeredocs: \n\n");
+		while (exec->hdocs)
+		{
+			t_hdoccmd *hdoc = exec->hdocs->content;
+			printf("Target Fd : %d\n", hdoc->fd);
+			printf("EOF : ");
+			for (int i = 0; hdoc->s_limit + i  < hdoc->e_limit; i++)
+				printf("%c", hdoc->s_limit[i]);
+			printf("\n");
+			exec->hdocs = exec->hdocs->next;
+		}
+	}
+	else if(token == COND)
+	{
+		t_condcmd *cond = (t_condcmd *) cmd;
+		
+		printf("Type : Condition\n");
+		printf("Condition Type : ");
+		if (cond->cond_type == COND_OR)
+			printf(" OR\n");
+		else if (cond->cond_type == COND_AND)
+			printf(" AND\n");
+	}
+	else if(token == PIPE)
+		printf("Type : Pipe\n");
+	printf("\n------------------------------------\n");
+}
+
+void 	print_tree(t_node *node, int count)
+{
+	if (node->type == BINODE)
+	{
+		t_binode	*binode = (t_binode *)node;
+		t_unode		*left	= (t_unode *) binode->left;
+		t_binode	*right = (t_binode *) binode->right;
+		if (left)
+			print_node(left->cmd, 1, count + 1);
+		if (right)
+		{
+			print_node(right->cmd, 0, count + 1);
+			print_tree((t_node *) right, count + 1);
+		}
+	}
+	else if (node->type == UNODE)
+	{
+		t_unode	*unode = (t_unode *) node;
+		if (unode)
+			print_node(unode->cmd, 1, count + 1);
+	}
+}
 
 void	mini_panic(void)
 {
@@ -62,7 +156,8 @@ int	main(int argc, char **argv, char **env)
 			mini_panic();
 		line = readline(prompt);
 		add_history(line);
-		parser(line);
+		t_node *root = (t_node *) parser(line, TKN_NONE);
+		print_tree(root, 0);
 		free(line);
 		free(prompt);
 	}

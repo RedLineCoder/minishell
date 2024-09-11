@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:17:19 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 13:36:30 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/11 16:18:35 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ t_cmd	*parse_redir(char **ps, char *ts, char *te)
 	if (*fd != *ts)
 		redir->fd = ft_atoi(fd);
 	free(fd);
-	get_token(ps, &redir->s_file, &redir->e_file);
+	if (peek_next(*ps) == ARG)
+		get_token(ps, &redir->s_file, &redir->e_file);
 	return ((t_cmd *) redir);		
 }

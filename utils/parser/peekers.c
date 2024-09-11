@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:48:04 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 14:45:00 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:15:18 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,18 @@
 bool	peek(char *ps, char *charset)
 {
 	if (!ps)
-		return (false);
+		return (TKN_NONE);
 	if (charset)
 		return ((bool)ft_strnstr(ps, charset, ft_strlen(ps)));
 	while (*ps)
 		if (!ft_strchr(SPACE, *(ps++)))
 			return (true);
 	return (false);
+}
+
+t_tokens	peek_next(char	*ps)
+{
+	return (get_token(&ps, NULL, NULL));
 }
 
 bool	peek_consecutive(char *ps, char *charset)

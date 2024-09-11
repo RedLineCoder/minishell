@@ -1,33 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_cmd.c                                        :+:      :+:    :+:   */
+/*   parse_cond.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/11 13:50:10 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 17:58:31 by emyildir         ###   ########.fr       */
+/*   Created: 2024/09/11 16:54:46 by emyildir          #+#    #+#             */
+/*   Updated: 2024/09/11 17:11:13 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-t_cmd	*parse_cmd(char **ps)
+t_cmd	*parse_cond(char **ps, char *ts, char *te)
 {
-	char			*ts;
-	char			*te;
-	t_tokens		token;
-	t_cmd			*(*funcs[7])(char **, char *, char *);
-	
-	ft_memset(funcs, 0, sizeof(t_cmd *) * 7);
-	funcs[REDIR] = parse_redir;
-	funcs[HDOC] = parse_hdoc;
-	funcs[ARG] = parse_arg;
-	funcs[PIPE] = parse_pipe;
-	funcs[COND] = parse_cond;
-	token = get_token(ps, &ts, &te);
-	if (funcs[token])
-		return (funcs[token](ps, ts, te));
-	return NULL;
-}
+	t_condcmd	*const cond = ft_calloc(sizeof(t_condcmd), 1);
 
+	if (!cond)
+		return (NULL);
+	(void)ps;
+	cond->type = COND;
+	cond->cond_type = COND_OR;
+	if (ft_strncmp(ts, "&&", te - ts))
+		cond->cond_type = COND_AND;
+	return ((t_cmd *)cond);	
+}

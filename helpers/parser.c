@@ -6,23 +6,30 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 14:43:05 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/11 19:41:13 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	parser(char *prompt)
+t_binode	*parser(char *prompt, int type)
 {
-	t_binode	*root = ft_calloc(sizeof(t_binode), 1);	
-	char	*ps;
+	char		*ps;
+	t_tokens	token;
+	t_binode	*const root = get_binode(NULL, NULL);	
 	
 	if (!root)
-		return ;
+		return (NULL);
 	ps = prompt;
-	while (peek(ps, NULL))
+	root->cmd = ft_calloc(sizeof(t_blockcmd), 1);
+	root->cmd->type = type;
+	t_cmd *cmd = parse_exec(&ps, NULL, NULL);
+	root->left = (t_node *) get_unode(cmd);
+	((t_unode *)root->left)->cmd = cmd;
+	if (peek_next(ps) == COND || peek_next(ps) == PIPE)
 	{
-		t_cmd	*cmd = parse_cmd(&ps);
-		(void)cmd;
+		token = get_token(&ps, NULL, NULL);
+		root->right = (t_node *) parser(ps, token);
 	}
+	return (root);
 }

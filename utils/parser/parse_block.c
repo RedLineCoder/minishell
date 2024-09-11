@@ -1,36 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nodes.c                                            :+:      :+:    :+:   */
+/*   parse_block.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/11 11:18:50 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 18:52:12 by emyildir         ###   ########.fr       */
+/*   Created: 2024/09/11 16:13:01 by emyildir          #+#    #+#             */
+/*   Updated: 2024/09/11 16:16:38 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
 
-t_binode	*get_binode(void *left, void *right)
+t_cmd	*parse_block(char **ps, char *ts, char *te)
 {
-	t_binode	*const node = ft_calloc(sizeof(t_binode), 1);
-
-	if (!node)
-		return NULL;
-	node->type = BINODE;
-	node->left = left;
-	node->right = right;
-	return (node);
-}
-
-t_unode	*get_unode(void *next)
-{
-	t_unode	*const node = ft_calloc(sizeof(t_unode), 1);
+	t_blockcmd	*const block = ft_calloc(sizeof(t_blockcmd), 1);
 	
-	if (!node)
+	if (!block)
 		return NULL;
-	node->type = UNODE;
-	node->next = next;
-	return (node);
+	while (peek_next(*ps) != BLOCK)
+	{
+		
+	}
+	get_token(ps, NULL, NULL);
 }

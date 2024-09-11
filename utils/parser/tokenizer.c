@@ -3,14 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 14:12:23 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/11 18:58:24 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+t_tokens	get_token_type(char *ts, char *te)
+{
+	if (is_redir(ts, te) || is_append(ts, te))
+		return (REDIR);
+	else if (is_hdoc(ts, te))
+		return (HDOC);
+	else if (!ft_strncmp(ts, "|", te - ts))
+		return (PIPE);
+	else if (is_cond(ts, te))
+		return (COND);
+	else if (is_block(ts, te))
+		return (BLOCK);
+	while (ts < te && !ft_strchr(SEP, *ts))
+		ts++;
+	if (ts == te)
+		return (ARG);
+	return (TKN_NONE);
+}
 
 // Alternative function
 /* int		get_quote(char	**qs)
@@ -95,22 +114,17 @@ void	handle_sep(char **ps, char **ts, char **te)
 
 t_tokens	get_token(char **ps, char **ts, char **te)
 {
+	char	*start;
+	char	*end;
+	
 	if (!ps || !*ps || !peek(*ps, NULL))
 		return (TKN_NONE);
 	while (**ps && ft_strchr(SPACE, **ps))
 		(*ps)++;
-	handle_sep(ps, ts, te);
-	if (is_redir(*ts, *te) || is_append(*ts, *te))
-		return (REDIR);
-	else if (is_hdoc(*ts, *te))
-		return (HDOC);
-	else if (!ft_strncmp(*ts, "|", *te - *ts))
-		return (PIPE);
-	else if (is_cond(*ts, *te))
-		return (COND);
-	else if (is_block(*ts, *te))
-		return (BLOCK);
-	else
-		return (ARG);
+	handle_sep(ps, &start, &end);
+	if (ts)
+		*ts = start;
+	if (te)
+		*te = end;
+	return (get_token_type(start, end));
 }
-// (((ls|3>cat)))
