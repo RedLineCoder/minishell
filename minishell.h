@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 16:47:55 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/12 22:32:11 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,28 +40,28 @@ typedef enum e_tokens
 {
 	TKN_NONE,
 	BLOCK,
-	PIPE,
-	COND,
+	CMD_OP,
 	ARG,
 	REDIR,
-	HDOC,
-	EXEC
+	EXEC,
 }			t_tokens;
 
 typedef enum e_redir
 {
+	REDIR_NONE,
 	REDIR_INPUT,
 	REDIR_OUTPUT,
-	REDIR_APPEND
+	REDIR_APPEND,
+	REDIR_HDOC
 }			t_redir;
 
-typedef enum e_cond
+typedef enum e_cmdop
 {
-	COND_NONE,
-	COND_AND,
-	COND_OR,
-	COND_NEG
-}			t_cond;
+	OP_NONE,
+	OP_AND,
+	OP_OR,
+	OP_PIPE
+}			t_cmdop;
 
 typedef enum e_quote
 {
@@ -115,7 +115,6 @@ typedef struct s_execcmd
 	int		in_file;
 	t_list	*args;
 	t_list	*redirs;
-	t_list	*hdocs;
 }			t_execcmd;
 
 typedef struct s_argcmd
@@ -130,55 +129,35 @@ typedef struct s_redircmd
 	int		type;
 	int		redir_type;
 	int		fd;
-	char	*s_file;
-	char	*e_file;
+	char	*s_spec;
+	char	*e_spec;
 }			t_redircmd;
 
-typedef struct s_hdoccmd
+typedef struct s_opcmd
 {
 	int		type;
-	int		fd;
-	char	*s_limit;
-	char	*e_limit;
-}			t_hdoccmd;
-
-typedef struct s_condcmd
-{
-	int		type;
-	t_cond	cond_type;
-}			t_condcmd;
-
-typedef struct s_pipecmd
-{
-	int		type;
-	int		pipe[2];
-}			t_pipecmd;
+	t_cmdop	op_type;
+}			t_opcmd;
 
 // Parser
-t_binode	*parser(char *prompt, int type);
+t_binode	*parser(char *ps, int is_root);
 t_cmd		*parse_cmd(char **ps);
 t_cmd		*parse_redir(char **ps, char *ts, char *te);
-t_cmd		*parse_hdoc(char **ps, char *ts, char *te);
 t_cmd		*parse_exec(char **ps, char *ts, char *te);
-t_cmd		*parse_cond(char **ps, char *ts, char *te);
+t_cmd		*parse_cmdop(char **ps, char *ts, char *te);
 t_cmd		*parse_arg(char **ps, char *ts, char *te);
-t_cmd		*parse_pipe(char **ps, char *ts, char *te);
 
 // Tokenizer
-bool		peek(char *ps, char *charset);
+t_tokens	peek(char	*ps);
 bool		peek_consecutive(char *ps, char *charset, char *filter);
 t_tokens	get_token(char **ps, char **ts, char **te);
-t_tokens	peek_next(char	*ps);
 t_tokens	get_token_type(char *ts, char *te);
 t_binode	*get_binode(void *left, void *right);
 t_unode		*get_unode(void *next);
 
 // Lexer
-int			is_redir(char *ts, char *te);
-int			is_block(char *ts, char *te);
-int			is_hdoc(char *ts, char *te);
-int			is_append(char *ts, char *te);
-int			is_cond(char *ts, char *te);
+t_redir		get_redir(char *ts, char *te);
+t_cmdop		get_cmdop(char *ts, char *te);
 
 // Executor
 void		execcmd(void);
@@ -193,6 +172,5 @@ int			str_arr_size(char **arr);
 void		free_string_array(char **arr);
 void		execute_command(char *command, char **args, char **env);
 void 		print_tree(t_node *node, int count);
-
 
 #endif

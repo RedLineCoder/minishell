@@ -3,33 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/12 17:02:12 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/12 23:02:40 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_binode	*parser(char *prompt, int type)
+t_binode	*parser(char *ps, int is_root)
 {
-	char		*ps;
-	t_tokens	token;
+	
+	t_tokens	next;
+	t_cmd		*cmd;
 	t_binode	*const root = get_binode(NULL, NULL);	
 
 	if (!root)
 		return (NULL);
-	ps = prompt;
-	root->cmd = ft_calloc(sizeof(t_blockcmd), 1);
-	root->cmd->type = type;
-	t_cmd *cmd = parse_exec(&ps, NULL, NULL);
-	root->left = (t_node *) get_unode(cmd);
-	((t_unode *)root->left)->cmd = cmd;
-	if (peek_next(ps) == COND || peek_next(ps) == PIPE)
+	if (!is_root)
 	{
-		token = get_token(&ps, NULL, NULL);
-		root->right = (t_node *) parser(ps, token);
+		root->cmd = parse_cmd(&ps);
+		if (!root->cmd)
+			return (free(root), NULL);
 	}
+	root->left = (t_node *) get_unode(NULL);
+	if (!root->left)
+		return (free(root), NULL);
+	cmd = parse_exec(&ps, NULL, NULL);
+	if (cmd)
+		((t_unode *)root->left)->cmd = cmd;	
+	next = peek(ps);
+	if (next == CMD_OP)
+		root->right = (t_node *) parser(ps, 0);
 	return (root);
+	
 }

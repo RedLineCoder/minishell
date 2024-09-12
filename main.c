@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 17:16:51 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/12 23:05:31 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	print_node(t_cmd *cmd, int left, int row)
 {
-	if (!cmd)
-		return ;
-	t_tokens	token = cmd->type;
+	t_tokens	token = 0;
+	if (cmd)
+		token = cmd->type;
 	printf("------------------------------------\n\n");
 	printf("%d - ", row);
 	if (left)
@@ -42,8 +42,8 @@ void	print_node(t_cmd *cmd, int left, int row)
 		{
 			t_redircmd *redir = exec->redirs->content;
 			printf("File: ");
-			for (int i = 0; redir->s_file + i  < redir->e_file; i++)
-				printf("%c", redir->s_file[i]);
+			for (int i = 0; redir->s_spec + i  < redir->e_spec; i++)
+				printf("%c", redir->s_spec[i]);
 			printf("\nManipulated fd : %d\n", redir->fd);
 			printf("Redir Type : ");
 			if (redir->redir_type == REDIR_OUTPUT)
@@ -51,35 +51,30 @@ void	print_node(t_cmd *cmd, int left, int row)
 			else if(redir->redir_type == REDIR_INPUT)
 				printf("Input\n");
 			else if(redir->redir_type == REDIR_APPEND)
-				printf("Append\n"); 
+				printf("Append\n");
+			else if(redir->redir_type == REDIR_HDOC)
+				printf("Heredoc\n");
 			printf("\n");
 			exec->redirs = exec->redirs->next;
 		}
-		printf("\nHeredocs: \n\n");
-		while (exec->hdocs)
-		{
-			t_hdoccmd *hdoc = exec->hdocs->content;
-			printf("Target Fd : %d\n", hdoc->fd);
-			printf("EOF : ");
-			for (int i = 0; hdoc->s_limit + i  < hdoc->e_limit; i++)
-				printf("%c", hdoc->s_limit[i]);
-			printf("\n");
-			exec->hdocs = exec->hdocs->next;
-		}
 	}
-	else if(token == COND)
+	else if(token == CMD_OP)
 	{
-		t_condcmd *cond = (t_condcmd *) cmd;
+		t_opcmd *cond = (t_opcmd *) cmd;
 		
 		printf("Type : Condition\n");
 		printf("Condition Type : ");
-		if (cond->cond_type == COND_OR)
+		if (cond->op_type == OP_OR)
 			printf(" OR\n");
-		else if (cond->cond_type == COND_AND)
+		else if (cond->op_type == OP_AND)
 			printf(" AND\n");
+		else 
+			printf(" PIPE\n");
 	}
-	else if(token == PIPE)
+	else if(token == OP_PIPE)
 		printf("Type : Pipe\n");
+	else if(token == TKN_NONE)
+		printf("NULL\n");
 	printf("\n------------------------------------\n");
 }
 
@@ -92,11 +87,13 @@ void 	print_tree(t_node *node, int count)
 		t_binode	*right = (t_binode *) binode->right;
 		if (left)
 			print_node(left->cmd, 1, count + 1);
-		if (right)
-		{
-			print_node(right->cmd, 0, count + 1);
-			print_tree((t_node *) right, count + 1);
-		}
+			if (right)
+			{
+				print_node(right->cmd, 0, count + 1);
+				print_tree((t_node *) right, count + 1);
+			}
+			else 
+				print_node(0, 0, count + 1);
 	}
 	else if (node->type == UNODE)
 	{
@@ -120,7 +117,7 @@ char	*get_prompt(t_msh *msh)
 	char	**path_splitted;
 
 	getcwd(path, PATH_MAX);
-	prompt = ft_strjoin(msh->user, ": ");
+	prompt = ft_strjoin(msh->user, " ");
 	path_splitted = ft_split(path, '/');
 	if (!prompt || !path_splitted)
 		return (free(prompt), free_string_array(path_splitted), NULL);
@@ -134,11 +131,11 @@ char	*get_prompt(t_msh *msh)
 	else if (size >= 1 && !is_tilde && !str_append(&prompt, path_splitted[size - 1]))
 		return (free_string_array(path_splitted), free(prompt), NULL);
 	free_string_array(path_splitted);
-	if (!str_append(&prompt, "$ "))
+	if (!str_append(&prompt, " $ "))
 		return (free(prompt), NULL);
 	return (prompt);
 }
-
+ 
 int	main(int argc, char **argv, char **env)
 {
 	t_msh *const	msh = &(t_msh){0};
@@ -156,7 +153,8 @@ int	main(int argc, char **argv, char **env)
 			mini_panic();
 		line = readline(prompt);
 		add_history(line);
-		t_node *root = (t_node *) parser(line, TKN_NONE);
+		t_node *root = (t_node *) parser(line, 1);
+		(void)root;
 		print_tree(root, 0);
 		free(line);
 		free(prompt);

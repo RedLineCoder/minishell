@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 16:57:20 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/12 22:57:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,12 @@
 
 t_tokens	get_token_type(char *ts, char *te)
 {
-	if (is_redir(ts, te) || is_append(ts, te))
-		return (REDIR);
-	else if (is_hdoc(ts, te))
-		return (HDOC);
-	else if (!ft_strncmp(ts, "|", te - ts))
-		return (PIPE);
-	else if (is_cond(ts, te))
-		return (COND);
-	else if (is_block(ts, te))
+	if (ft_strchr(BLOCKS, *ts))
 		return (BLOCK);
+	else if (get_redir(ts, te))
+		return (REDIR);
+	else if (get_cmdop(ts, te))
+		return (CMD_OP);
 	while (ts < te && !ft_strchr(SEP, *ts))
 		ts++;
 	if (ts == te)
@@ -87,7 +83,7 @@ t_tokens	get_token(char **ps, char **ts, char **te)
 	char	*start;
 	char	*end;
 
-	if (!ps || !*ps || !peek(*ps, NULL))
+	if (!ps || !*ps)
 		return (TKN_NONE);
 	while (**ps && ft_strchr(SPACE, **ps))
 		(*ps)++;
