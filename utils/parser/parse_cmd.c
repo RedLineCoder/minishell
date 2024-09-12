@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 13:50:10 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 17:58:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/12 12:48:07 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_cmd	*parse_cmd(char **ps)
 	char			*te;
 	t_tokens		token;
 	t_cmd			*(*funcs[7])(char **, char *, char *);
-	
+
 	ft_memset(funcs, 0, sizeof(t_cmd *) * 7);
 	funcs[REDIR] = parse_redir;
 	funcs[HDOC] = parse_hdoc;
@@ -28,6 +28,5 @@ t_cmd	*parse_cmd(char **ps)
 	token = get_token(ps, &ts, &te);
 	if (funcs[token])
 		return (funcs[token](ps, ts, te));
-	return NULL;
+	return (NULL);
 }
-

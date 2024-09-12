@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 13:40:24 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 19:00:19 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/12 12:30:05 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 t_cmd	*parse_exec(char **ps, char *ts, char *te)
 {
-	t_cmd		*cmd;
-	t_list		*item;
-	t_tokens	token;
-	t_execcmd	*const exec = ft_calloc(sizeof(t_execcmd), 1);
-	
+	t_execcmd *const	exec = ft_calloc(sizeof(t_execcmd), 1);
+	t_cmd				*cmd;
+	t_list				*item;
+	t_tokens			token;
+
 	(void)ts;
 	(void)te;
 	if (!exec)

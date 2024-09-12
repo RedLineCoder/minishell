@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 18:58:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/12 12:27:34 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,38 +31,11 @@ t_tokens	get_token_type(char *ts, char *te)
 	return (TKN_NONE);
 }
 
-// Alternative function
-/* int		get_quote(char	**qs)
-{
-	int		quotes[2];
-	char	*str;
-	
-	quotes[QUOTE_SINGLE] = 0;
-	quotes[QUOTE_DOUBLE] = 0;
-	str = *qs;
-	while (str && *str)
-	{
-		if (!quotes[QUOTE_DOUBLE] && *str == '\'')
-		{
-			if (++quotes[QUOTE_SINGLE] == 2)
-				break;
-		}
-		else if (!quotes[QUOTE_SINGLE] && *str == '"')
-			if (++quotes[QUOTE_DOUBLE] == 2)
-				break;
-		str++;
-	}
-	*qs = str;
-	if (quotes[QUOTE_DOUBLE] == 2)
-		return QUOTE_DOUBLE;
-	return QUOTE_SINGLE;
-} */
-
 void	get_quote(char	**qs)
 {
 	char	quote;
 	char	*str;
-	
+
 	str = *qs;
 	quote = *str++;
 	while (str && *str && *str != quote)
@@ -78,7 +51,6 @@ void	get_operator(char **pe)
 	str = *pe;
 	while (*str && !ft_strchr(OPERATOR, *str))
 		str++;
-	// Handle fd error for redirects
 	opt = *str;
 	while (*str && *str == opt)
 		str++;
@@ -97,12 +69,14 @@ void	handle_sep(char **ps, char **ts, char **te)
 	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, REDIRS))
 		get_operator(&str);
 	else
+	{
 		while (*str && !ft_strchr(SEP, *str))
 		{
 			if (ft_strchr(QUOTES, *str))
 				get_quote(&str);
 			str++;
 		}
+	}
 	if (te)
 		*te = str;
 	*ps = str;
@@ -116,7 +90,7 @@ t_tokens	get_token(char **ps, char **ts, char **te)
 {
 	char	*start;
 	char	*end;
-	
+
 	if (!ps || !*ps || !peek(*ps, NULL))
 		return (TKN_NONE);
 	while (**ps && ft_strchr(SPACE, **ps))
