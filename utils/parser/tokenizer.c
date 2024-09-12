@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 12:27:34 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/12 14:58:48 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	handle_sep(char **ps, char **ts, char **te)
 		*ts = str;
 	if (ft_strchr(BLOCKS, *str))
 		str++;
-	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, REDIRS))
+	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, REDIRS, DIGITS))
 		get_operator(&str);
 	else
 	{
@@ -81,10 +81,6 @@ void	handle_sep(char **ps, char **ts, char **te)
 		*te = str;
 	*ps = str;
 }
-
-/*
-	Now everything is clear as a pure glass
-*/
 
 t_tokens	get_token(char **ps, char **ts, char **te)
 {

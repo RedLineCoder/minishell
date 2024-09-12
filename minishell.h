@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 19:27:58 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/12 14:59:00 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # define REDIRS "<>"
 # define QUOTES "'\""
 # define BLOCKS "()"
+# define DIGITS "0123456789"
 
 typedef enum e_nodes
 {
@@ -165,7 +166,7 @@ t_cmd		*parse_pipe(char **ps, char *ts, char *te);
 
 // Tokenizer
 bool		peek(char *ps, char *charset);
-bool		peek_consecutive(char *ps, char *charset);
+bool		peek_consecutive(char *ps, char *charset, char *filter);
 t_tokens	get_token(char **ps, char **ts, char **te);
 t_tokens	peek_next(char	*ps);
 t_tokens	get_token_type(char *ts, char *te);
