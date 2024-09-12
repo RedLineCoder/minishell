@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 19:41:13 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/12 17:02:12 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_binode	*parser(char *prompt, int type)
 	char		*ps;
 	t_tokens	token;
 	t_binode	*const root = get_binode(NULL, NULL);	
-	
+
 	if (!root)
 		return (NULL);
 	ps = prompt;

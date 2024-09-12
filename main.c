@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/11 19:42:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/12 17:16:51 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,14 +113,14 @@ void	mini_panic(void)
 
 char	*get_prompt(t_msh *msh)
 {
-	int		size;
 	bool	is_tilde;
+	int		size;
 	char	path[PATH_MAX];
 	char	*prompt;
 	char	**path_splitted;
 
 	getcwd(path, PATH_MAX);
-	prompt = ft_strjoin(msh->user, " ");
+	prompt = ft_strjoin(msh->user, ": ");
 	path_splitted = ft_split(path, '/');
 	if (!prompt || !path_splitted)
 		return (free(prompt), free_string_array(path_splitted), NULL);
@@ -134,7 +134,7 @@ char	*get_prompt(t_msh *msh)
 	else if (size >= 1 && !is_tilde && !str_append(&prompt, path_splitted[size - 1]))
 		return (free_string_array(path_splitted), free(prompt), NULL);
 	free_string_array(path_splitted);
-	if (!str_append(&prompt, " % "))
+	if (!str_append(&prompt, "$ "))
 		return (free(prompt), NULL);
 	return (prompt);
 }

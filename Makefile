@@ -1,6 +1,6 @@
 NAME = minishell
 HEADERS = minishell.h
-SOURCES = main.c utils/user.c utils/string_utils.c utils/command.c helpers/parser.c utils/parser/tokenizer.c utils/lexer/is_operator.c utils/parser/parse_redir.c utils/parser/peekers.c \
+SOURCES = main.c utils/user.c utils/string_utils.c utils/command.c helpers/parser.c utils/tokenizer/tokenizer.c utils/lexer/is_operator.c utils/parser/parse_redir.c utils/tokenizer/peekers.c \
 utils/parser/parse_cmd.c utils/parser/parse_hdoc.c utils/nodes.c utils/parser/parse_cond.c utils/parser/parse_pipe.c utils/parser/parse_exec.c utils/parser/parse_arg.c
 
 READLINE = lib/readline/lib/libreadline.a
