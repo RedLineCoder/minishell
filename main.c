@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 23:05:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 00:19:31 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ int	main(int argc, char **argv, char **env)
 		add_history(line);
 		t_node *root = (t_node *) parser(line, 1);
 		(void)root;
-		print_tree(root, 0);
+		//print_tree(root, 0);
 		free(line);
 		free(prompt);
 	}

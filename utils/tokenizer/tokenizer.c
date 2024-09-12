@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 22:57:37 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 00:25:12 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_tokens	get_token_type(char *ts, char *te)
 		return (REDIR);
 	else if (get_cmdop(ts, te))
 		return (CMD_OP);
-	while (ts < te && !ft_strchr(SEP, *ts))
+	while (ts < te)
 		ts++;
 	if (ts == te)
 		return (ARG);
@@ -87,6 +87,8 @@ t_tokens	get_token(char **ps, char **ts, char **te)
 		return (TKN_NONE);
 	while (**ps && ft_strchr(SPACE, **ps))
 		(*ps)++;
+	if (!**ps)
+		return (TKN_NONE);
 	handle_sep(ps, &start, &end);
 	if (ts)
 		*ts = start;

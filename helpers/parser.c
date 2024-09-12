@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/12 23:02:40 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 00:19:49 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,12 @@
 
 t_binode	*parser(char *ps, int is_root)
 {
-	
-	t_tokens	next;
+	(void)is_root;
+	t_tokens token;
+	token = peek(ps);
+	printf("Token: %i\n", token);
+	return (NULL);
+	/* t_tokens	next;
 	t_cmd		*cmd;
 	t_binode	*const root = get_binode(NULL, NULL);	
 
@@ -36,6 +40,5 @@ t_binode	*parser(char *ps, int is_root)
 	next = peek(ps);
 	if (next == CMD_OP)
 		root->right = (t_node *) parser(ps, 0);
-	return (root);
-	
+	return (root); */
 }
