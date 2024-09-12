@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 14:58:48 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/12 15:15:16 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,27 @@ t_tokens	get_token_type(char *ts, char *te)
 	return (TKN_NONE);
 }
 
-void	get_quote(char	**qs)
+void	get_block(char **bs)
+{
+	char	*str;
+	int		sem;
+
+	str = *bs;
+	sem = 1;
+	while (str && *str)
+	{
+		if (*str == ')')
+			sem++;
+		if (*str == ')')
+			sem--;
+		if (!sem)
+			break ;
+		str++;
+	}
+	*bs = str;
+}
+
+void	get_quote(char **qs)
 {
 	char	quote;
 	char	*str;
