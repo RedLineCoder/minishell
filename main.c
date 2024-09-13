@@ -6,11 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/09/13 18:22:44 by emyildir         ###   ########.fr       */
-=======
-/*   Updated: 2024/09/13 03:46:29 by emyildir         ###   ########.fr       */
->>>>>>> parser
+/*   Updated: 2024/09/13 18:41:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,13 +256,8 @@ int	main(int argc, char **argv, char **env)
 			mini_panic("An error occured.");
 		line = readline(prompt);
 		add_history(line);
-<<<<<<< HEAD
-		t_node *root = (t_node *) parser(line, 1);
+		t_node *root = (t_node *) parser(line, line+ft_strlen(line), 1);
 		executor((t_binode *)root, msh);
-=======
-		t_node *root = (t_node *) parser(line, NULL, 1);
-		(void)root;
->>>>>>> parser
 		//print_tree(root, 0);
 		free(line);
 		free(prompt);

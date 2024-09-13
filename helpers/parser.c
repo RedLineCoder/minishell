@@ -6,11 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/09/13 07:58:00 by emyildir         ###   ########.fr       */
-=======
-/*   Updated: 2024/09/13 03:40:43 by emyildir         ###   ########.fr       */
->>>>>>> parser
+/*   Updated: 2024/09/13 18:40:42 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +37,7 @@ t_binode	*parser(char *ps, char *pe, int is_block)
 		((t_unode *)root->left)->cmd = cmd;
 	next = peek(ps, pe);
 	if (next == CMD_OP)
-<<<<<<< HEAD
-		root->right = (t_node *) parser(ps, 0);
-=======
-		root->right = (t_node *) parser(ps, NULL, 0);
->>>>>>> parser
+		root->right = (t_node *) parser(ps, 0, 0);
 	return (root);
 }
 

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/13 18:32:57 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 18:40:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int		execute_block(t_binode	*block, t_msh *msh, int *fd)
 	if (!block)
 		return (0);
 		
+	(void)fd;
 	status = 0;
 	left_token = TKN_NONE;
 	right_token = TKN_NONE;
