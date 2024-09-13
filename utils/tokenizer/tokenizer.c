@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/13 00:25:12 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 03:36:17 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_tokens	get_token_type(char *ts, char *te)
 {
-	if (ft_strchr(BLOCKS, *ts))
+	if (is_block(ts, te))
 		return (BLOCK);
 	else if (get_redir(ts, te))
 		return (REDIR);
@@ -25,6 +25,24 @@ t_tokens	get_token_type(char *ts, char *te)
 	if (ts == te)
 		return (ARG);
 	return (TKN_NONE);
+}
+
+void	get_block(char **bs)
+{
+	int		sem_block;
+	char	*str;
+
+	str = *bs;
+	sem_block = 1;
+	while (str && *str && sem_block)
+	{
+		str++;
+		if (*str == ')')
+			sem_block--;
+		if (*str == '(')
+			sem_block++;
+	}
+	*bs = str + 1;
 }
 
 void	get_quote(char **qs)
@@ -61,7 +79,7 @@ void	handle_sep(char **ps, char **ts, char **te)
 	if (ts)
 		*ts = str;
 	if (ft_strchr(BLOCKS, *str))
-		str++;
+		get_block(&str);
 	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, REDIRS, DIGITS))
 		get_operator(&str);
 	else
@@ -78,7 +96,7 @@ void	handle_sep(char **ps, char **ts, char **te)
 	*ps = str;
 }
 
-t_tokens	get_token(char **ps, char **ts, char **te)
+t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
 {
 	char	*start;
 	char	*end;
@@ -87,7 +105,7 @@ t_tokens	get_token(char **ps, char **ts, char **te)
 		return (TKN_NONE);
 	while (**ps && ft_strchr(SPACE, **ps))
 		(*ps)++;
-	if (!**ps)
+	if (!**ps || (pe && *ps == *pe))
 		return (TKN_NONE);
 	handle_sep(ps, &start, &end);
 	if (ts)

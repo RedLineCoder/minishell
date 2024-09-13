@@ -6,11 +6,16 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/13 00:15:59 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 03:39:57 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+t_tokens	is_block(char *ts, char *te)
+{
+	return (*ts == '(' && *(te - 1) == ')');
+}
 
 t_redir	get_redir(char *ts, char *te)
 {
@@ -41,9 +46,9 @@ t_cmdop	get_cmdop(char *ts, char *te)
 		return (OP_NONE);
 	if (!ft_strncmp(ts, "|", len))
 		return (OP_PIPE);
-	if (!ft_strncmp(ts, "||", len))
+	if (len > 1 && !ft_strncmp(ts, "||", len))
 		return (OP_OR);
-	if (!ft_strncmp(ts, "&&", len))
+	if (len > 1 && !ft_strncmp(ts, "&&", len))
 		return (OP_AND);
 	return (OP_NONE);
 }

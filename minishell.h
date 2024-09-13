@@ -6,7 +6,11 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/09/13 18:22:24 by emyildir         ###   ########.fr       */
+=======
+/*   Updated: 2024/09/13 03:43:58 by emyildir         ###   ########.fr       */
+>>>>>>> parser
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +66,7 @@ typedef enum e_cmdop
 	OP_AND,
 	OP_OR,
 	OP_PIPE
-}			t_cmdop;
-
-typedef enum e_quote
-{
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE,
-}			t_quote;
+}			t_cmdop;		
 
 // Structs
 typedef struct s_msh
@@ -104,13 +102,6 @@ typedef struct s_unode
 	t_node	*next;
 }			t_unode;
 
-
-typedef struct s_blockcmd
-{
-	int		type;
-	int		status;
-}			t_blockcmd;
-
 typedef struct s_execcmd
 {
 	int		type;
@@ -142,24 +133,26 @@ typedef struct s_opcmd
 }			t_opcmd;
 
 // Parser
-t_binode	*parser(char *ps, int is_root);
-t_cmd		*parse_cmd(char **ps);
-t_cmd		*parse_redir(char **ps, char *ts, char *te);
-t_cmd		*parse_exec(char **ps, char *ts, char *te);
-t_cmd		*parse_cmdop(char **ps, char *ts, char *te);
-t_cmd		*parse_arg(char **ps, char *ts, char *te);
+t_binode	*parser(char *ps, char *pe, int is_block);
+t_cmd		*parse_cmd(char **ps, char**pe);
+t_cmd		*parse_redir(char **ps, char **pe,char *ts, char *te);
+t_cmd		*parse_exec(char **ps, char **pe, char *ts, char *te);
+t_cmd		*parse_cmdop(char **ps, char **pe, char *ts, char *te);
+t_cmd		*parse_arg(char **ps, char **pe, char *ts, char *te);
+t_binode	*parse_block(char **ps, char**pe, char *ts, char *te);
 
 // Tokenizer
-t_tokens	peek(char	*ps);
+t_tokens	peek(char *ps, char *pe);
 bool		peek_consecutive(char *ps, char *charset, char *filter);
-t_tokens	get_token(char **ps, char **ts, char **te);
+t_tokens	get_token(char **ps, char **pe,char **ts, char **te);
 t_tokens	get_token_type(char *ts, char *te);
 t_binode	*get_binode(void *left, void *right);
-t_unode		*get_unode(void *next);
+t_unode		*get_unode(void *cmd);
 
 // Lexer
 t_redir		get_redir(char *ts, char *te);
 t_cmdop		get_cmdop(char *ts, char *te);
+t_tokens	is_block(char *ts, char *te);
 
 // Executor
 int			executor(t_binode *root, t_msh *msh);
@@ -178,3 +171,5 @@ void		execute_command(char *command, char **args, char **env);
 void 		print_tree(t_node *node, int count);
 
 #endif
+
+// ls&&cat||can|meta 3<file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nodes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:18:50 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/12 12:55:39 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/13 01:02:08 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ t_binode	*get_binode(void *left, void *right)
 	return (node);
 }
 
-t_unode	*get_unode(void *next)
+t_unode	*get_unode(void *cmd)
 {
 	t_unode *const	node = ft_calloc(sizeof(t_unode), 1);
 
 	if (!node)
 		return NULL;
 	node->type = UNODE;
-	node->next = next;
+	node->cmd = cmd;
 	return (node);
 }
