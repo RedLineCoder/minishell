@@ -3,12 +3,14 @@ HEADERS = minishell.h
 PARSER_PATH = utils/parser/
 TOKENIZER_PATH = utils/tokenizer/
 LEXER_PATH = utils/lexer/
+EXECUTOR_PATH = utils/executor/
 PARSER = $(PARSER_PATH)parse_cmd.c $(PARSER_PATH)parse_cmdop.c $(PARSER_PATH)parse_redir.c $(PARSER_PATH)parse_arg.c \
 		$(PARSER_PATH)parse_exec.c
 TOKENIZER = $(TOKENIZER_PATH)tokenizer.c $(TOKENIZER_PATH)peekers.c
 LEXER = $(LEXER_PATH)get_operator.c
+EXECUTOR = $(EXECUTOR_PATH)executor.c
 
-SOURCES = $(PARSER) $(TOKENIZER) $(LEXER) main.c utils/user.c utils/string_utils.c utils/command.c helpers/parser.c utils/nodes.c  
+SOURCES = $(PARSER) $(TOKENIZER) $(LEXER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c helpers/parser.c utils/nodes.c  helpers/executor.c
 
 READLINE = lib/readline/lib/libreadline.a
 RL_FLAGS = -L${PWD}/lib/readline/lib -I${PWD}/lib/readline/include/readline -lreadline

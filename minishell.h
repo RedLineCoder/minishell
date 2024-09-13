@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 22:32:11 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 18:22:24 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
@@ -76,15 +77,17 @@ typedef struct s_msh
 	char	**env;
 }			t_msh;
 
-typedef struct s_node 
-{
-	int		type;
-} t_node;
 
 typedef struct s_cmd
 {
 	int		type;
 }			t_cmd;
+
+typedef struct s_node 
+{
+	int		type;
+	t_cmd	*cmd;
+} t_node;
 
 typedef struct s_binode
 {
@@ -111,8 +114,7 @@ typedef struct s_blockcmd
 typedef struct s_execcmd
 {
 	int		type;
-	int		out_file;
-	int		in_file;
+	int		fd[2];
 	t_list	*args;
 	t_list	*redirs;
 }			t_execcmd;
@@ -160,8 +162,10 @@ t_redir		get_redir(char *ts, char *te);
 t_cmdop		get_cmdop(char *ts, char *te);
 
 // Executor
-void		execcmd(void);
-void		mini_panic(void);
+int			executor(t_binode *root, t_msh *msh);
+int			dup_io(int input_fd, int output_fd, int close_fd);
+void		mini_panic(char *str);
+char		**get_args_arr(t_list	*arglist);
 
 // Utils
 char		*get_user(void);

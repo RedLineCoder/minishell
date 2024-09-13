@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/13 00:19:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 18:22:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,9 @@ void 	print_tree(t_node *node, int count)
 	}
 }
 
-void	mini_panic(void)
+void	mini_panic(char *str)
 {
+	ft_putstr_fd(str, STDOUT_FILENO);
 	exit(1);
 }
 
@@ -127,7 +128,7 @@ char	*get_prompt(t_msh *msh)
 	if (size <= 1 && (!str_append(&prompt, "/")))
 		return (free_string_array(path_splitted), free(prompt), NULL);
 	else if (is_tilde && !str_append(&prompt, "~"))
-			return (free_string_array(path_splitted), free(prompt), NULL);
+		return (free_string_array(path_splitted), free(prompt), NULL);
 	else if (size >= 1 && !is_tilde && !str_append(&prompt, path_splitted[size - 1]))
 		return (free_string_array(path_splitted), free(prompt), NULL);
 	free_string_array(path_splitted);
@@ -150,11 +151,11 @@ int	main(int argc, char **argv, char **env)
 		msh->user = get_user();
 		prompt = get_prompt(msh);
 		if (!prompt)
-			mini_panic();
+			mini_panic("An error occured.");
 		line = readline(prompt);
 		add_history(line);
 		t_node *root = (t_node *) parser(line, 1);
-		(void)root;
+		executor((t_binode *)root, msh);
 		//print_tree(root, 0);
 		free(line);
 		free(prompt);
