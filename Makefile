@@ -4,7 +4,7 @@ PARSER_PATH = utils/parser/
 TOKENIZER_PATH = utils/tokenizer/
 LEXER_PATH = utils/lexer/
 PARSER = $(PARSER_PATH)parse_cmd.c $(PARSER_PATH)parse_cmdop.c $(PARSER_PATH)parse_redir.c $(PARSER_PATH)parse_arg.c \
-		$(PARSER_PATH)parse_exec.c
+		$(PARSER_PATH)parse_exec.c $(PARSER_PATH)parse_block.c
 TOKENIZER = $(TOKENIZER_PATH)tokenizer.c $(TOKENIZER_PATH)peekers.c
 LEXER = $(LEXER_PATH)get_operator.c
 

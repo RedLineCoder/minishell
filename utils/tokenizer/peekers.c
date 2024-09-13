@@ -6,15 +6,15 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 11:48:04 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/12 21:46:59 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/13 02:36:42 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-t_tokens	peek(char	*ps)
+t_tokens	peek(char *ps, char *pe)
 {
-	return (get_token(&ps, NULL, NULL));
+	return (get_token(&ps, &pe, NULL, NULL));
 }
 
 bool	peek_consecutive(char *ps, char *charset, char *filter)

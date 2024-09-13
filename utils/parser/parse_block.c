@@ -3,22 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   parse_block.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 16:13:01 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/12 12:48:49 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/13 03:32:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-t_cmd	*parse_block(char **ps, char *ts, char *te)
+t_binode	*parse_block(char **ps, char **pe, char *ts, char *te)
 {
-	t_blockcmd *const	block = ft_calloc(sizeof(t_blockcmd), 1);
+	t_binode *const	block = parser(ts + 1, te, 1);
 
+	(void)ps;
+	(void)pe;
 	if (!block)
 		return (NULL);
-	while (peek_next(*ps) != BLOCK)
-		;
-	get_token(ps, NULL, NULL);
+	block->cmd->type = BLOCK;
+	return (block);
 }
