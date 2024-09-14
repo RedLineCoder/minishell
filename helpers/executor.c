@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 20:46:41 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 21:23:21 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,18 @@ int		execute_redir(t_redircmd *redir)
 	char	*file;
 	int		flags;
 	
-	flags = O_RDWR | O_CREAT;
+	flags = O_RDWR;
 	if (redir->redir_type == REDIR_APPEND)
 		flags |= O_APPEND;
+	if (redir->redir_type != REDIR_INPUT)
+		flags |= O_CREAT;
 	file = ft_strndup(redir->s_spec, redir->e_spec - redir->s_spec);
 	fd = open(file, flags, S_IRWXU);
 	free(file);
 	if (fd == -1)
+	{
+		
+	}
 		return (0);
 	dup2(fd, redir->fd);
 	return (1);
@@ -87,9 +92,11 @@ int		execute_block(t_node *block, t_msh *msh, int *fd)
 		status = executor(block->left, msh);
 	else if (left_token == EXEC)
 	{
-		status = execute_execcmd((t_execcmd *)block->left->cmd, msh->env, NULL, 0);
+		status = execute_execcmd((t_execcmd *)block->left->cmd, msh->env, 0, 1);
 		if (right_token == OP_PIPE)
-			return (execute_block(block->right, msh, NULL));
+		{
+			return (execute_block(block->right, msh, ((t_execcmd *)block->left->cmd)->fd));
+		}
 	}
 	block = block->right;
 	if ((!status && right_token == OP_OR) 
@@ -103,19 +110,19 @@ int		execute_block(t_node *block, t_msh *msh, int *fd)
 }
 
 
-int	executor(t_node *root, t_msh *msh)
+int	executor(t_node *block, t_msh *msh)
 {
 	pid_t	pid;
 	int		status;
 	
-	if (!root)
+	if (!block)
 		return (0);
 	pid = fork();
 	if (pid == -1)
 		return (0);
 	else if (pid == 0)
 	{
-		execute_block(root, msh, NULL);
+		execute_block(block, msh, NULL);
 		exit(0);
 	}
 	waitpid(pid, &status, 0);

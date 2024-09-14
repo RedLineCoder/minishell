@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 20:11:57 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 21:27:55 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ t_cmd	*parse_redir(char **ps, char *ts, char *te)
 	while (!ft_strchr("<>", *ts))
 		ts++;
 	redir->redir_type = get_redir(ts, te);
-	redir->fd = redir->redir_type || 0;
+	redir->fd = redir->redir_type != 1 && redir->redir_type != 4;
 	if (*fd != *ts)
 		redir->fd = ft_atoi(fd);
 	free(fd);
