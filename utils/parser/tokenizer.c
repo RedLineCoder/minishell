@@ -6,26 +6,11 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/13 03:36:17 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 20:12:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-t_tokens	get_token_type(char *ts, char *te)
-{
-	if (is_block(ts, te))
-		return (BLOCK);
-	else if (get_redir(ts, te))
-		return (REDIR);
-	else if (get_cmdop(ts, te))
-		return (CMD_OP);
-	while (ts < te)
-		ts++;
-	if (ts == te)
-		return (ARG);
-	return (TKN_NONE);
-}
 
 void	get_block(char **bs)
 {
@@ -60,14 +45,13 @@ void	get_quote(char **qs)
 void	get_operator(char **pe)
 {
 	char	*str;
-	char	opt;
 
 	str = *pe;
-	while (*str && !ft_strchr(OPERATOR, *str))
+	while (ft_isdigit(*str))
 		str++;
-	opt = *str;
-	while (*str && *str == opt)
+	if (*str == *(str + 1))
 		str++;
+	str++;
 	*pe = str;
 }
 
@@ -96,7 +80,7 @@ void	handle_sep(char **ps, char **ts, char **te)
 	*ps = str;
 }
 
-t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
+t_tokens	get_token(char **ps, char **ts, char **te)
 {
 	char	*start;
 	char	*end;
@@ -105,7 +89,7 @@ t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
 		return (TKN_NONE);
 	while (**ps && ft_strchr(SPACE, **ps))
 		(*ps)++;
-	if (!**ps || (pe && *ps == *pe))
+	if (!**ps)
 		return (TKN_NONE);
 	handle_sep(ps, &start, &end);
 	if (ts)

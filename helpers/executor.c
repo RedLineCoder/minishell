@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 19:43:52 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 20:46:41 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int		execute_execcmd(t_execcmd *exec, char **env, int *input, int output)
 	return (status);
 }
 
-int		execute_block(t_binode	*block, t_msh *msh, int *fd)
+int		execute_block(t_node *block, t_msh *msh, int *fd)
 {
 	int			status;
 	int			left_token;
@@ -84,26 +84,26 @@ int		execute_block(t_binode	*block, t_msh *msh, int *fd)
 	if (block->left)
 		left_token = ((t_cmd *)block->left->cmd)->type;
 	if (left_token == BLOCK)
-		status = executor((t_binode *)block->left, msh);
+		status = executor(block->left, msh);
 	else if (left_token == EXEC)
 	{
 		status = execute_execcmd((t_execcmd *)block->left->cmd, msh->env, NULL, 0);
 		if (right_token == OP_PIPE)
-			return (execute_block((t_binode *)block->right, msh, NULL));
+			return (execute_block(block->right, msh, NULL));
 	}
-	block = (t_binode *)block->right;
+	block = block->right;
 	if ((!status && right_token == OP_OR) 
 		|| (status && right_token == OP_AND))
 	{
-		block = (t_binode *)block->right;
+		block = block->right;
 		while (block && ((t_opcmd *)block->cmd)->op_type == OP_PIPE)
-			block = (t_binode *)block->right;
+			block = block->right;
 	}
-	return (executor((t_binode *)block, msh)); 
+	return (executor(block, msh)); 
 }
 
 
-int	executor(t_binode *root, t_msh *msh)
+int	executor(t_node *root, t_msh *msh)
 {
 	pid_t	pid;
 	int		status;

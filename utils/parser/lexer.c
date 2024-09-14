@@ -6,16 +6,11 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/13 03:39:57 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 20:10:48 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-t_tokens	is_block(char *ts, char *te)
-{
-	return (*ts == '(' && *(te - 1) == ')');
-}
 
 t_redir	get_redir(char *ts, char *te)
 {
@@ -46,9 +41,46 @@ t_cmdop	get_cmdop(char *ts, char *te)
 		return (OP_NONE);
 	if (!ft_strncmp(ts, "|", len))
 		return (OP_PIPE);
-	if (len > 1 && !ft_strncmp(ts, "||", len))
+	if (!ft_strncmp(ts, "||", len))
 		return (OP_OR);
-	if (len > 1 && !ft_strncmp(ts, "&&", len))
+	if (!ft_strncmp(ts, "&", len))
+		return (OP_ASYNC);
+	if (!ft_strncmp(ts, "&&", len))
 		return (OP_AND);
 	return (OP_NONE);
+}
+
+t_tokens	get_token_type(char *ts, char *te)
+{
+	if (*ts == '(' && *(te - 1) == ')')
+		return (BLOCK);
+	else if (get_redir(ts, te))
+		return (REDIR);
+	else if (get_cmdop(ts, te))
+		return (CMD_OP);
+	while (ts < te)
+		ts++;
+	if (ts == te && *ts != '(')
+		return (ARG);
+	return (TKN_NONE);
+}
+
+t_tokens	peek(char *ps)
+{
+	return (get_token(&ps, NULL, NULL));
+}
+
+bool	peek_consecutive(char *ps, char *charset, char *filter)
+{
+	if (!ps)
+		return (false);
+	while (*ps)
+	{
+		if (ft_strchr(charset, *ps))
+			return (true);
+		if (ft_strchr(SEP, *ps) || !ft_strchr(filter, *ps))
+			break ;
+		ps++;
+	}
+	return (false);
 }

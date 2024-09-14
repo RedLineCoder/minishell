@@ -6,204 +6,42 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 19:34:11 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 20:50:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* void	print_node(t_cmd *cmd, int tree, int left, int row)
+void treeprint(t_node *root, int level)
 {
-	t_tokens	token = 0;
-	if (cmd)
-		token = cmd->type;
-	printf("------------------------------------\n\n");
-	printf("%d - %d - ", tree, row);
-	if (row == 0)
-		printf("Root\n");
-	else if (left)
-		printf("Left\n");
-	else
-		printf("Right\n");
-	printf("------------------------------------\n\n");
-	if (token == EXEC)
-	{
-		t_execcmd	*exec = (t_execcmd *)cmd;
-		printf("Type : Exec\n");
-		printf("Args : ");
-		while (exec->args)
+        if (root == NULL)
+			return;
+        for (int i = 0; i < level; i++)
+                printf(i == level - 1 ? "|-" : "  ");
+		if (root->cmd)
 		{
-			t_argcmd *arg = exec->args->content;
-			for (int i = 0; arg->s_arg + i  < arg->e_arg; i++)
-				printf("%c", arg->s_arg[i]);
-			printf(" - ");
-			exec->args = exec->args->next;
-		}
-		printf("\n\nRedirects: \n\n");
-		while (exec->redirs)
-		{
-			t_redircmd *redir = exec->redirs->content;
-			printf("File: ");
-			for (int i = 0; redir->s_spec + i  < redir->e_spec; i++)
-				printf("%c", redir->s_spec[i]);
-			printf("\nManipulated fd : %d\n", redir->fd);
-			printf("Redir Type : ");
-			if (redir->redir_type == REDIR_OUTPUT)
-				printf("Output\n");
-			else if(redir->redir_type == REDIR_INPUT)
-				printf("Input\n");
-			else if(redir->redir_type == REDIR_APPEND)
-				printf("Append\n");
-			else if(redir->redir_type == REDIR_HDOC)
-				printf("Heredoc\n");
-			printf("\n");
-			exec->redirs = exec->redirs->next;
-		}
-	}
-	else if(token == CMD_OP)
-	{
-		t_opcmd *cond = (t_opcmd *) cmd;
-		
-		printf("Type : Condition\n");
-		printf("Condition Type : ");
-		if (cond->op_type == OP_OR)
-			printf(" OR\n");
-		else if (cond->op_type == OP_AND)
-			printf(" AND\n");
-		else 
-			printf(" PIPE\n");
-	}
-	else if(token == OP_PIPE)
-		printf("Type : Pipe\n");
-	else if(token == BLOCK)
-	{
-		printf("Type : BLOCK\n");
-	}
-	else if(token == TKN_NONE)
-		printf("NULL\n");
-	printf("\n------------------------------------\n");
-}
-
-void 	print_tree(t_node *node, int tree, int count)
-{
-	if (node->type == BINODE)
-	{
-		t_binode	*binode = (t_binode *)node;
-		print_node(binode->cmd, tree, 0, 0);
-		t_unode		*left	= (t_unode *) binode->left;
-		t_binode	*right = (t_binode *) binode->right;
-		if (left)
-		{
-			print_node(left->cmd, tree, 1, count + 1);
-			if (left->cmd->type == BLOCK)
-				print_tree((t_node *)left, tree + 1, 0);
-		}
-		if (right)
-		{
-			print_node(right->cmd, tree, 0, count + 1);
-			print_tree((t_node *) right, tree + 1,count + 1);
-		}
-		else 
-			print_node(0, tree, 0, count + 1);
-	}
-	else if (node->type == UNODE)
-	{
-		t_unode	*unode = (t_unode *) node;
-		if (unode)
-			print_node(unode->cmd, tree, 1, count + 1);
-	}
-} */
-
-void	print_node(t_cmd *cmd, int left, int row)
-{
-	t_tokens	token = 0;
-	if (cmd)
-		token = cmd->type;
-	printf("------------------------------------\n\n");
-	printf("%d - ", row);
-	if (left)
-		printf("Left\n");
-	else
-		printf("Right\n");
-	printf("------------------------------------\n\n");
-	if (token == EXEC)
-	{
-		t_execcmd	*exec = (t_execcmd *)cmd;
-		printf("Type : Exec\n");
-		printf("Args : ");
-		while (exec->args)
-		{
-			t_argcmd *arg = exec->args->content;
-			for (int i = 0; arg->s_arg + i  < arg->e_arg; i++)
-				printf("%c", arg->s_arg[i]);
-			printf(" - ");
-			exec->args = exec->args->next;
-		}
-		printf("\n\nRedirects: \n\n");
-		while (exec->redirs)
-		{
-			t_redircmd *redir = exec->redirs->content;
-			printf("File: ");
-			for (int i = 0; redir->s_spec + i  < redir->e_spec; i++)
-				printf("%c", redir->s_spec[i]);
-			printf("\nManipulated fd : %d\n", redir->fd);
-			printf("Redir Type : ");
-			if (redir->redir_type == REDIR_OUTPUT)
-				printf("Output\n");
-			else if(redir->redir_type == REDIR_INPUT)
-				printf("Input\n");
-			else if(redir->redir_type == REDIR_APPEND)
-				printf("Append\n");
-			else if(redir->redir_type == REDIR_HDOC)
-				printf("Heredoc\n");
-			printf("\n");
-			exec->redirs = exec->redirs->next;
-		}
-	}
-	else if(token == CMD_OP)
-	{
-		t_opcmd *cond = (t_opcmd *) cmd;
-		
-		printf("Type : Condition\n");
-		printf("Condition Type : ");
-		if (cond->op_type == OP_OR)
-			printf(" OR\n");
-		else if (cond->op_type == OP_AND)
-			printf(" AND\n");
-		else 
-			printf(" PIPE\n");
-	}
-	else if(token == OP_PIPE)
-		printf("Type : Pipe\n");
-	else if(token == TKN_NONE)
-		printf("NULL\n");
-	printf("\n------------------------------------\n");
-}
-
-void 	print_tree(t_node *node, int count)
-{
-	if (node->type == BINODE)
-	{
-		t_binode	*binode = (t_binode *)node;
-		t_unode		*left	= (t_unode *) binode->left;
-		t_binode	*right = (t_binode *) binode->right;
-		if (left)
-			print_node(left->cmd, 1, count + 1);
-			if (right)
+			t_tokens token = root->cmd->type;
+			switch (token)
 			{
-				print_node(right->cmd, 0, count + 1);
-				print_tree((t_node *) right, count + 1);
+				case 1: 	
+					printf(" BLOCK\n");
+					break;
+				case 3:
+					printf(" CMD OP\n");
+					break;
+				case 5:
+					printf(" EXEC\n");
+					break;
+				default:
+					printf(" null\n");
+					break;
 			}
-			else 
-				print_node(0, 0, count + 1);
-	}
-	else if (node->type == UNODE)
-	{
-		t_unode	*unode = (t_unode *) node;
-		if (unode)
-			print_node(unode->cmd, 1, count + 1);
-	}
-}
+		}
+		else
+			printf("null\n");
+        treeprint(root->left, level + 1);
+        treeprint(root->right, level + 1);
+} 
 
 void	mini_panic(char *str)
 {
@@ -256,10 +94,11 @@ int	main(int argc, char **argv, char **env)
 			mini_panic("An error occured.");
 		line = readline(prompt);
 		add_history(line);
-		t_node *root = (t_node *) parser(line, line+ft_strlen(line), 1);
-		(void)root;
-		executor((t_binode *)root, msh);
-		//print_tree(root, 0);
+		t_node *root = get_node(NULL, 0);
+		parser(line, root);
+		//printf("%p\n", root->right);
+		executor(root, msh);
+		//treeprint(root, 0);
 		free(line);
 		free(prompt);
 	}

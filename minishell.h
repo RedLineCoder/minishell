@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/13 18:38:35 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 20:19:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,16 @@
 # define QUOTES "'\""
 # define BLOCKS "()"
 # define DIGITS "0123456789"
+# define ERR_TKN_SYNTAX "-msh: syntax error near unexpected token"
 
-typedef enum e_nodes
-{
-	UNODE,
-	BINODE
-}		t_nodes;
+typedef struct s_node t_node;
 
 typedef enum e_tokens
 {
 	TKN_NONE,
 	BLOCK,
-	CMD_OP,
 	ARG,
+	CMD_OP,
 	REDIR,
 	EXEC,
 }			t_tokens;
@@ -61,7 +58,8 @@ typedef enum e_cmdop
 	OP_NONE,
 	OP_AND,
 	OP_OR,
-	OP_PIPE
+	OP_PIPE,
+	OP_ASYNC
 }			t_cmdop;		
 
 // Structs
@@ -71,7 +69,6 @@ typedef struct s_msh
 	char	**env;
 }			t_msh;
 
-
 typedef struct s_cmd
 {
 	int		type;
@@ -79,28 +76,22 @@ typedef struct s_cmd
 
 typedef struct s_node 
 {
-	int		type;
-	t_cmd	*cmd;
-} t_node;
-
-typedef struct s_binode
-{
-	int		type;
 	t_cmd	*cmd;
 	t_node	*left;
 	t_node	*right;
-}			t_binode;
+} t_node;
 
-typedef struct s_unode
+typedef struct s_blockcmd
 {
 	int		type;
-	t_cmd	*cmd;
-	t_node	*next;
-}			t_unode;
+	char	*line;
+}			t_blockcmd;
 
 typedef struct s_execcmd
 {
 	int		type;
+	int		out_file;
+	int		in_file;
 	int		fd[2];
 	t_list	*args;
 	t_list	*redirs;
@@ -129,30 +120,33 @@ typedef struct s_opcmd
 }			t_opcmd;
 
 // Parser
-t_binode	*parser(char *ps, char *pe, int is_block);
-t_cmd		*parse_cmd(char **ps, char**pe);
-t_cmd		*parse_redir(char **ps, char **pe,char *ts, char *te);
-t_cmd		*parse_exec(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_cmdop(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_arg(char **ps, char **pe, char *ts, char *te);
-t_binode	*parse_block(char **ps, char**pe, char *ts, char *te);
+int			parser(char *ps, t_node *node);
+t_cmd		*parse_cmd(char **ps);
+t_cmd		*parse_redir(char **ps,char *ts, char *te);
+t_cmd		*parse_exec(char **ps, char *ts, char *te);
+t_cmd		*parse_cmdop(char **ps, char *ts, char *te);
+t_cmd		*parse_arg(char **ps, char *ts, char *te);
+t_cmd		*parse_block(char **ps, char *ts, char *te);
 
 // Tokenizer
-t_tokens	peek(char *ps, char *pe);
+t_tokens	get_token(char **ps,char **ts, char **te);
+t_tokens	peek(char *ps);
 bool		peek_consecutive(char *ps, char *charset, char *filter);
-t_tokens	get_token(char **ps, char **pe,char **ts, char **te);
-t_tokens	get_token_type(char *ts, char *te);
-t_binode	*get_binode(void *left, void *right);
-t_unode		*get_unode(void *cmd);
+void		get_block(char **bs);
+void		get_quote(char **qs);
+void		get_operator(char **pe);
+
+// Nodes
+t_node		*get_node(void *cmd, int nullcheck);
 
 // Lexer
 t_redir		get_redir(char *ts, char *te);
 t_cmdop		get_cmdop(char *ts, char *te);
-t_tokens	is_block(char *ts, char *te);
+t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-int			executor(t_binode *root, t_msh *msh);
 int			dup_io(int input_fd, int output_fd, int close_fd);
+int			executor(t_node *root, t_msh *msh);
 void		mini_panic(char *str);
 char		**get_args_arr(t_list	*arglist);
 
