@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 13:11:54 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 22:41:29 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,21 @@ int	str_append(char **s1, char const *s2)
 	ft_strlcpy(str + s1_len, s2, s2_len + 1);
 	*s1 = (free(*s1), str);
 	return (1);
+}
+
+void	clean_tree(t_node *node)
+{
+	if (!node)
+		return ;
+	clean_tree(node->left);
+	clean_tree(node->right);
+	if (node->cmd && node->cmd->type == BLOCK)
+		free(((t_blockcmd *)node->cmd)->line);
+	if (node->cmd && node->cmd->type == EXEC)
+	{
+		ft_lstclear(&((t_execcmd *)node->cmd)->args, free);
+		ft_lstclear(&((t_execcmd *)node->cmd)->redirs, free);
+	}
+	free(node->cmd);
+	free(node);
 }

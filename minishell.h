@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 20:19:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 22:42:01 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ typedef struct s_opcmd
 
 // Parser
 int			parser(char *ps, t_node *node);
+void		clean_tree(t_node *node);
 t_cmd		*parse_cmd(char **ps);
 t_cmd		*parse_redir(char **ps,char *ts, char *te);
 t_cmd		*parse_exec(char **ps, char *ts, char *te);

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 22:35:23 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/14 22:42:08 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,9 @@ int	main(int argc, char **argv, char **env)
 		t_node *root = get_node(NULL, 0);
 		parser(line, root);
 		//printf("%p\n", root->right);
-		executor(root, msh);
-		//treeprint(root, 0);
+		//executor(root, msh);
+		treeprint(root, 0);
+		clean_tree(root);
 		free(line);
 		free(prompt);
 	}
