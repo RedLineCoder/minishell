@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/13 18:40:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 19:43:52 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int		execute_redir(t_redircmd *redir)
 	
 	flags = O_RDWR | O_CREAT;
 	if (redir->redir_type == REDIR_APPEND)
-		flags |= O_APPEND; 
+		flags |= O_APPEND;
 	file = ft_strndup(redir->s_spec, redir->e_spec - redir->s_spec);
 	fd = open(file, flags, S_IRWXU);
 	free(file);
@@ -65,6 +65,7 @@ int		execute_execcmd(t_execcmd *exec, char **env, int *input, int output)
 	free_string_array(args);
 	return (status);
 }
+
 int		execute_block(t_binode	*block, t_msh *msh, int *fd)
 {
 	int			status;

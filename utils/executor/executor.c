@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/13 18:24:09 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/14 20:01:17 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ char	**get_args_arr(t_list	*arglist)
 	char		**args;
 	t_argcmd	*arg;
 	const int	len = ft_lstsize(arglist);
+	
 	if (!len)
 		return (NULL);
 	args = ft_calloc(sizeof(char *), len + 1);
@@ -85,7 +86,9 @@ char	**get_args_arr(t_list	*arglist)
 	while (arglist)
 	{
 		arg = arglist->content;
-		args[i++] = ft_strndup(arg->s_arg, arg->e_arg - arg->s_arg);
+		args[i] = ft_strndup(arg->s_arg, arg->e_arg - arg->s_arg);
+		if (!args[i++])
+			return (free_string_array(args), NULL);
 		arglist = arglist->next;
 	}
 	return (args);		
