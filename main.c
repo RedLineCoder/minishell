@@ -6,12 +6,12 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 20:50:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 11:26:50 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+char **bashenv;
 void treeprint(t_node *root, int level)
 {
         if (root == NULL)

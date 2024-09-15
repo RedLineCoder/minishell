@@ -6,18 +6,16 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 20:01:17 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 14:37:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	dup_io(int input_fd, int output_fd, int close_fd)
+void	close_pipe(int	fd[2])
 {
-	close(close_fd);
-	dup2(input_fd, STDIN_FILENO);
-	dup2(output_fd, STDOUT_FILENO);
-	return (1);
+	close(fd[0]);
+	close(fd[1]);
 }
 
 void	execute_command(char *command, char **args, char **env)
@@ -48,7 +46,9 @@ char	*get_cmd_path(char *command)
 	char		**paths;
 	char		*path;
 	size_t		i;
-
+	
+	if (!access(command, F_OK))
+		return (command);
 	if (!pathenv)
 		return (NULL);
 	paths = ft_split(pathenv, ':');
@@ -60,8 +60,7 @@ char	*get_cmd_path(char *command)
 		path = ft_strjoin(paths[i++], "/");
 		if (!path)
 			break ;
-		str_append(&path, command);
-		if (!access(path, F_OK))
+		if (str_append(&path, command) && !access(path, F_OK))
 			break ;
 		free(path);
 		path = NULL;
@@ -92,4 +91,17 @@ char	**get_args_arr(t_list	*arglist)
 		arglist = arglist->next;
 	}
 	return (args);		
+}
+
+t_node	*get_next_block(t_node *block, int status)
+{
+	t_cmdop	const	token = get_node_type(block);
+	
+	if ((!status && token == OP_OR) || (status && token == OP_AND))
+	{
+		block = block->right;
+		while (block && get_node_type(block) == OP_PIPE)
+			block = block->right;
+	}
+	return (block);
 }

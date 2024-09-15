@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 21:27:55 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 12:08:35 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,10 @@ t_cmd	*parse_exec(char **ps, char *ts, char *te)
 	if (!(token == ARG || token == REDIR))
 		return (free(exec), NULL);
 	exec->type = EXEC;
+	if (pipe(exec->fd) == -1)
+		return (free(exec), NULL);
+	exec->in_file = -1;
+	exec->out_file = -1;
 	while (token == ARG || token == REDIR)
 	{
 		cmd = parse_cmd(ps);
@@ -96,7 +100,8 @@ t_cmd	*parse_redir(char **ps, char *ts, char *te)
 	while (!ft_strchr("<>", *ts))
 		ts++;
 	redir->redir_type = get_redir(ts, te);
-	redir->fd = redir->redir_type != 1 && redir->redir_type != 4;
+	redir->fd = redir->redir_type != REDIR_INPUT 
+				&& redir->redir_type != REDIR_HDOC;
 	if (*fd != *ts)
 		redir->fd = ft_atoi(fd);
 	free(fd);

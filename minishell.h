@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 20:19:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 14:34:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ typedef enum e_cmdop
 // Structs
 typedef struct s_msh
 {
+	int		last_status;
 	char	*user;
 	char	**env;
 }			t_msh;
@@ -137,19 +138,25 @@ void		get_quote(char **qs);
 void		get_operator(char **pe);
 
 // Nodes
+int			get_node_type(t_node *node);
+t_cmd		*get_node_cmd(t_node *node);
 t_node		*get_node(void *cmd, int nullcheck);
-
 // Lexer
 t_redir		get_redir(char *ts, char *te);
 t_cmdop		get_cmdop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-int			dup_io(int input_fd, int output_fd, int close_fd);
-int			executor(t_node *root, t_msh *msh);
-void		mini_panic(char *str);
+int			execute_block(t_node *block, t_msh *msh);
+int			execute_redir(t_execcmd *cmd, t_redircmd *redir);
+int			exec_pipe(t_execcmd	*cmd);
 char		**get_args_arr(t_list	*arglist);
-
+void		executor(t_node *block, t_msh *msh);
+void		exec_hdoc(t_execcmd *cmd, t_redircmd *redir);
+void		close_pipe(int	fd[2]);
+void		mini_panic(char *str);
+void		wait_child_processes();
+t_node		*get_next_block(t_node *block, int status);
 // Utils
 char		*get_user(void);
 char		*get_cmd_path(char *command);

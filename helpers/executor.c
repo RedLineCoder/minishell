@@ -6,125 +6,123 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 21:23:21 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 14:39:53 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int		execute_redir(t_redircmd *redir)
+pid_t	execute_exec(t_execcmd *exec, char **env, int piped)
 {
-	int		fd;
-	char	*file;
-	int		flags;
-	
-	flags = O_RDWR;
-	if (redir->redir_type == REDIR_APPEND)
-		flags |= O_APPEND;
-	if (redir->redir_type != REDIR_INPUT)
-		flags |= O_CREAT;
-	file = ft_strndup(redir->s_spec, redir->e_spec - redir->s_spec);
-	fd = open(file, flags, S_IRWXU);
-	free(file);
-	if (fd == -1)
-	{
-		
-	}
-		return (0);
-	dup2(fd, redir->fd);
-	return (1);
-}
+	const pid_t		pid = fork();
+	char **const	args = get_args_arr(exec->args);
 
-int		execute_execcmd(t_execcmd *exec, char **env, int *input, int output)
-{
-	pid_t	pid;
-	int		status;
-	t_list	*lst;
-	t_redircmd	*redir;
-	char	**const args = get_args_arr(exec->args);
-	
-	pid = fork();
 	if (pid == -1)
 		return (free_string_array(args), 0);
-	else if (!pid)
+	if (!pid)
 	{
-		if (input)
-			dup_io(input[0], STDOUT_FILENO, input[1]);
-		if (output)
-		{
-			dup2(exec->fd[1], STDOUT_FILENO);
+		if (piped)
 			close(exec->fd[0]);
-		}
-		lst = exec->redirs;
-		while (lst)
+		while (exec->redirs)
 		{
-			redir = lst->content;
-			if (redir->redir_type != REDIR_HDOC)
-				execute_redir(lst->content);
-			lst = lst->next;
+			if (((t_redircmd *)exec->redirs->content)->redir_type != REDIR_HDOC)
+				execute_redir(exec, exec->redirs->content);
+			exec->redirs = exec->redirs->next;
 		}
+		if (exec->in_file != -1)
+			dup2(exec->in_file, STDIN_FILENO);
+		if(exec->out_file != -1)
+			dup2(exec->out_file, STDOUT_FILENO);
 		if (args)
 			execute_command(args[0], args, env);
 	}
-	waitpid(pid, &status, 0);
-	free_string_array(args);
-	return (status);
+	if (!piped)
+		close_pipe(exec->fd);
+	return (free_string_array(args), pid);
 }
 
-int		execute_block(t_node *block, t_msh *msh, int *fd)
+int	execute_node(t_node *node, t_msh *msh, pid_t *last)
 {
-	int			status;
-	int			left_token;
-	int			right_token;
+	const int		is_piped = get_node_type(node->right) == OP_PIPE;
+	const t_tokens	l_token = get_node_type(node->left);
+	t_cmd *const	left = get_node_cmd(node->left);
 
-	if (!block)
-		return (0);
-		
-	(void)fd;
-	status = 0;
-	left_token = TKN_NONE;
-	right_token = TKN_NONE;
-	if (block->right)
-		right_token = ((t_opcmd *)block->right->cmd)->op_type;
-	if (block->left)
-		left_token = ((t_cmd *)block->left->cmd)->type;
-	if (left_token == BLOCK)
-		status = executor(block->left, msh);
-	else if (left_token == EXEC)
+	if (l_token == BLOCK)
+		*last = execute_block(node->left, msh);
+	else if (l_token == EXEC)
 	{
-		status = execute_execcmd((t_execcmd *)block->left->cmd, msh->env, 0, 1);
-		if (right_token == OP_PIPE)
-		{
-			return (execute_block(block->right, msh, ((t_execcmd *)block->left->cmd)->fd));
-		}
+		if(is_piped)
+			exec_pipe((t_execcmd *)left);
+		*last = execute_exec((t_execcmd *)left, msh->env, \
+		is_piped);
 	}
-	block = block->right;
-	if ((!status && right_token == OP_OR) 
-		|| (status && right_token == OP_AND))
+	if (is_piped && node->right->left)
 	{
-		block = block->right;
-		while (block && ((t_opcmd *)block->cmd)->op_type == OP_PIPE)
-			block = block->right;
+		close(((t_execcmd *)left)->fd[1]);
+		((t_execcmd *)node->right->left->cmd)->in_file = ((t_execcmd *)left)->fd[0];
+		return (execute_node(node->right, msh, last));
 	}
-	return (executor(block, msh)); 
+	waitpid(*last, &msh->last_status, 0);
+	wait_child_processes();
+	node = node->right;
+	return (execute_block(get_next_block(node, msh->last_status), msh));
 }
 
-
-int	executor(t_node *block, t_msh *msh)
+int	execute_block(t_node *block, t_msh *msh)
 {
-	pid_t	pid;
-	int		status;
+	const pid_t	pid = fork();
+	pid_t		last;
 	
 	if (!block)
 		return (0);
-	pid = fork();
 	if (pid == -1)
 		return (0);
 	else if (pid == 0)
 	{
-		execute_block(block, msh, NULL);
-		exit(0);
+		execute_node(block, msh, &last);
+		exit(msh->last_status);
 	}
-	waitpid(pid, &status, 0);
-	return (status);	
+	while (1)
+	{
+		if (!block)
+			break ;
+		if (block->left && block->left->cmd->type == EXEC)
+		{
+			close (((t_execcmd *)block->left->cmd)->fd[0]);
+			close (((t_execcmd *)block->left->cmd)->fd[1]);
+		}
+		block = block->right;
+	}
+	waitpid(pid, NULL, 0);
+	return (1);
+}
+
+void	execute_hdocs(t_node *block)
+{
+	t_list		*lst;
+	t_redircmd	*redir;
+	t_execcmd	*exec;
+	
+	while (block)
+	{
+		exec = (t_execcmd *)get_node_cmd(block->left);
+		if (exec && exec->type == EXEC)
+		{
+			lst = exec->redirs;
+			while (lst)
+			{
+				redir = lst->content;
+				if (redir->redir_type == REDIR_HDOC)
+					exec_hdoc(exec, redir);
+				lst = lst->next;
+			}
+		}
+		block = block->right;
+	}
+}
+
+void	executor(t_node *block, t_msh *msh)
+{
+	execute_hdocs(block);
+	execute_block(block, msh);
 }
