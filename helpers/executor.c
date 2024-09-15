@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 14:39:53 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 16:47:51 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	execute_node(t_node *node, t_msh *msh, pid_t *last)
 	t_cmd *const	left = get_node_cmd(node->left);
 
 	if (l_token == BLOCK)
-		*last = execute_block(node->left, msh);
+		return (execute_block(node->left, msh));
 	else if (l_token == EXEC)
 	{
 		if(is_piped)
@@ -64,8 +64,34 @@ int	execute_node(t_node *node, t_msh *msh, pid_t *last)
 	}
 	waitpid(*last, &msh->last_status, 0);
 	wait_child_processes();
-	node = node->right;
-	return (execute_block(get_next_block(node, msh->last_status), msh));
+	node = get_next_block(node->right, msh->last_status);
+	if (node)
+		return (execute_block(node, msh));
+	return (1);
+}
+
+void	execute_hdocs(t_node *block)
+{
+	t_list		*lst;
+	t_redircmd	*redir;
+	t_execcmd	*exec;
+	
+	while (block)
+	{
+		exec = (t_execcmd *)get_node_cmd(block->left);
+		if (exec && exec->type == EXEC)
+		{
+			lst = exec->redirs;
+			while (lst)
+			{
+				redir = lst->content;
+				if (redir->redir_type == REDIR_HDOC)
+					exec_hdoc(exec, redir);
+				lst = lst->next;
+			}
+		}
+		block = block->right;
+	}
 }
 
 int	execute_block(t_node *block, t_msh *msh)
@@ -93,32 +119,8 @@ int	execute_block(t_node *block, t_msh *msh)
 		}
 		block = block->right;
 	}
-	waitpid(pid, NULL, 0);
-	return (1);
-}
-
-void	execute_hdocs(t_node *block)
-{
-	t_list		*lst;
-	t_redircmd	*redir;
-	t_execcmd	*exec;
-	
-	while (block)
-	{
-		exec = (t_execcmd *)get_node_cmd(block->left);
-		if (exec && exec->type == EXEC)
-		{
-			lst = exec->redirs;
-			while (lst)
-			{
-				redir = lst->content;
-				if (redir->redir_type == REDIR_HDOC)
-					exec_hdoc(exec, redir);
-				lst = lst->next;
-			}
-		}
-		block = block->right;
-	}
+	waitpid(pid, &msh->last_status, 0);
+	return (msh->last_status);
 }
 
 void	executor(t_node *block, t_msh *msh)
