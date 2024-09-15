@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 07:01:41 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 08:03:36 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,12 @@ int	parser(char *ps, t_node *node)
 {
 	t_tokens	next;
 
+	if (!block_closed(ps))
+		return (printf("%s `block'\n", ERR_MISS), 0);
+	if (!quote_closed(ps))
+		return (printf("%s `quote'\n", ERR_MISS), 0);
+	if (!token_missed(ps))
+		return (printf("%s `exec'\n", ERR_MISS), 0);
 	if (err_syntax(ps))
 		return (0);
 	next = peek(ps);

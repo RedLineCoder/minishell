@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:39:03 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/15 07:03:21 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 08:31:37 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,48 +50,75 @@ int	block_closed(char *ps)
 	return (1);
 }
 
+int	token_missed(char *ps)
+{
+	t_tokens	token;
+	t_tokens	prev;
+	char		*ts;
+	char		*te;
+
+	token = get_token(&ps, &ts, &te);
+	if (token && !peek(ps))
+		return (1);
+	while (token)
+	{
+		prev = token;
+		token = get_token(&ps, &ts, &te);
+		if (token != CMD_OP || prev != ARG)
+			continue ;
+		if (!peek(ps))
+			return (0);
+	}
+	return (1);
+}
+
+void	print_errsyntax(char *ts, char *te, int newline)
+{
+	char	*token;
+
+	if (newline)
+	{
+		ft_putstr_fd(ERR_TKN, 2);
+		ft_putstr_fd("'", 2);
+		ft_putstr_fd("newline", 2);
+		ft_putendl_fd("'", 2);
+	}
+	else
+	{
+		token = ft_strndup(ts, te - ts);
+		ft_putstr_fd(ERR_TKN, 2);
+		ft_putstr_fd("'", 2);
+		ft_putstr_fd(token, 2);
+		ft_putendl_fd("'", 2);
+		free(token);
+	}
+}
+
 int	err_syntax(char *ps)
 {
 	t_tokens	token;
+	t_tokens	prev;
 	char		*str;
 	char		*ts;
 	char		*te;
 
+	(void)prev;
 	str = NULL;
-	if (!block_closed(ps))
-		return (printf("%s `block'\n", ERR_MISS), 258);
-	if (!quote_closed(ps))
-		return (printf("%s `quote'\n", ERR_MISS), 258);
-	token = 1;
+	token = get_token(&ps, &ts, &te);
+	if (token && !peek(ps) && !(token == ARG || token == REDIR || *ts == '('))
+		return (print_errsyntax(ts, te, 0), 258);
+	if (token == REDIR && !peek(ps))
+		return (print_errsyntax(ts, te, 1), 258);
 	while (token)
 	{
+		prev = token;
 		token = get_token(&ps, &ts, &te);
-		if (token == BLOCK)
-			return (printf("%s `)'\n", ERR_TKN), 258);
+		if (prev == CMD_OP && !(token == ARG || token == REDIR || *ts == '('))
+			return (print_errsyntax(ts, te, 0), 258);
+		if (*ts == '(' && !(prev == ARG || prev == REDIR))
+			return (print_errsyntax(ts, te, 0), 258);
+		if (prev == REDIR && token != ARG)
+			return (print_errsyntax(ts, te, 0), 258);
 	}
 	return (0);
 }
-
-/* token = get_token(&ps, &ts, &te);
-if (token == CMD_OP && blkst)
-{
-	str = ft_strndup(ts, te - ts);
-	return (printf("%s `%s'\n", ERR_SYNTAX, str), free(str), 258);
-}
-if (token == REDIR)
-{
-	if (peek(ps) && peek(ps) != ARG)
-	{
-		token = get_token(&ps, &ts, &te);
-		str = ft_strndup(ts, te - ts);
-		return (printf("%s `%s'\n", ERR_SYNTAX, str), free(str), 258);
-	}
-	else
-		return (printf("%s `%s'\n", ERR_SYNTAX, "newline"), 258);
-}
-if (*ts == '(')
-	return (err_syntax(ps));
-if (*ts == ')')
-	return (printf("%s `%s'\n", ERR_SYNTAX, str), free(str), 258);
-if (token == ARG)
-	blkst = 0; */

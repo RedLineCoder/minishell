@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/15 07:03:45 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 08:20:26 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 # define QUOTES "'\""
 # define BLOCKS "()"
 # define DIGITS "0123456789"
-# define ERR_TKN "-msh: syntax error near unexpected token"
-# define ERR_MISS "-msh: syntax error missing token"
+# define ERR_TKN "-msh: syntax error near unexpected token "
+# define ERR_MISS "-msh: syntax error missing token "
 
 typedef struct s_node t_node;
 
@@ -135,6 +135,9 @@ t_tokens	get_token(char **ps,char **ts, char **te);
 t_tokens	peek(char *ps);
 bool		peek_consecutive(char *ps, char *charset, char *filter);
 int			err_syntax(char *ps);
+int			quote_closed(char *ps);
+int			block_closed(char *ps);
+int			token_missed(char *ps);
 void		get_block(char **bs);
 void		get_quote(char **qs);
 void		get_operator(char **pe);
@@ -165,3 +168,32 @@ void		execute_command(char *command, char **args, char **env);
 #endif
 
 // ls&&cat||can|meta 3<file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
+
+/* 
+
+<REDIRECTION> ::=  '>' <WORD>
+                |  '<' <WORD>
+                |  <NUMBER> '>' <WORD>
+                |  <NUMBER> '<' <WORD>
+                |  '>>' <WORD>
+                |  <NUMBER> '>>' <WORD>
+                |  '<<' <WORD>
+                |  <NUMBER> '<<' <WORD>
+
+<PIPELINE> ::=
+          <PIPELINE> '|' <NEWLINE-LIST> <PIPELINE>
+       |  <COMMAND>
+
+<CONDITION> ::=
+          <CONDITION> '&&' <NEWLINE-LIST> <CONDITION>
+       |  <CONDITION> '||' <NEWLINE-LIST> <CONDITION>
+       |  <COMMAND>
+
+STRUCT: <EXEC> <COND or PIPE> <EXEC>
+
+<BS> <STRUCT> <BE>
+
+is_block ?
+is_struct ? 
+
+*/
