@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 22:42:01 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 07:03:45 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@
 # define QUOTES "'\""
 # define BLOCKS "()"
 # define DIGITS "0123456789"
-# define ERR_TKN_SYNTAX "-msh: syntax error near unexpected token"
+# define ERR_TKN "-msh: syntax error near unexpected token"
+# define ERR_MISS "-msh: syntax error missing token"
 
 typedef struct s_node t_node;
 
@@ -133,6 +134,7 @@ t_cmd		*parse_block(char **ps, char *ts, char *te);
 t_tokens	get_token(char **ps,char **ts, char **te);
 t_tokens	peek(char *ps);
 bool		peek_consecutive(char *ps, char *charset, char *filter);
+int			err_syntax(char *ps);
 void		get_block(char **bs);
 void		get_quote(char **qs);
 void		get_operator(char **pe);
@@ -159,7 +161,6 @@ int			str_append(char **s1, char const *s2);
 int			str_arr_size(char **arr);
 void		free_string_array(char **arr);
 void		execute_command(char *command, char **args, char **env);
-void 		print_tree(t_node *node, int count);
 
 #endif
 

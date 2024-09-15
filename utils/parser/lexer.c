@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_operator.c                                     :+:      :+:    :+:   */
+/*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 20:10:48 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 06:26:45 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ t_cmdop	get_cmdop(char *ts, char *te)
 
 t_tokens	get_token_type(char *ts, char *te)
 {
-	if (*ts == '(' && *(te - 1) == ')')
+	if (*ts == '(' || *ts == ')')
 		return (BLOCK);
 	else if (get_redir(ts, te))
 		return (REDIR);

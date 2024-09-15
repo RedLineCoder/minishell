@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 20:45:17 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 07:01:41 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@ t_cmd	*parse_cmd(char **ps)
 	funcs[ARG] = parse_arg;
 	funcs[BLOCK] = parse_block;
 	token = get_token(ps, &ts, &te);
+	if (token == BLOCK)
+	{
+		get_block(&te);
+		*ps = te;
+	}
 	if (funcs[token])
 		return (funcs[token](ps, ts, te));
 	return (NULL);
@@ -61,18 +66,12 @@ int	set_node(char *ps, t_node *node, t_tokens next)
 	return (1);
 }
 
-int	err_syntax(t_tokens next, t_node *node)
-{
-	(void)next;
-	if (!node->left && node->right)
-		return (printf("%s `%i'\n", ERR_TKN_SYNTAX, node->right->cmd->type), 258);
-	return (0);
-}
-
 int	parser(char *ps, t_node *node)
 {
 	t_tokens	next;
 
+	if (err_syntax(ps))
+		return (0);
 	next = peek(ps);
 	if (next == BLOCK)
 	{
@@ -83,8 +82,6 @@ int	parser(char *ps, t_node *node)
 			return (0);
 	}
 	if (!set_node(ps, node, peek(ps)))
-		return (0);
-	if (err_syntax(next, node))
 		return (0);
 	return (1);
 }

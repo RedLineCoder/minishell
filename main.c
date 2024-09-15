@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 22:42:08 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 06:02:51 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void treeprint(t_node *root, int level)
 			}
 		}
 		else
-			printf("null\n");
+			printf("ROOT\n");
         treeprint(root->left, level + 1);
         treeprint(root->right, level + 1);
 } 
@@ -95,7 +95,8 @@ int	main(int argc, char **argv, char **env)
 		line = readline(prompt);
 		add_history(line);
 		t_node *root = get_node(NULL, 0);
-		parser(line, root);
+		if (!parser(line, root))
+			continue ;
 		//printf("%p\n", root->right);
 		//executor(root, msh);
 		treeprint(root, 0);
