@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/15 08:20:26 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 15:52:43 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ typedef struct s_node t_node;
 typedef enum e_tokens
 {
 	TKN_NONE,
-	BLOCK,
+	BLK_OP,
+	BLK_CLS,
 	ARG,
 	CMD_OP,
 	REDIR,
@@ -121,7 +122,7 @@ typedef struct s_opcmd
 }			t_opcmd;
 
 // Parser
-int			parser(char *ps, t_node *node);
+int			parser(char *ps, t_node *node, int syntax);
 void		clean_tree(t_node *node);
 t_cmd		*parse_cmd(char **ps);
 t_cmd		*parse_redir(char **ps,char *ts, char *te);

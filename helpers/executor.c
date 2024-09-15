@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 21:23:21 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/15 14:25:49 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int		execute_block(t_node *block, t_msh *msh, int *fd)
 		right_token = ((t_opcmd *)block->right->cmd)->op_type;
 	if (block->left)
 		left_token = ((t_cmd *)block->left->cmd)->type;
-	if (left_token == BLOCK)
+	if (left_token == BLK_OP)
 		status = executor(block->left, msh);
 	else if (left_token == EXEC)
 	{

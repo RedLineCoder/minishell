@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/15 06:02:51 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 15:53:21 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@ void treeprint(t_node *root, int level)
 				case 1: 	
 					printf(" BLOCK\n");
 					break;
-				case 3:
+				case 4:
 					printf(" CMD OP\n");
 					break;
-				case 5:
+				case 6:
 					printf(" EXEC\n");
 					break;
 				default:
@@ -95,11 +95,11 @@ int	main(int argc, char **argv, char **env)
 		line = readline(prompt);
 		add_history(line);
 		t_node *root = get_node(NULL, 0);
-		if (!parser(line, root))
+		if (!parser(line, root, 1))
 			continue ;
 		//printf("%p\n", root->right);
 		//executor(root, msh);
-		treeprint(root, 0);
+		//treeprint(root, 0);
 		clean_tree(root);
 		free(line);
 		free(prompt);

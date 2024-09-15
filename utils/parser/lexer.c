@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 06:26:45 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 14:17:00 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,10 @@ t_cmdop	get_cmdop(char *ts, char *te)
 
 t_tokens	get_token_type(char *ts, char *te)
 {
-	if (*ts == '(' || *ts == ')')
-		return (BLOCK);
+	if (*ts == '(')
+		return (BLK_OP);
+	else if (*ts == ')')
+		return (BLK_CLS);
 	else if (get_redir(ts, te))
 		return (REDIR);
 	else if (get_cmdop(ts, te))

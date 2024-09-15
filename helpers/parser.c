@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 08:03:36 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 16:02:46 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ t_cmd	*parse_cmd(char **ps)
 	funcs[REDIR] = parse_redir;
 	funcs[CMD_OP] = parse_cmdop;
 	funcs[ARG] = parse_arg;
-	funcs[BLOCK] = parse_block;
+	funcs[BLK_OP] = parse_block;
 	token = get_token(ps, &ts, &te);
-	if (token == BLOCK)
+	if (token == BLK_OP)
 	{
 		get_block(&te);
 		*ps = te;
@@ -52,7 +52,7 @@ int	set_node(char *ps, t_node *node, t_tokens next)
 		node->right = get_node(parse_cmd(&ps), 1);
 		if (!node->right)
 			return (0);
-		if (!parser(ps, node->right))
+		if (!parser(ps, node->right, 0))
 			return (0);
 	}
 	else if (next)
@@ -60,31 +60,34 @@ int	set_node(char *ps, t_node *node, t_tokens next)
 		node->left = get_node(parse_exec(&ps, NULL, NULL), 1);
 		if (!node->left)
 			return (0);
-		if (!parser(ps, node))
+		if (!parser(ps, node, 0))
 			return (0);
 	}
 	return (1);
 }
 
-int	parser(char *ps, t_node *node)
+int	parser(char *ps, t_node *node, int syntax)
 {
 	t_tokens	next;
 
-	if (!block_closed(ps))
-		return (printf("%s `block'\n", ERR_MISS), 0);
-	if (!quote_closed(ps))
-		return (printf("%s `quote'\n", ERR_MISS), 0);
-	if (!token_missed(ps))
-		return (printf("%s `exec'\n", ERR_MISS), 0);
-	if (err_syntax(ps))
-		return (0);
+	if (syntax)
+	{
+		if (!block_closed(ps))
+			return (printf("%s `block'\n", ERR_MISS), 0);
+		if (!quote_closed(ps))
+			return (printf("%s `quote'\n", ERR_MISS), 0);
+		if (err_syntax(ps))
+			return (0);
+		if (!token_missed(ps))
+			return (printf("%s `exec'\n", ERR_MISS), 0);
+	}
 	next = peek(ps);
-	if (next == BLOCK)
+	if (next == BLK_OP)
 	{
 		node->left = get_node(parse_cmd(&ps), 1);
 		if (!node->left)
 			return (0);
-		if (!parser(((t_blockcmd *)node->left->cmd)->line, node->left))
+		if (!parser(((t_blockcmd *)node->left->cmd)->line, node->left, 0))
 			return (0);
 	}
 	if (!set_node(ps, node, peek(ps)))

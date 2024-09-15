@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 22:41:29 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 14:26:12 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	clean_tree(t_node *node)
 		return ;
 	clean_tree(node->left);
 	clean_tree(node->right);
-	if (node->cmd && node->cmd->type == BLOCK)
+	if (node->cmd && node->cmd->type == BLK_OP)
 		free(((t_blockcmd *)node->cmd)->line);
 	if (node->cmd && node->cmd->type == EXEC)
 	{

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 06:57:03 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/15 14:24:09 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_cmd	*parse_block(char **ps, char *ts, char *te)
 		return (NULL);
 	if (!block)
 		return (free(line), NULL);
-	block->type = BLOCK;
+	block->type = BLK_OP;
 	block->line = line;
 	return ((t_cmd *)block);
 }
