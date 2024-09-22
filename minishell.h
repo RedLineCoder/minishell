@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/23 00:32:18 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/23 02:49:14 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef enum e_tokens
 	BLK_CLS,
 	LOGIC_OP,
 	PIPE_OP,
-	ERR_TOKEN = 258
+	ERR_TOKEN
 }			t_tokens;
 
 typedef enum e_redir
@@ -83,6 +83,7 @@ typedef	struct s_part
 
 typedef struct s_msh
 {
+	int		status;
 	char	*user;
 	char	**env;
 }			t_msh;
@@ -135,10 +136,12 @@ typedef struct s_logiccmd
 }			t_logiccmd;
 
 // Parser
-t_cmd		*parser(char *ps, char *pe);
-t_cmd		*parse_exec(char *ps, char *pe);
-t_cmd		*parse_redir(char **ps, char **pe, char *ts, char *te);
+t_cmd		*parser(char *ps, char *pe, t_msh *msh);
+t_cmd		*parse_exec(char *ps, char *pe, t_msh *msh);
+t_cmd		*parse_redir(char **ps, char **pe, t_msh *msh);
+t_cmd		*parse_pipe(char *ps, char *pe, t_msh *msh, t_pipecmd *pipe);
 t_part		ft_divide(char *s, char *e, t_tokens tkn, int rev);
+void		*syntax_panic(char *ps, char *pe, int status, t_msh *msh);
 
 // Tokenizer
 t_tokens	get_token(char **ps, char **pe, char **ts, char **te);

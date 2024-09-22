@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/23 00:36:01 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/23 02:07:27 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,8 +172,7 @@ int	main(int argc, char **argv, char **env)
 	char			*prompt;
 	char			*line;
 
-	(void)argv;
-	(void)argc;
+	(void)argv, (void)argc;
 	msh->env = env;
 	while (1)
 	{
@@ -183,12 +182,12 @@ int	main(int argc, char **argv, char **env)
 			mini_panic("An error occured.");
 		line = readline(prompt);
 		add_history(line);
-		t_cmd *root = parser(line, line + ft_strlen(line));
+		t_cmd *root = parser(line, line + ft_strlen(line), msh);
 		if (!root)
 			continue ;
 		//printf("%p\n", root->right);
 		//executor(root, msh);
-		treeprint(root, 0);
+		//treeprint(root, 0);
 		free(line);
 		free(prompt);
 	}

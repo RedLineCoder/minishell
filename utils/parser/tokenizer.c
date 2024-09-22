@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/22 21:35:44 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/23 02:02:33 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
 	char	*start;
 	char	*end;
 
-	if ((!ps || !*ps || !pe))
+	if ((!ps || !pe) || (ps == pe))
 		return (TKN_NONE);
 	while ((*ps != *pe) && ft_strchr(SPACE, **ps))
 		(*ps)++;
