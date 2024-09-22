@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 15:58:17 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/23 00:31:59 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_redir	get_redir(char *ts, char *te)
 	return (REDIR_NONE);
 }
 
-t_cmdop	get_logicop(char *ts, char *te)
+t_logicop	get_logicop(char *ts, char *te)
 {
 	size_t	len;
 

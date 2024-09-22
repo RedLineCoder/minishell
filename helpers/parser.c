@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 16:35:45 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/23 00:32:42 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 t_cmd	*parse_logic(char *ps, char *pe)
 {
-	t_opcmd *const op = ft_calloc(sizeof(t_opcmd), 1);
-	t_lnsplit		ln;
+	t_logiccmd *const	op = ft_calloc(sizeof(t_logiccmd), 1);
+	t_part				ln;
 
 	if (!op)
 		return (NULL);
-	ln = ft_lnsplit(ps, pe, LOGIC_OP, 1);
+	ln = ft_divide(ps, pe, LOGIC_OP, 1);
 	op->type = LOGIC;
 	op->op_type = get_logicop(ln.lfte, ln.rghts);
 	op->left = parser(ln.lfts, ln.lfte);
@@ -29,7 +29,7 @@ t_cmd	*parse_logic(char *ps, char *pe)
 
 t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 {
-	t_lnsplit	ln;
+	t_part		ln;
 	t_cmd		*cmd;
 	t_list		*lst;
 
@@ -41,7 +41,7 @@ t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 	pipe->type = PIPE;
 	if (peek(ps, pe, PIPE_OP))
 	{
-		ln = ft_lnsplit(ps, pe, PIPE_OP, 0);
+		ln = ft_divide(ps, pe, PIPE_OP, 0);
 		cmd = parser(ln.lfts, ln.lfte);
 		lst = ft_lstnew(cmd);
 		ft_lstadd_back(&pipe->pipelist, lst);
@@ -59,6 +59,8 @@ t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 t_cmd	*parse_block(char *ps, char *pe)
 {
 	t_blockcmd *const block = ft_calloc(sizeof(t_blockcmd), 1);
+	t_cmd			*cmd;
+	t_list			*item;
 	char			*ts;
 	char			*te;
 
@@ -68,6 +70,18 @@ t_cmd	*parse_block(char *ps, char *pe)
 	get_token(&ps, &pe, &ts, &te);
 	te = pass_block(ts, pe);
 	block->subshell = parser(ts + 1, te);
+	ps = te;
+	while (ps != pe)
+	{
+		if (get_token(&ps, &pe, &ts, &te) == REDIR_OP)
+		{
+			cmd = parse_redir(&ps, &pe, ts, te);
+			item = ft_lstnew(cmd);
+			if (!cmd || !item)
+				return (NULL);
+			ft_lstadd_back(&block->redirs, item);
+		}
+	}
 	return ((t_cmd *)block);
 }
 
@@ -82,7 +96,7 @@ t_cmd	*parser(char *ps, char *pe)
 	else if (peek(ps, pe, TKN_NONE) == BLK_OP)
 		cmd = parse_block(ps, pe);
 	else
-		cmd = parse_exec(&ps, &pe, NULL, NULL);
+		cmd = parse_exec(ps, pe);
 	if (!cmd)
 		return (NULL);
 	return (cmd);

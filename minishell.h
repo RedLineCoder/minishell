@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/22 16:19:23 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/23 00:32:18 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef enum e_cmdtype
 	SUBSHELL,
 	LOGIC,
 	PIPE,
-	CMD,
+	EXEC,
 	REDIR
 }			t_cmdtype;
 
@@ -59,27 +59,27 @@ typedef enum e_tokens
 typedef enum e_redir
 {
 	REDIR_NONE,
-	REDIR_INPUT,
 	REDIR_OUTPUT,
+	REDIR_INPUT,
 	REDIR_APPEND,
 	REDIR_HDOC
 }			t_redir;
 
-typedef enum e_cmdop
+typedef enum e_logicop
 {
 	OP_NONE,
 	OP_AND,
 	OP_OR
-}			t_cmdop;
+}			t_logicop;
 
 // Structs
-typedef	struct s_lnsplit
+typedef	struct s_part
 {
 	char	*lfts;
 	char	*lfte;
 	char	*rghts;
 	char	*rghte;
-}			t_lnsplit;
+}			t_part;
 
 typedef struct s_msh
 {
@@ -95,6 +95,8 @@ typedef struct s_cmd
 typedef struct s_blockcmd
 {
 	int		type;
+	int		out_file;
+	int		in_file;
 	t_cmd	*subshell;
 	t_list	*redirs;
 }			t_blockcmd;
@@ -104,17 +106,9 @@ typedef struct s_execcmd
 	int		type;
 	int		out_file;
 	int		in_file;
-	int		fd[2];
 	t_list	*args;
 	t_list	*redirs;
 }			t_execcmd;
-
-typedef struct s_argcmd
-{
-	int		type;
-	char	*s_arg;
-	char	*e_arg;
-}			t_argcmd;
 
 typedef struct s_redircmd
 {
@@ -128,26 +122,23 @@ typedef struct s_redircmd
 typedef struct s_pipecmd
 {
 	int		type;
+	int		fd[2];
 	t_list	*pipelist;
 }			t_pipecmd;
 
-typedef struct s_opcmd
+typedef struct s_logiccmd
 {
-	int		type;
-	t_cmdop	op_type;
-	t_cmd	*left;
-	t_cmd	*right;
-}			t_opcmd;
+	int			type;
+	t_logicop	op_type;
+	t_cmd		*left;
+	t_cmd		*right;
+}			t_logiccmd;
 
 // Parser
 t_cmd		*parser(char *ps, char *pe);
-t_cmd		*parse_cmd(char **ps, char **pe);
+t_cmd		*parse_exec(char *ps, char *pe);
 t_cmd		*parse_redir(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_exec(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_cmdop(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_arg(char **ps, char **pe, char *ts, char *te);
-t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token, int reverse);
-char		*pass_block(char *bs, char *pe);
+t_part		ft_divide(char *s, char *e, t_tokens tkn, int rev);
 
 // Tokenizer
 t_tokens	get_token(char **ps, char **pe, char **ts, char **te);
@@ -159,7 +150,7 @@ char		*get_operator(char *te);
 
 // Lexer
 t_redir		get_redir(char *ts, char *te);
-t_cmdop		get_logicop(char *ts, char *te);
+t_logicop	get_logicop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
