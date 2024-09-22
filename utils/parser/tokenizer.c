@@ -3,59 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 20:12:37 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 15:56:01 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	get_block(char **bs)
+char	*pass_block(char *bs, char *pe)
 {
 	int		sem_block;
-	char	*str;
 
-	str = *bs;
+	if (peek(bs, pe, TKN_NONE) != BLK_OP)
+		return (bs);
+	get_token(&bs, &pe, NULL, NULL);
 	sem_block = 1;
-	while (str && *str && sem_block)
+	while (bs != pe && sem_block)
 	{
-		str++;
-		if (*str == ')')
+		if (*bs == ')')
 			sem_block--;
-		if (*str == '(')
+		if (*bs == '(')
 			sem_block++;
+		bs++;
 	}
-	*bs = str + 1;
+	return (bs);
 }
 
-void	get_quote(char **qs)
+char	*pass_quote(char *qs, char *pe)
 {
 	char	quote;
-	char	*str;
 
-	str = *qs;
-	quote = *str++;
-	while (str && *str && *str != quote)
-		str++;
-	*qs = str;
+	if (!ft_strchr(QUOTES, *qs))
+		return(qs);
+	quote = *qs;
+	qs++;
+	while (qs != pe && *qs != quote)
+		qs++;
+	return (qs);
 }
 
-void	get_operator(char **pe)
+char	*get_operator(char *te)
 {
-	char	*str;
-
-	str = *pe;
-	while (ft_isdigit(*str))
-		str++;
-	if (*str == *(str + 1))
-		str++;
-	str++;
-	*pe = str;
+	while (ft_isdigit(*te))
+		te++;
+	if (*te == *(te + 1))
+		te++;
+	te++;
+	return (te);
 }
 
-void	handle_sep(char **ps, char **ts, char **te)
+void	handle_sep(char **ps, char **pe, char **ts, char **te)
 {
 	char	*str;
 
@@ -63,35 +62,32 @@ void	handle_sep(char **ps, char **ts, char **te)
 	if (ts)
 		*ts = str;
 	if (ft_strchr(BLOCKS, *str))
-		get_block(&str);
-	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, REDIRS, DIGITS))
-		get_operator(&str);
+		str++;
+	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, *pe, REDIRS, DIGITS))
+		str = get_operator(str);
 	else
-	{
-		while (*str && !ft_strchr(SEP, *str))
+		while (str != *pe && !ft_strchr(SEP, *str))
 		{
-			if (ft_strchr(QUOTES, *str))
-				get_quote(&str);
+			str = pass_quote(str, *pe);
 			str++;
 		}
-	}
 	if (te)
 		*te = str;
 	*ps = str;
 }
 
-t_tokens	get_token(char **ps, char **ts, char **te)
+t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
 {
 	char	*start;
 	char	*end;
 
-	if (!ps || !*ps)
+	if ((!ps || !*ps || !pe))
 		return (TKN_NONE);
-	while (**ps && ft_strchr(SPACE, **ps))
+	while ((*ps != *pe) && ft_strchr(SPACE, **ps))
 		(*ps)++;
-	if (!**ps)
+	if (*ps == *pe)
 		return (TKN_NONE);
-	handle_sep(ps, &start, &end);
+	handle_sep(ps, pe, &start, &end);
 	if (ts)
 		*ts = start;
 	if (te)

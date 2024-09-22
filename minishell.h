@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/22 20:21:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 20:43:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,30 @@
 # define QUOTES "'\""
 # define BLOCKS "()"
 # define DIGITS "0123456789"
-# define ERR_TKN_SYNTAX "-msh: syntax error near unexpected token"
+# define ERR_TKN "-msh: syntax error near unexpected token "
+# define ERR_MISS "-msh: syntax error missing token "
 
-typedef struct s_node t_node;
+typedef enum e_cmdtype
+{
+	ROOT,
+	SUBSHELL,
+	LOGIC,
+	PIPE,
+	CMD,
+	REDIR
+}			t_cmdtype;
 
 typedef enum e_tokens
 {
 	TKN_NONE,
-	BLOCK,
+	TKN_IN,
 	ARG,
-	CMD_OP,
-	REDIR,
-	EXEC,
+	REDIR_OP,
+	BLK_OP,
+	BLK_CLS,
+	LOGIC_OP,
+	PIPE_OP,
+	ERR_TOKEN = 258
 }			t_tokens;
 
 typedef enum e_redir
@@ -57,10 +69,8 @@ typedef enum e_cmdop
 {
 	OP_NONE,
 	OP_AND,
-	OP_OR,
-	OP_PIPE,
-	OP_ASYNC
-}			t_cmdop;		
+	OP_OR
+}			t_cmdop;
 
 typedef enum e_builtins
 {
@@ -75,6 +85,14 @@ typedef enum e_builtins
 }		t_builtins;
 
 // Structs
+typedef	struct s_lnsplit
+{
+	char	*lfts;
+	char	*lfte;
+	char	*rghts;
+	char	*rghte;
+}			t_lnsplit;
+
 typedef struct s_msh
 {
 	int		last_status;
@@ -87,17 +105,11 @@ typedef struct s_cmd
 	int		type;
 }			t_cmd;
 
-typedef struct s_node 
-{
-	t_cmd	*cmd;
-	t_node	*left;
-	t_node	*right;
-} t_node;
-
 typedef struct s_blockcmd
 {
 	int		type;
-	char	*line;
+	t_cmd	*subshell;
+	t_list	*redirs;
 }			t_blockcmd;
 
 typedef struct s_execcmd
@@ -126,49 +138,53 @@ typedef struct s_redircmd
 	char	*e_spec;
 }			t_redircmd;
 
+typedef struct s_pipecmd
+{
+	int		type;
+	t_list	*pipelist;
+}			t_pipecmd;
+
 typedef struct s_opcmd
 {
 	int		type;
 	t_cmdop	op_type;
+	t_cmd	*left;
+	t_cmd	*right;
 }			t_opcmd;
 
 // Parser
-int			parser(char *ps, t_node *node);
-t_cmd		*parse_cmd(char **ps);
-t_cmd		*parse_redir(char **ps,char *ts, char *te);
-t_cmd		*parse_exec(char **ps, char *ts, char *te);
-t_cmd		*parse_cmdop(char **ps, char *ts, char *te);
-t_cmd		*parse_arg(char **ps, char *ts, char *te);
-t_cmd		*parse_block(char **ps, char *ts, char *te);
+t_cmd		*parser(char *ps, char *pe);
+t_cmd		*parse_cmd(char **ps, char **pe);
+t_cmd		*parse_redir(char **ps, char **pe, char *ts, char *te);
+t_cmd		*parse_exec(char **ps, char **pe, char *ts, char *te);
+t_cmd		*parse_cmdop(char **ps, char **pe, char *ts, char *te);
+t_cmd		*parse_arg(char **ps, char **pe, char *ts, char *te);
+t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token, int reverse);
+char		*pass_block(char *bs, char *pe);
 
 // Tokenizer
-t_tokens	get_token(char **ps,char **ts, char **te);
-t_tokens	peek(char *ps);
-bool		peek_consecutive(char *ps, char *charset, char *filter);
-void		get_block(char **bs);
-void		get_quote(char **qs);
-void		get_operator(char **pe);
+t_tokens	get_token(char **ps, char **pe, char **ts, char **te);
+t_tokens	peek(char *ps, char *pe, t_tokens token);
+bool		peek_consecutive(char *ps, char *pe, char *charset, char *filter);
+char		*pass_quote(char *qs, char *pe);
+char		*pass_block(char *bs, char *pe);
+char		*get_operator(char *te);
 
-// Nodes
-int			get_node_type(t_node *node);
-t_cmd		*get_node_cmd(t_node *node);
-t_node		*get_node(void *cmd, int nullcheck);
 // Lexer
 t_redir		get_redir(char *ts, char *te);
-t_cmdop		get_cmdop(char *ts, char *te);
+t_cmdop		get_logicop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-int			execute_block(t_node *block, t_msh *msh, int is_root);
-int			execute_redir(t_execcmd *cmd, t_redircmd *redir);
-int			exec_pipe(t_execcmd	*cmd);
+int			dup_io(int input_fd, int output_fd, int close_fd);
+void		mini_panic(char *str);
 char		**get_args_arr(t_list	*arglist);
-void		executor(t_node *block, t_msh *msh);
+void		executor(t_cmd *block, t_msh *msh);
 void		exec_hdoc(t_execcmd *cmd, t_redircmd *redir);
 void		close_pipe(int	fd[2]);
 void		mini_panic(char *str);
 void		wait_child_processes();
-t_node		*get_next_block(t_node *block, int status);
+t_cmd		*get_next_block(t_cmd *block, int status);
 
 // Utils
 char		*get_user(void);
@@ -178,8 +194,37 @@ int			str_append(char **s1, char const *s2);
 int			str_arr_size(char **arr);
 void		free_string_array(char **arr);
 void		execute_command(char *command, char **args, char **env);
-void 		print_tree(t_node *node, int count);
 
 #endif
 
 // ls&&cat||can|meta 3<file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
+// (ls | ls && cat < redir) || ls && cmd || (echo "afbf|&&" || ls)
+
+/* 
+
+<REDIRECTION> ::=  '>' <WORD>
+                |  '<' <WORD>
+                |  <NUMBER> '>' <WORD>
+                |  <NUMBER> '<' <WORD>
+                |  '>>' <WORD>
+                |  <NUMBER> '>>' <WORD>
+                |  '<<' <WORD>
+                |  <NUMBER> '<<' <WORD>
+
+<PIPELINE> ::=
+          <PIPELINE> '|' <NEWLINE-LIST> <PIPELINE>
+       |  <COMMAND>
+
+<CONDITION> ::=
+          <CONDITION> '&&' <NEWLINE-LIST> <CONDITION>
+       |  <CONDITION> '||' <NEWLINE-LIST> <CONDITION>
+       |  <COMMAND>
+
+STRUCT: <EXEC> <COND or PIPE> <EXEC>
+
+<BS> <STRUCT> <BE>
+
+is_block ?
+is_struct ? 
+
+*/

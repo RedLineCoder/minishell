@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/11 13:11:54 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 16:32:31 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,26 @@ int	str_append(char **s1, char const *s2)
 	ft_strlcpy(str + s1_len, s2, s2_len + 1);
 	*s1 = (free(*s1), str);
 	return (1);
+}
+
+t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token, int reverse)
+{
+	t_lnsplit 	ln;
+	char		*ts;
+	char		*te;
+
+	ln.lfts = line;
+	while (line && line != end)
+	{
+		line = pass_block(line, end);
+		if (get_token(&line, &end, &ts, &te) == token)
+		{
+			ln.lfte = ts;
+			ln.rghts = te;
+			if (!reverse)
+				break ;
+		}
+	}
+	ln.rghte = end;
+	return (ln);
 }

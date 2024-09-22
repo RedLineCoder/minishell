@@ -6,42 +6,51 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/21 11:03:00 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 20:42:34 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-char **bashenv;
-void treeprint(t_node *root, int level)
+
+void treeprint(t_cmd *root, int level)
 {
         if (root == NULL)
 			return;
         for (int i = 0; i < level; i++)
                 printf(i == level - 1 ? "|-" : "  ");
-		if (root->cmd)
+		if (root->type == LOGIC)
 		{
-			t_tokens token = root->cmd->type;
-			switch (token)
+			t_cmdop type = ((t_opcmd *)root)->op_type;
+			switch (type)
 			{
-				case 1: 	
-					printf(" BLOCK\n");
+				case 1:	
+					printf("AND\n");
 					break;
-				case 3:
-					printf(" CMD OP\n");
-					break;
-				case 5:
-					printf(" EXEC\n");
+				case 2:
+					printf("OR\n");
 					break;
 				default:
-					printf(" null\n");
+					printf("NONE\n");
 					break;
 			}
+			treeprint(((t_opcmd *)root)->left, level + 1);
+			treeprint(((t_opcmd *)root)->right, level + 1);
 		}
-		else
-			printf("null\n");
-        treeprint(root->left, level + 1);
-        treeprint(root->right, level + 1);
-} 
+		if (root->type == SUBSHELL)
+		{
+			printf("SUBSHELL\n");
+			treeprint(((t_blockcmd *)root)->subshell, level + 1);
+		}
+        if (root->type == PIPE)
+		{
+			printf("PIPELIST\n");
+			while (((t_pipecmd *)root)->pipelist)
+				treeprint((((t_pipecmd *)root)->pipelist)->content, level + 1);
+				((t_pipecmd *)root)->pipelist = ((t_pipecmd *)root)->pipelist->next;
+		}
+		if (root->type == CMD)
+			printf("CMD\n");
+}
 
 void	mini_panic(char *str)
 {
@@ -96,11 +105,12 @@ int	main(int argc, char **argv, char **env)
 		if (!line) 
 			exit(0);
 		add_history(line);
-		t_node *root = get_node(NULL, 0);
-		parser(line, root);
+		t_cmd *root = parser(line, line + ft_strlen(line));
+		if (!root)
+			continue ;
 		//printf("%p\n", root->right);
-		executor(root, msh);
-		//treeprint(root, 0);
+		//executor(root, msh);
+		treeprint(root, 0);
 		free(line);
 		free(prompt);
 	}

@@ -3,88 +3,87 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 20:45:17 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 16:35:45 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_node	*get_node(void *cmd, int nullcheck)
+t_cmd	*parse_logic(char *ps, char *pe)
 {
-	t_node *const	node = ft_calloc(sizeof(t_node), 1);
+	t_opcmd *const op = ft_calloc(sizeof(t_opcmd), 1);
+	t_lnsplit		ln;
 
-	if (!node || (nullcheck && !cmd))
+	if (!op)
 		return (NULL);
-	node->cmd = (t_cmd *)cmd;
-	return (node);
+	ln = ft_lnsplit(ps, pe, LOGIC_OP, 1);
+	op->type = LOGIC;
+	op->op_type = get_logicop(ln.lfte, ln.rghts);
+	op->left = parser(ln.lfts, ln.lfte);
+	op->right = parser(ln.rghts, ln.rghte);
+	return ((t_cmd *)op);
 }
 
-t_cmd	*parse_cmd(char **ps)
+t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 {
+	t_lnsplit	ln;
+	t_cmd		*cmd;
+	t_list		*lst;
+
+	(void)cmd, (void)lst;
+	if (!pipe)
+		pipe = ft_calloc(sizeof(t_pipecmd), 1);
+	if (!pipe)
+		return (NULL);
+	pipe->type = PIPE;
+	if (peek(ps, pe, PIPE_OP))
+	{
+		ln = ft_lnsplit(ps, pe, PIPE_OP, 0);
+		cmd = parser(ln.lfts, ln.lfte);
+		lst = ft_lstnew(cmd);
+		ft_lstadd_back(&pipe->pipelist, lst);
+		parse_pipe(ln.rghts, ln.rghte, pipe);
+	}
+	else
+	{
+		cmd = parser(ps, pe);
+		lst = ft_lstnew(cmd);
+		ft_lstadd_back(&pipe->pipelist, lst);
+	}
+	return ((t_cmd *)pipe);
+}
+
+t_cmd	*parse_block(char *ps, char *pe)
+{
+	t_blockcmd *const block = ft_calloc(sizeof(t_blockcmd), 1);
 	char			*ts;
 	char			*te;
-	t_tokens		token;
-	t_cmd			*(*funcs[7])(char **, char *, char *);
 
-	ft_memset(funcs, 0, sizeof(t_cmd *) * 7);
-	funcs[REDIR] = parse_redir;
-	funcs[CMD_OP] = parse_cmdop;
-	funcs[ARG] = parse_arg;
-	funcs[BLOCK] = parse_block;
-	token = get_token(ps, &ts, &te);
-	if (funcs[token])
-		return (funcs[token](ps, ts, te));
-	return (NULL);
+	if (!block)
+		return (NULL);
+	block->type = SUBSHELL;
+	get_token(&ps, &pe, &ts, &te);
+	te = pass_block(ts, pe);
+	block->subshell = parser(ts + 1, te);
+	return ((t_cmd *)block);
 }
 
-int	set_node(char *ps, t_node *node, t_tokens next)
+t_cmd	*parser(char *ps, char *pe)
 {
-	if (next == CMD_OP)
-	{
-		node->right = get_node(parse_cmd(&ps), 1);
-		if (!node->right)
-			return (0);
-		if (!parser(ps, node->right))
-			return (0);
-	}
-	else if (next)
-	{
-		node->left = get_node(parse_exec(&ps, NULL, NULL), 1);
-		if (!node->left)
-			return (0);
-		if (!parser(ps, node))
-			return (0);
-	}
-	return (1);
-}
+	t_cmd		*cmd;
 
-int	err_syntax(t_tokens next, t_node *node)
-{
-	(void)next;
-	if (!node->left && node->right)
-		return (printf("%s `%i'\n", ERR_TKN_SYNTAX, node->right->cmd->type), 258);
-	return (0);
-}
-
-int	parser(char *ps, t_node *node)
-{
-	t_tokens	next;
-
-	next = peek(ps);
-	if (next == BLOCK)
-	{
-		node->left = get_node(parse_cmd(&ps), 1);
-		if (!node->left)
-			return (0);
-		if (!parser(((t_blockcmd *)node->left->cmd)->line, node->left))
-			return (0);
-	}
-	if (!set_node(ps, node, peek(ps)))
-		return (0);
-	if (err_syntax(next, node))
-		return (0);
-	return (1);
+	if (peek(ps, pe, LOGIC_OP))
+		cmd = parse_logic(ps, pe);
+	else if (peek(ps, pe, PIPE_OP))
+		cmd = parse_pipe(ps, pe, NULL);
+	else if (peek(ps, pe, TKN_NONE) == BLK_OP)
+		cmd = parse_block(ps, pe);
+	else
+		cmd = parse_exec(&ps, &pe, NULL, NULL);
+	if (!cmd)
+		return (NULL);
+	return (cmd);
 }

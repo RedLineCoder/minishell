@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_operator.c                                     :+:      :+:    :+:   */
+/*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/14 20:10:48 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 15:58:17 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,15 @@ t_redir	get_redir(char *ts, char *te)
 	return (REDIR_NONE);
 }
 
-t_cmdop	get_cmdop(char *ts, char *te)
+t_cmdop	get_logicop(char *ts, char *te)
 {
 	size_t	len;
 
 	len = te - ts;
 	if (!len)
 		return (OP_NONE);
-	if (!ft_strncmp(ts, "|", len))
-		return (OP_PIPE);
 	if (!ft_strncmp(ts, "||", len))
 		return (OP_OR);
-	if (!ft_strncmp(ts, "&", len))
-		return (OP_ASYNC);
 	if (!ft_strncmp(ts, "&&", len))
 		return (OP_AND);
 	return (OP_NONE);
@@ -52,12 +48,16 @@ t_cmdop	get_cmdop(char *ts, char *te)
 
 t_tokens	get_token_type(char *ts, char *te)
 {
-	if (*ts == '(' && *(te - 1) == ')')
-		return (BLOCK);
+	if (*ts == '(')
+		return (BLK_OP);
+	else if (*ts == ')')
+		return (BLK_CLS);
 	else if (get_redir(ts, te))
-		return (REDIR);
-	else if (get_cmdop(ts, te))
-		return (CMD_OP);
+		return (REDIR_OP);
+	else if (!ft_strncmp(ts, "|", te - ts))
+		return (PIPE_OP);
+	else if (get_logicop(ts, te))
+		return (LOGIC_OP);
 	while (ts < te)
 		ts++;
 	if (ts == te && *ts != '(')
@@ -65,16 +65,26 @@ t_tokens	get_token_type(char *ts, char *te)
 	return (TKN_NONE);
 }
 
-t_tokens	peek(char *ps)
+t_tokens	peek(char *ps, char *pe, t_tokens token)
 {
-	return (get_token(&ps, NULL, NULL));
+	if (token)
+	{
+		while (ps && ps != pe)
+		{
+			ps = pass_block(ps, pe);
+			if (get_token(&ps, &pe, NULL, NULL) == token)
+				return (TKN_IN);
+		}
+		return (TKN_NONE);
+	}
+	return (get_token(&ps, &pe, NULL, NULL));
 }
 
-bool	peek_consecutive(char *ps, char *charset, char *filter)
+bool	peek_consecutive(char *ps, char *pe, char *charset, char *filter)
 {
-	if (!ps)
+	if (!ps || ps == pe)
 		return (false);
-	while (*ps)
+	while (*ps && (ps != pe))
 	{
 		if (ft_strchr(charset, *ps))
 			return (true);
