@@ -6,11 +6,30 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/22 15:14:11 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 15:56:01 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+char	*pass_block(char *bs, char *pe)
+{
+	int		sem_block;
+
+	if (peek(bs, pe, TKN_NONE) != BLK_OP)
+		return (bs);
+	get_token(&bs, &pe, NULL, NULL);
+	sem_block = 1;
+	while (bs != pe && sem_block)
+	{
+		if (*bs == ')')
+			sem_block--;
+		if (*bs == '(')
+			sem_block++;
+		bs++;
+	}
+	return (bs);
+}
 
 char	*pass_quote(char *qs, char *pe)
 {
@@ -47,13 +66,11 @@ void	handle_sep(char **ps, char **pe, char **ts, char **te)
 	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, *pe, REDIRS, DIGITS))
 		str = get_operator(str);
 	else
-	{
 		while (str != *pe && !ft_strchr(SEP, *str))
 		{
 			str = pass_quote(str, *pe);
 			str++;
 		}
-	}
 	if (te)
 		*te = str;
 	*ps = str;

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 14:59:15 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 16:01:13 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,45 @@ t_cmd	*parse_arg(char **ps, char **pe, char *ts, char *te)
 	arg->s_arg = ts;
 	arg->e_arg = te;
 	return ((t_cmd *) arg);
+}
+
+t_cmd	*parse_redir(char **ps, char **pe, char *ts, char *te)
+{
+	t_redircmd *const	redir = ft_calloc(sizeof(t_redircmd), 1);
+	char				*fd;
+
+	if (!redir)
+		return (NULL);
+	redir->type = REDIR_OP;
+	fd = ft_strndup(ts, te - ts);
+	if (!fd)
+		return (free(redir), NULL);
+	while (!ft_strchr("<>", *ts))
+		ts++;
+	redir->redir_type = get_redir(ts, te);
+	redir->fd = redir->redir_type != 1 && redir->redir_type != 4;
+	if (*fd != *ts)
+		redir->fd = ft_atoi(fd);
+	free(fd);
+	if (peek(*ps, *pe, TKN_NONE) == ARG)
+		get_token(ps, pe, &redir->s_spec, &redir->e_spec);
+	return ((t_cmd *) redir);
+}
+
+t_cmd	*parse_cmd(char **ps, char **pe)
+{
+	char		*ts;
+	char		*te;
+	t_tokens	token;
+
+	t_cmd		*(*funcs[4])(char **, char **, char *, char *);
+	ft_memset(funcs, 0, sizeof(t_cmd *) * 4);
+	funcs[REDIR_OP] = parse_redir;
+	funcs[ARG] = parse_arg;
+	token = get_token(ps, pe, &ts, &te);
+	if (funcs[token])
+		return (funcs[token](ps, pe, ts, te));
+	return (NULL);
 }
 
 t_cmd	*parse_exec(char **ps, char **pe, char *ts, char *te)
@@ -53,27 +92,4 @@ t_cmd	*parse_exec(char **ps, char **pe, char *ts, char *te)
 		token = peek(*ps, *pe, TKN_NONE);
 	}
 	return ((t_cmd *)exec);
-}
-
-t_cmd	*parse_redir(char **ps, char **pe, char *ts, char *te)
-{
-	t_redircmd *const	redir = ft_calloc(sizeof(t_redircmd), 1);
-	char				*fd;
-
-	if (!redir)
-		return (NULL);
-	redir->type = REDIR_OP;
-	fd = ft_strndup(ts, te - ts);
-	if (!fd)
-		return (free(redir), NULL);
-	while (!ft_strchr("<>", *ts))
-		ts++;
-	redir->redir_type = get_redir(ts, te);
-	redir->fd = redir->redir_type != 1 && redir->redir_type != 4;
-	if (*fd != *ts)
-		redir->fd = ft_atoi(fd);
-	free(fd);
-	if (peek(*ps, *pe, TKN_NONE) == ARG)
-		get_token(ps, pe, &redir->s_spec, &redir->e_spec);
-	return ((t_cmd *) redir);
 }

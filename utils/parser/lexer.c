@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 15:49:46 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 15:58:17 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ t_tokens	peek(char *ps, char *pe, t_tokens token)
 {
 	if (token)
 	{
-		while (ps && (pe && ps != pe))
+		while (ps && ps != pe)
 		{
 			ps = pass_block(ps, pe);
 			if (get_token(&ps, &pe, NULL, NULL) == token)

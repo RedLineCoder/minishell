@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 15:51:04 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 16:32:31 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,26 +63,7 @@ int	str_append(char **s1, char const *s2)
 	return (1);
 }
 
-char	*pass_block(char *bs, char *pe)
-{
-	int		sem_block;
-
-	if (peek(bs, pe, TKN_NONE) != BLK_OP)
-		return (bs);
-	get_token(&bs, &pe, NULL, NULL);
-	sem_block = 1;
-	while (bs != pe && sem_block)
-	{
-		if (*bs == ')')
-			sem_block--;
-		if (*bs == '(')
-			sem_block++;
-		bs++;
-	}
-	return (bs);
-}
-
-t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token)
+t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token, int reverse)
 {
 	t_lnsplit 	ln;
 	char		*ts;
@@ -96,8 +77,10 @@ t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token)
 		{
 			ln.lfte = ts;
 			ln.rghts = te;
+			if (!reverse)
+				break ;
 		}
 	}
-	ln.rghte = line;
+	ln.rghte = end;
 	return (ln);
 }

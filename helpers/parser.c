@@ -6,27 +6,11 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 15:20:52 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 16:35:45 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-t_cmd	*parse_cmd(char **ps, char **pe)
-{
-	char		*ts;
-	char		*te;
-	t_tokens	token;
-
-	t_cmd		*(*funcs[4])(char **, char **, char *, char *);
-	ft_memset(funcs, 0, sizeof(t_cmd *) * 4);
-	funcs[REDIR_OP] = parse_redir;
-	funcs[ARG] = parse_arg;
-	token = get_token(ps, pe, &ts, &te);
-	if (funcs[token])
-		return (funcs[token](ps, pe, ts, te));
-	return (NULL);
-}
 
 t_cmd	*parse_logic(char *ps, char *pe)
 {
@@ -35,7 +19,7 @@ t_cmd	*parse_logic(char *ps, char *pe)
 
 	if (!op)
 		return (NULL);
-	ln = ft_lnsplit(ps, pe, LOGIC_OP);
+	ln = ft_lnsplit(ps, pe, LOGIC_OP, 1);
 	op->type = LOGIC;
 	op->op_type = get_logicop(ln.lfte, ln.rghts);
 	op->left = parser(ln.lfts, ln.lfte);
@@ -49,6 +33,7 @@ t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 	t_cmd		*cmd;
 	t_list		*lst;
 
+	(void)cmd, (void)lst;
 	if (!pipe)
 		pipe = ft_calloc(sizeof(t_pipecmd), 1);
 	if (!pipe)
@@ -56,17 +41,17 @@ t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 	pipe->type = PIPE;
 	if (peek(ps, pe, PIPE_OP))
 	{
-		ln = ft_lnsplit(ps, pe, PIPE_OP);
-		cmd = parser(ln.rghts, ln.rghte);
+		ln = ft_lnsplit(ps, pe, PIPE_OP, 0);
+		cmd = parser(ln.lfts, ln.lfte);
 		lst = ft_lstnew(cmd);
-		ft_lstadd_front(&pipe->pipelist, lst);
-		parse_pipe(ln.lfts, ln.lfte, pipe);
+		ft_lstadd_back(&pipe->pipelist, lst);
+		parse_pipe(ln.rghts, ln.rghte, pipe);
 	}
 	else
 	{
 		cmd = parser(ps, pe);
 		lst = ft_lstnew(cmd);
-		ft_lstadd_front(&pipe->pipelist, lst);
+		ft_lstadd_back(&pipe->pipelist, lst);
 	}
 	return ((t_cmd *)pipe);
 }
