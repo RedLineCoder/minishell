@@ -1,9 +1,9 @@
 NAME = minishell
 HEADERS = minishell.h
 PARSER_PATH = utils/parser/
-PARSER = $(PARSER_PATH)init_cmd.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c $(PARSER_PATH)validater.c
+PARSER = $(PARSER_PATH)init_cmd.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c
 EXECUTOR_PATH = utils/executor/
-EXECUTOR = $(EXECUTOR_PATH)executor.c helpers/executor.c
+EXECUTOR = $(EXECUTOR_PATH)executor.c
 SOURCES = $(PARSER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c helpers/parser.c
 
 READLINE = lib/readline/lib/libreadline.a
@@ -16,7 +16,7 @@ GNL = lib/gnl/gnl.a
 GNL_PATH = lib/gnl
 
 CC = cc
-CFLAGS= -Wall -Wextra -Werror -fsanitize=address
+CFLAGS= -Wall -Wextra -Werror
 
 all: $(NAME)
 

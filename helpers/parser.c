@@ -6,91 +6,101 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 16:02:46 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/20 19:04:21 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_node	*get_node(void *cmd, int nullcheck)
+t_cmd	*parse_cmd(char **ps, char **pe)
 {
-	t_node *const	node = ft_calloc(sizeof(t_node), 1);
+	char		*ts;
+	char		*te;
+	t_tokens	token;
 
-	if (!node || (nullcheck && !cmd))
-		return (NULL);
-	node->cmd = (t_cmd *)cmd;
-	return (node);
-}
-
-t_cmd	*parse_cmd(char **ps)
-{
-	char			*ts;
-	char			*te;
-	t_tokens		token;
-	t_cmd			*(*funcs[7])(char **, char *, char *);
-
-	ft_memset(funcs, 0, sizeof(t_cmd *) * 7);
-	funcs[REDIR] = parse_redir;
-	funcs[CMD_OP] = parse_cmdop;
+	t_cmd		*(*funcs[4])(char **, char **, char *, char *);
+	ft_memset(funcs, 0, sizeof(t_cmd *) * 4);
+	funcs[REDIR_OP] = parse_redir;
 	funcs[ARG] = parse_arg;
-	funcs[BLK_OP] = parse_block;
-	token = get_token(ps, &ts, &te);
-	if (token == BLK_OP)
-	{
-		get_block(&te);
-		*ps = te;
-	}
+	token = get_token(ps, pe, &ts, &te);
 	if (funcs[token])
-		return (funcs[token](ps, ts, te));
+		return (funcs[token](ps, pe, ts, te));
 	return (NULL);
 }
 
-int	set_node(char *ps, t_node *node, t_tokens next)
+t_cmd	*parse_cmdopnew(t_lnsplit ln)
 {
-	if (next == CMD_OP)
-	{
-		node->right = get_node(parse_cmd(&ps), 1);
-		if (!node->right)
-			return (0);
-		if (!parser(ps, node->right, 0))
-			return (0);
-	}
-	else if (next)
-	{
-		node->left = get_node(parse_exec(&ps, NULL, NULL), 1);
-		if (!node->left)
-			return (0);
-		if (!parser(ps, node, 0))
-			return (0);
-	}
-	return (1);
+	t_opcmd *const op = ft_calloc(sizeof(t_opcmd), 1);
+
+	if (!op)
+		return (NULL);
+	op->type = LOGIC;
+	op->op_type = get_logicop(ln.lfte, ln.rghts);
+	op->left = parser(ln.lfts, ln.lfte);
+	op->right = parser(ln.rghts, ln.rghte);
+	return ((t_cmd *)op);
 }
 
-int	parser(char *ps, t_node *node, int syntax)
+t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 {
-	t_tokens	next;
+	t_lnsplit	ln;
+	t_cmd		*cmd;
+	t_list		*lst;
 
-	if (syntax)
+	if (!pipe)
+		pipe = ft_calloc(sizeof(t_pipecmd), 1);
+	if (!pipe)
+		return (NULL);
+	pipe->type = PIPE;
+	if (peek(ps, pe, "|"))
 	{
-		if (!block_closed(ps))
-			return (printf("%s `block'\n", ERR_MISS), 0);
-		if (!quote_closed(ps))
-			return (printf("%s `quote'\n", ERR_MISS), 0);
-		if (err_syntax(ps))
-			return (0);
-		if (!token_missed(ps))
-			return (printf("%s `exec'\n", ERR_MISS), 0);
+		ln = ft_lnsplit2(ps, pe);
+		cmd = parser(ln.rghts, ln.rghte);
+		lst = ft_lstnew(cmd);
+		ft_lstadd_front(&pipe->pipelist, lst);
+		parse_pipe(ln.lfts, ln.lfte, pipe);
 	}
-	next = peek(ps);
-	if (next == BLK_OP)
+	else
 	{
-		node->left = get_node(parse_cmd(&ps), 1);
-		if (!node->left)
-			return (0);
-		if (!parser(((t_blockcmd *)node->left->cmd)->line, node->left, 0))
-			return (0);
+		cmd = parser(ps, pe);
+		lst = ft_lstnew(cmd);
+		ft_lstadd_front(&pipe->pipelist, lst);
 	}
-	if (!set_node(ps, node, peek(ps)))
-		return (0);
-	return (1);
+	return ((t_cmd *)pipe);
+}
+
+t_cmd	*parse_blocknew(char *ps, char *pe)
+{
+	t_blockcmd *const block = ft_calloc(sizeof(t_blockcmd), 1);
+	char			*ts;
+	char			*te;
+
+	if (!block)
+		return (NULL);
+	block->type = SUBSHELL;
+	get_token(&ps, &pe, &ts, &te);
+	te = pass_block(ts, pe);
+	block->subshell = parser(ts + 1, te);
+	return ((t_cmd *)block);
+}
+
+t_cmd	*parser(char *ps, char *pe)
+{
+	t_cmd		*cmd;
+	t_lnsplit	ln;
+
+	if (peek(ps, pe, "&&") || peek(ps, pe, "||"))
+	{
+		ln = ft_lnsplit(ps, pe);
+		cmd = parse_cmdopnew(ln);
+	}
+	else if (peek(ps, pe, "|"))
+		cmd = parse_pipe(ps, pe, NULL);
+	else if (peek(ps, pe, NULL) == BLK_OP)
+		cmd = parse_blocknew(ps, pe);
+	else
+		cmd = parse_exec(&ps, &pe, NULL, NULL);
+	if (!cmd)
+		return (NULL);
+	return (cmd);
 }

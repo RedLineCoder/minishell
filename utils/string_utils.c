@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 14:26:12 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/20 19:26:39 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,19 +63,68 @@ int	str_append(char **s1, char const *s2)
 	return (1);
 }
 
-void	clean_tree(t_node *node)
+char	*pass_block(char *bs, char *pe)
 {
-	if (!node)
-		return ;
-	clean_tree(node->left);
-	clean_tree(node->right);
-	if (node->cmd && node->cmd->type == BLK_OP)
-		free(((t_blockcmd *)node->cmd)->line);
-	if (node->cmd && node->cmd->type == EXEC)
+	int		sem_block;
+
+	sem_block = 1;
+	while (bs != pe && *bs && sem_block)
 	{
-		ft_lstclear(&((t_execcmd *)node->cmd)->args, free);
-		ft_lstclear(&((t_execcmd *)node->cmd)->redirs, free);
+		bs++;
+		if (*bs == ')')
+			sem_block--;
+		if (*bs == '(')
+			sem_block++;
 	}
-	free(node->cmd);
-	free(node);
+	return (bs);
+}
+
+t_lnsplit	ft_lnsplit(char *line, char *end)
+{
+	t_lnsplit 	ln;
+	int			sem;
+
+	sem = 0;
+	ln.lfts = line;
+	while (line && (end && line != end))
+	{
+		if (*line == '(' || ft_strchr(QUOTES ,*line))
+			line = pass_block(line, end);
+		if (!ft_strncmp(line, "&&", 2) || !ft_strncmp(line, "||", 2))
+		{
+			ln.lfte = line;
+			line += 2;
+			ln.rghts = line;
+		}
+		if (*line == '(' || ft_strchr(QUOTES ,*line))
+			line = pass_block(line, end);
+		line++;
+	}
+	ln.rghte = line;
+	return (ln);
+}
+
+t_lnsplit	ft_lnsplit2(char *line, char *end)
+{
+	t_lnsplit 	ln;
+	int			sem;
+
+	sem = 0;
+	ln.lfts = line;
+	while (line && (end && line != end))
+	{
+		if (*line == '(')
+			line = pass_block(line, end);
+		if (*line == '|')
+		{
+			ln.lfte = line;
+			line += 2;
+			ln.rghts = line;
+		}
+		if (*line == '(')
+			line = pass_block(line, end);
+		line++;
+	}
+	ln.rghte = line;
+	return (ln);
 }

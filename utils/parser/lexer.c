@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 14:17:00 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/20 18:32:52 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,15 @@ t_redir	get_redir(char *ts, char *te)
 	return (REDIR_NONE);
 }
 
-t_cmdop	get_cmdop(char *ts, char *te)
+t_cmdop	get_logicop(char *ts, char *te)
 {
 	size_t	len;
 
 	len = te - ts;
 	if (!len)
 		return (OP_NONE);
-	if (!ft_strncmp(ts, "|", len))
-		return (OP_PIPE);
 	if (!ft_strncmp(ts, "||", len))
 		return (OP_OR);
-	if (!ft_strncmp(ts, "&", len))
-		return (OP_ASYNC);
 	if (!ft_strncmp(ts, "&&", len))
 		return (OP_AND);
 	return (OP_NONE);
@@ -57,9 +53,13 @@ t_tokens	get_token_type(char *ts, char *te)
 	else if (*ts == ')')
 		return (BLK_CLS);
 	else if (get_redir(ts, te))
-		return (REDIR);
-	else if (get_cmdop(ts, te))
-		return (CMD_OP);
+		return (REDIR_OP);
+	else if (get_logicop(ts, te))
+		return (LOGIC_OP);
+	else if (!ft_strncmp(ts, "|", te - ts))
+		return (PIPE_OP);
+	else if (!ft_strncmp(ts, "&", te - ts))
+		return (ASYNC_OP);
 	while (ts < te)
 		ts++;
 	if (ts == te && *ts != '(')
@@ -67,16 +67,32 @@ t_tokens	get_token_type(char *ts, char *te)
 	return (TKN_NONE);
 }
 
-t_tokens	peek(char *ps)
+t_tokens	peek(char *ps, char *pe, char *token)
 {
-	return (get_token(&ps, NULL, NULL));
+	int	len;
+
+	len = 0;
+	if (token)
+	{
+		len = ft_strlen(token);
+		while (ps && (pe && ps != pe))
+		{
+			if (*ps == '(')
+				ps = pass_block(ps, pe);
+			if (!ft_strncmp(ps, token, len))
+				return (TKN_IN);
+			ps++;
+		}
+		return (TKN_NONE);
+	}
+	return (get_token(&ps, &pe, NULL, NULL));
 }
 
-bool	peek_consecutive(char *ps, char *charset, char *filter)
+bool	peek_consecutive(char *ps, char *pe, char *charset, char *filter)
 {
-	if (!ps)
+	if (!ps || ps == pe)
 		return (false);
-	while (*ps)
+	while (*ps && (ps != pe))
 	{
 		if (ft_strchr(charset, *ps))
 			return (true);
