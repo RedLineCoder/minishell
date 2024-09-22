@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/15 11:26:50 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/21 11:03:00 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ int	main(int argc, char **argv, char **env)
 		if (!prompt)
 			mini_panic("An error occured.");
 		line = readline(prompt);
+		if (!line) 
+			exit(0);
 		add_history(line);
 		t_node *root = get_node(NULL, 0);
 		parser(line, root);

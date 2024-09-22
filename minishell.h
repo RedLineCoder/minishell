@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/15 14:57:57 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 20:21:31 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ t_cmdop		get_cmdop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-int			execute_block(t_node *block, t_msh *msh);
+int			execute_block(t_node *block, t_msh *msh, int is_root);
 int			execute_redir(t_execcmd *cmd, t_redircmd *redir);
 int			exec_pipe(t_execcmd	*cmd);
 char		**get_args_arr(t_list	*arglist);
@@ -169,6 +169,7 @@ void		close_pipe(int	fd[2]);
 void		mini_panic(char *str);
 void		wait_child_processes();
 t_node		*get_next_block(t_node *block, int status);
+
 // Utils
 char		*get_user(void);
 char		*get_cmd_path(char *command);

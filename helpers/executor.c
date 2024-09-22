@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 16:47:51 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/22 18:59:49 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,14 @@ int	execute_node(t_node *node, t_msh *msh, pid_t *last)
 	t_cmd *const	left = get_node_cmd(node->left);
 
 	if (l_token == BLOCK)
-		return (execute_block(node->left, msh));
+		return (execute_block(node->left, msh, 0));
 	else if (l_token == EXEC)
 	{
 		if(is_piped)
 			exec_pipe((t_execcmd *)left);
 		*last = execute_exec((t_execcmd *)left, msh->env, \
 		is_piped);
-	}
+	}  
 	if (is_piped && node->right->left)
 	{
 		close(((t_execcmd *)left)->fd[1]);
@@ -66,7 +66,7 @@ int	execute_node(t_node *node, t_msh *msh, pid_t *last)
 	wait_child_processes();
 	node = get_next_block(node->right, msh->last_status);
 	if (node)
-		return (execute_block(node, msh));
+		return (execute_block(node, msh, 0));
 	return (1);
 }
 
@@ -94,37 +94,38 @@ void	execute_hdocs(t_node *block)
 	}
 }
 
-int	execute_block(t_node *block, t_msh *msh)
+int	execute_block(t_node *block, t_msh *msh, int is_root)
 {
-	const pid_t	pid = fork();
-	pid_t		last;
+	pid_t	pid;
+	pid_t	last;
 	
 	if (!block)
 		return (0);
-	if (pid == -1)
-		return (0);
-	else if (pid == 0)
+	if (!is_root)
 	{
-		execute_node(block, msh, &last);
-		exit(msh->last_status);
-	}
-	while (1)
-	{
-		if (!block)
-			break ;
-		if (block->left && block->left->cmd->type == EXEC)
+		pid = fork();
+		if (pid == -1)
+			return (0);
+		else if (pid == 0)
 		{
-			close (((t_execcmd *)block->left->cmd)->fd[0]);
-			close (((t_execcmd *)block->left->cmd)->fd[1]);
+			execute_node(block, msh, &last);
+			exit(msh->last_status);
 		}
-		block = block->right;
+		while (block)
+		{
+			if (block->left && block->left->cmd->type == EXEC)
+				close_pipe(((t_execcmd *)block->left->cmd)->fd);
+			block = block->right;
+		}
+		waitpid(pid, NULL, 0);
 	}
-	waitpid(pid, &msh->last_status, 0);
+	else
+		execute_node(block, msh, &last);
 	return (msh->last_status);
 }
 
 void	executor(t_node *block, t_msh *msh)
 {
 	execute_hdocs(block);
-	execute_block(block, msh);
+	execute_block(block, msh, 1);
 }
