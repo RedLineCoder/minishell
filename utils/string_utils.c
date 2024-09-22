@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 14:36:02 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 15:51:04 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,63 +67,36 @@ char	*pass_block(char *bs, char *pe)
 {
 	int		sem_block;
 
-	if (*bs != '(')
+	if (peek(bs, pe, TKN_NONE) != BLK_OP)
 		return (bs);
+	get_token(&bs, &pe, NULL, NULL);
 	sem_block = 1;
-	while (bs != pe && *bs && sem_block)
+	while (bs != pe && sem_block)
 	{
-		bs++;
 		if (*bs == ')')
 			sem_block--;
 		if (*bs == '(')
 			sem_block++;
+		bs++;
 	}
 	return (bs);
 }
 
-t_lnsplit	ft_lnsplit(char *line, char *end)
+t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token)
 {
 	t_lnsplit 	ln;
-	int			sem;
+	char		*ts;
+	char		*te;
 
-	sem = 0;
 	ln.lfts = line;
-	while (line && (end && line != end))
+	while (line && line != end)
 	{
 		line = pass_block(line, end);
-		line = pass_quote(line, end);
-		if (!ft_strncmp(line, "&&", 2) || !ft_strncmp(line, "||", 2))
+		if (get_token(&line, &end, &ts, &te) == token)
 		{
-			ln.lfte = line;
-			line += 2;
-			ln.rghts = line;
-			continue ;
+			ln.lfte = ts;
+			ln.rghts = te;
 		}
-		line++;
-	}
-	ln.rghte = line;
-	return (ln);
-}
-
-t_lnsplit	ft_lnsplit2(char *line, char *end)
-{
-	t_lnsplit 	ln;
-	int			sem;
-
-	sem = 0;
-	ln.lfts = line;
-	while (line && (end && line != end))
-	{
-		line = pass_block(line, end);
-		line = pass_quote(line, end);
-		if (*line == '|')
-		{
-			ln.lfte = line;
-			line += 1;
-			ln.rghts = line;
-			continue ;
-		}
-		line++;
 	}
 	ln.rghte = line;
 	return (ln);

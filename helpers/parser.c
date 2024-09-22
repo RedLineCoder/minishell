@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/20 19:04:21 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 15:20:52 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,14 @@ t_cmd	*parse_cmd(char **ps, char **pe)
 	return (NULL);
 }
 
-t_cmd	*parse_cmdopnew(t_lnsplit ln)
+t_cmd	*parse_logic(char *ps, char *pe)
 {
 	t_opcmd *const op = ft_calloc(sizeof(t_opcmd), 1);
+	t_lnsplit		ln;
 
 	if (!op)
 		return (NULL);
+	ln = ft_lnsplit(ps, pe, LOGIC_OP);
 	op->type = LOGIC;
 	op->op_type = get_logicop(ln.lfte, ln.rghts);
 	op->left = parser(ln.lfts, ln.lfte);
@@ -52,9 +54,9 @@ t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 	if (!pipe)
 		return (NULL);
 	pipe->type = PIPE;
-	if (peek(ps, pe, "|"))
+	if (peek(ps, pe, PIPE_OP))
 	{
-		ln = ft_lnsplit2(ps, pe);
+		ln = ft_lnsplit(ps, pe, PIPE_OP);
 		cmd = parser(ln.rghts, ln.rghte);
 		lst = ft_lstnew(cmd);
 		ft_lstadd_front(&pipe->pipelist, lst);
@@ -69,7 +71,7 @@ t_cmd	*parse_pipe(char *ps, char *pe, t_pipecmd *pipe)
 	return ((t_cmd *)pipe);
 }
 
-t_cmd	*parse_blocknew(char *ps, char *pe)
+t_cmd	*parse_block(char *ps, char *pe)
 {
 	t_blockcmd *const block = ft_calloc(sizeof(t_blockcmd), 1);
 	char			*ts;
@@ -87,17 +89,13 @@ t_cmd	*parse_blocknew(char *ps, char *pe)
 t_cmd	*parser(char *ps, char *pe)
 {
 	t_cmd		*cmd;
-	t_lnsplit	ln;
 
-	if (peek(ps, pe, "&&") || peek(ps, pe, "||"))
-	{
-		ln = ft_lnsplit(ps, pe);
-		cmd = parse_cmdopnew(ln);
-	}
-	else if (peek(ps, pe, "|"))
+	if (peek(ps, pe, LOGIC_OP))
+		cmd = parse_logic(ps, pe);
+	else if (peek(ps, pe, PIPE_OP))
 		cmd = parse_pipe(ps, pe, NULL);
-	else if (peek(ps, pe, NULL) == BLK_OP)
-		cmd = parse_blocknew(ps, pe);
+	else if (peek(ps, pe, TKN_NONE) == BLK_OP)
+		cmd = parse_block(ps, pe);
 	else
 		cmd = parse_exec(&ps, &pe, NULL, NULL);
 	if (!cmd)

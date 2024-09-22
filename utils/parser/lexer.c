@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 14:36:20 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 15:49:46 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,10 @@ t_tokens	get_token_type(char *ts, char *te)
 		return (BLK_CLS);
 	else if (get_redir(ts, te))
 		return (REDIR_OP);
-	else if (get_logicop(ts, te))
-		return (LOGIC_OP);
 	else if (!ft_strncmp(ts, "|", te - ts))
 		return (PIPE_OP);
-	else if (!ft_strncmp(ts, "&", te - ts))
-		return (ASYNC_OP);
+	else if (get_logicop(ts, te))
+		return (LOGIC_OP);
 	while (ts < te)
 		ts++;
 	if (ts == te && *ts != '(')
@@ -67,21 +65,15 @@ t_tokens	get_token_type(char *ts, char *te)
 	return (TKN_NONE);
 }
 
-t_tokens	peek(char *ps, char *pe, char *token)
+t_tokens	peek(char *ps, char *pe, t_tokens token)
 {
-	int	len;
-
-	len = 0;
 	if (token)
 	{
-		len = ft_strlen(token);
 		while (ps && (pe && ps != pe))
 		{
 			ps = pass_block(ps, pe);
-			ps = pass_quote(ps, pe);
-			if (!ft_strncmp(ps, token, len))
+			if (get_token(&ps, &pe, NULL, NULL) == token)
 				return (TKN_IN);
-			ps++;
 		}
 		return (TKN_NONE);
 	}
