@@ -6,20 +6,23 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/20 19:31:26 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 14:28:10 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	get_quote(char **qs, char **pe)
+char	*pass_quote(char *qs, char *pe)
 {
 	char	quote;
 
-	quote = **qs;
-	*qs += 1;
-	while (*qs != *pe && **qs && **qs != quote)
-		*qs += 1;
+	if (!ft_strchr(QUOTES, *qs))
+		return(qs);
+	quote = *qs;
+	qs++;
+	while (qs != pe && *qs != quote)
+		qs++;
+	return (qs);
 }
 
 void	get_operator(char **te)
@@ -46,8 +49,7 @@ t_tokens	handle_sep(char **ps, char **pe, char **ts, char **te)
 	{
 		while (str != *pe && !ft_strchr(SEP, *str))
 		{
-			if (ft_strchr(QUOTES, *str))
-				get_quote(&str, pe);
+			str = pass_quote(str, *pe);
 			str++;
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/20 18:32:52 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 14:36:20 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,8 @@ t_tokens	peek(char *ps, char *pe, char *token)
 		len = ft_strlen(token);
 		while (ps && (pe && ps != pe))
 		{
-			if (*ps == '(')
-				ps = pass_block(ps, pe);
+			ps = pass_block(ps, pe);
+			ps = pass_quote(ps, pe);
 			if (!ft_strncmp(ps, token, len))
 				return (TKN_IN);
 			ps++;

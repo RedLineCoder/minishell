@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/20 19:26:39 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 14:36:02 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ char	*pass_block(char *bs, char *pe)
 {
 	int		sem_block;
 
+	if (*bs != '(')
+		return (bs);
 	sem_block = 1;
 	while (bs != pe && *bs && sem_block)
 	{
@@ -88,16 +90,15 @@ t_lnsplit	ft_lnsplit(char *line, char *end)
 	ln.lfts = line;
 	while (line && (end && line != end))
 	{
-		if (*line == '(' || ft_strchr(QUOTES ,*line))
-			line = pass_block(line, end);
+		line = pass_block(line, end);
+		line = pass_quote(line, end);
 		if (!ft_strncmp(line, "&&", 2) || !ft_strncmp(line, "||", 2))
 		{
 			ln.lfte = line;
 			line += 2;
 			ln.rghts = line;
+			continue ;
 		}
-		if (*line == '(' || ft_strchr(QUOTES ,*line))
-			line = pass_block(line, end);
 		line++;
 	}
 	ln.rghte = line;
@@ -113,16 +114,15 @@ t_lnsplit	ft_lnsplit2(char *line, char *end)
 	ln.lfts = line;
 	while (line && (end && line != end))
 	{
-		if (*line == '(')
-			line = pass_block(line, end);
+		line = pass_block(line, end);
+		line = pass_quote(line, end);
 		if (*line == '|')
 		{
 			ln.lfte = line;
-			line += 2;
+			line += 1;
 			ln.rghts = line;
+			continue ;
 		}
-		if (*line == '(')
-			line = pass_block(line, end);
 		line++;
 	}
 	ln.rghte = line;

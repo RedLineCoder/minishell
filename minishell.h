@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/20 19:00:52 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/22 14:21:45 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef enum e_cmdop
 	OP_ASYNC
 }			t_cmdop;
 
+// Structs
 typedef	struct s_lnsplit
 {
 	char	*lfts;
@@ -84,7 +85,6 @@ typedef	struct s_lnsplit
 	char	*rghte;
 }			t_lnsplit;
 
-// Structs
 typedef struct s_msh
 {
 	char	*user;
@@ -160,6 +160,7 @@ t_tokens	get_token(char **ps, char **pe, char **ts, char **te);
 t_tokens	peek(char *ps, char *pe, char *token);
 bool		peek_consecutive(char *ps, char *pe, char *charset, char *filter);
 void		get_operator(char **pe);
+char		*pass_quote(char *qs, char *pe);
 
 // Lexer
 t_redir		get_redir(char *ts, char *te);
