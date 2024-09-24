@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/23 03:56:17 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/24 17:57:20 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ typedef struct s_redircmd
 	int		type;
 	int		redir_type;
 	int		fd;
+	int		pipe[2];
 	char	*s_spec;
 	char	*e_spec;
 }			t_redircmd;
@@ -183,11 +184,11 @@ pid_t		execute_cmd(t_cmd *cmd, t_msh *msh);
 void		mini_panic(char *str);
 char		**get_args_arr(t_list	*arglist);
 void		executor(t_cmd *block, t_msh *msh);
-void		exec_hdoc(t_execcmd *cmd, t_redircmd *redir);
 void		close_pipe(int	fd[2]);
 void		mini_panic(char *str);
 void		wait_child_processes();
-t_cmd		*get_next_block(t_cmd *block, int status);
+int			execute_redir(t_execcmd *cmd, t_redircmd *redir);
+void 		exec_hdoc(t_redircmd *redir);
 
 // Utils
 char		*get_user(void);

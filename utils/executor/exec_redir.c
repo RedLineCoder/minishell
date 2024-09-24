@@ -6,32 +6,31 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/23 02:06:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/24 17:57:07 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void exec_hdoc(t_execcmd *cmd, t_redircmd *redir)
+void exec_hdoc(t_redircmd *redir)
 {
 	char			*buffer;
 	const size_t	len = redir->e_spec - redir->s_spec;
 	
-	close_pipe(cmd->fd);
-	if (pipe(cmd->fd) == -1)
+	close_pipe(redir->pipe);
+	if (pipe(redir->pipe) == -1)
 		return ;
-	cmd->in_file = cmd->fd[0];
 	while (1)
 	{
 		buffer = readline("> ");
 		if (ft_strlen(buffer) == len && !ft_strncmp(buffer, redir->s_spec, len))
 		{
 			free(buffer);
-			close(cmd->fd[1]);
+			close(redir->pipe[1]);
 			return ;
 		}
-		write(cmd->fd[1], buffer, ft_strlen(buffer));
-		write(cmd->fd[1], "\n", 1);
+		write(redir->pipe[1], buffer, ft_strlen(buffer));
+		write(redir->pipe[1], "\n", 1);
 		free(buffer);
 	}
 }
@@ -45,7 +44,7 @@ int	execute_redir(t_execcmd *cmd, t_redircmd *redir)
 
 	if (type == REDIR_HDOC)
 	{
-		cmd->in_file = cmd->fd[0];
+		cmd->in_file = redir->pipe[0];
 		return (1);
 	}
 	flags = O_RDWR;

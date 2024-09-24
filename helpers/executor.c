@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/24 17:38:29 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/24 17:57:50 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,20 +137,16 @@ pid_t	execute_exec(t_execcmd *exec, char **env, int *pipe)
 	{
 		if (pipe)
 			close(pipe[0]);
-		if (exec->in_file != -1)
-			dup2(exec->in_file, STDIN_FILENO);
-		if (exec->out_file != -1)
-			dup2(exec->out_file, STDOUT_FILENO);
-		/*while (exec->redirs)
+		while (exec->redirs)
 		{
 			if (((t_redircmd *)exec->redirs->content)->redir_type != REDIR_HDOC)
 				execute_redir(exec, exec->redirs->content);
 			exec->redirs = exec->redirs->next;
-		}*/
-/* 		if (exec->in_file != -1)
+		}
+		if (exec->in_file != -1)
 			dup2(exec->in_file, STDIN_FILENO);
-		if(exec->out_file != -1)
-			dup2(exec->out_file, STDOUT_FILENO); */
+		if (exec->out_file != -1)
+			dup2(exec->out_file, STDOUT_FILENO);
 		if (args)
 			execute_command(args[0], args, env);
 	}
@@ -261,7 +257,6 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh)
 void	executor(t_cmd *root, t_msh *msh)
 {
 	pid_t	pid;
-	//execute_hdocs(root);
 	pid = execute_cmd(root, msh);
 	waitpid(pid, &msh->last_status, 0);
 }
