@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 20:31:41 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/23 02:12:50 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,9 @@ t_cmd	*parse_exec(char **ps, char **pe, char *ts, char *te)
 	token = peek(*ps, *pe, TKN_NONE);
 	if (!(token == ARG || token == REDIR_OP))
 		return (free(exec), NULL);
-	exec->type = CMD;
+	exec->type = EXEC;
+	exec->in_file = -1;
+	exec->out_file = -1;
 	while (token == ARG || token == REDIR_OP)
 	{
 		cmd = parse_cmd(ps, pe);

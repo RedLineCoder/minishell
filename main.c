@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/22 20:42:34 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/24 17:34:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,15 @@ void treeprint(t_cmd *root, int level)
 		{
 			printf("PIPELIST\n");
 			while (((t_pipecmd *)root)->pipelist)
+			{
 				treeprint((((t_pipecmd *)root)->pipelist)->content, level + 1);
 				((t_pipecmd *)root)->pipelist = ((t_pipecmd *)root)->pipelist->next;
+			}
 		}
-		if (root->type == CMD)
-			printf("CMD\n");
+		if (root->type == EXEC)
+		{
+			printf("EXEC\n");
+		}
 }
 
 void	mini_panic(char *str)
@@ -109,8 +113,8 @@ int	main(int argc, char **argv, char **env)
 		if (!root)
 			continue ;
 		//printf("%p\n", root->right);
-		//executor(root, msh);
-		treeprint(root, 0);
+		executor(root, msh);
+		//treeprint(root, 0);
 		free(line);
 		free(prompt);
 	}

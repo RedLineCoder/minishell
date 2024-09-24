@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/22 20:43:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/23 03:56:17 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef enum e_cmdtype
 	SUBSHELL,
 	LOGIC,
 	PIPE,
-	CMD,
+	EXEC,
 	REDIR
 }			t_cmdtype;
 
@@ -108,6 +108,8 @@ typedef struct s_cmd
 typedef struct s_blockcmd
 {
 	int		type;
+	int		out_file;
+	int		in_file;
 	t_cmd	*subshell;
 	t_list	*redirs;
 }			t_blockcmd;
@@ -117,7 +119,6 @@ typedef struct s_execcmd
 	int		type;
 	int		out_file;
 	int		in_file;
-	int		fd[2];
 	t_list	*args;
 	t_list	*redirs;
 }			t_execcmd;
@@ -141,6 +142,7 @@ typedef struct s_redircmd
 typedef struct s_pipecmd
 {
 	int		type;
+	int		**pipes;
 	t_list	*pipelist;
 }			t_pipecmd;
 
@@ -176,7 +178,8 @@ t_cmdop		get_logicop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-int			dup_io(int input_fd, int output_fd, int close_fd);
+int			init_pipes(t_pipecmd *pipecmd);
+pid_t		execute_cmd(t_cmd *cmd, t_msh *msh);
 void		mini_panic(char *str);
 char		**get_args_arr(t_list	*arglist);
 void		executor(t_cmd *block, t_msh *msh);

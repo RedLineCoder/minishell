@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/15 12:59:55 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/23 02:06:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,5 @@ int	execute_redir(t_execcmd *cmd, t_redircmd *redir)
 		cmd->out_file = fd;
 	else
 		cmd->in_file = fd;
-	return (1);
-}
-
-int	exec_pipe(t_execcmd	*cmd)
-{
-	close_pipe(cmd->fd);
-	if (pipe(cmd->fd) == -1)
-		return (0);
-	cmd->out_file = cmd->fd[1];
 	return (1);
 }

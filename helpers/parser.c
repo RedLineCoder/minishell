@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 16:35:45 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/24 17:24:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ t_cmd	*parse_block(char *ps, char *pe)
 	get_token(&ps, &pe, &ts, &te);
 	te = pass_block(ts, pe);
 	block->subshell = parser(ts + 1, te);
+	block->in_file = -1;
+	block->out_file = -1;
 	return ((t_cmd *)block);
 }
 
