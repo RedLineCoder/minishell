@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/26 16:11:58 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/26 18:55:15 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ int			parser(char *ps, char *pe, t_cmd **cmd);
 int			parse_redirs(char *ps, char *pe, int block, t_list **redirs);
 int			parse_args(char *ps, char *pe, t_list **args);
 int			init_pipes(char *ps, char *pe, t_list **pipelist);
-void		syntax_panic(char *ps, char *pe, char *msg);
+void		syntax_panic(char *ls, char *msg);
 t_part		ft_divide(char *s, char *e, t_tokens tkn, int rev);
 
 // Tokenizer
@@ -203,3 +203,24 @@ is_block ?
 is_struct ? 
 
 */
+
+/* void	syntax_panic(char *ps, char *msg)
+{
+	t_tokens	token;
+	char		*ts;
+	char		*te;
+	char		*pe;
+
+	pe = ps + ft_strlen(ps);
+	token = get_token(&ps, &pe, &ts, &te);
+	if (msg)
+	{
+		ft_putstr_fd(msg, 2);
+		ft_putstr_fd("'", 2);
+		if (!token)
+			write(2, "newline", 7);
+		else
+			write(2, ts, te - ts);
+		ft_putendl_fd("'", 2);
+	}
+} */

@@ -6,14 +6,28 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/26 16:15:40 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/26 18:57:09 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	syntax_panic(char *ts, char *te, char *msg)
+void	syntax_panic(char *ls, char *msg)
 {
+	char	*ps;
+	char	*pe;
+	char	*ts;
+	char	*te;
+
+	(void)ls;
+	(void)pe;
+	(void)ps;
+	(void)ts;
+	(void)te;
+	(void)msg;
+	//ps = ls;
+	/* pe = ps + ft_strlen(ps);
+	get_token(&ps, &pe, &ts, &te);
 	if (msg)
 	{
 		ft_putstr_fd(msg, 2);
@@ -23,7 +37,7 @@ void	syntax_panic(char *ts, char *te, char *msg)
 		else
 			write(2, ts, te - ts);
 		ft_putendl_fd("'", 2);
-	}
+	} */
 }
 
 int	parse_args(char *ps, char *pe, t_list **args)
@@ -73,31 +87,29 @@ int	parse_redir(char *ts, char *te, t_redircmd **cmd)
 
 int	parse_redirs(char *ps, char *pe, int block, t_list **redirs)
 {
-	t_tokens	token;
 	t_redircmd	*cmd;
 	char		*ts;
 	char		*te;
 
-	token = get_token(&ps, &pe, &ts, &te);
-	if (token == REDIR_OP)
+	if (peek(ps, pe, TKN_NONE) == REDIR_OP)
 	{
+		get_token(&ps, &pe, &ts, &te);
 		if (parse_redir(ts, te, &cmd))
 			return (1);
-		token = get_token(&ps, &pe, &ts, &te);
-		if (token == ARG)
+		if (peek(ps, pe, TKN_NONE) == ARG)
+		{
+			get_token(&ps, &pe, &ts, &te);
 			cmd->s_spec = ts, cmd->e_spec = te;
-		else if (!token)
-			return (syntax_panic(ps, pe, ERR_TKN), 1);
+		}
 		else
-			return (syntax_panic(ts, te, ERR_TKN), 258);
+			return (syntax_panic(te, ERR_TKN), 258);
 		ft_lstadd_back(redirs, ft_lstnew(cmd));
-		return (parse_redirs(ps, pe, block,redirs));
 	}
-	else if ((token && token != ARG) || (token && block))
-		return (syntax_panic(ts, te, ERR_TKN), 258);
-	else if (token == ARG)
-		parse_redirs(ps, pe, block,redirs);
-	return(0);
+	else if (!peek(ps, pe, TKN_NONE))
+		return (0);
+	else if (peek(ps, pe, TKN_NONE) != ARG || block)
+		return (syntax_panic(ps, ERR_TKN), 258);
+	return(parse_redirs(ps, pe, block, redirs));
 }
 
 int	init_pipes(char *ps, char *pe, t_list **pipelist)
@@ -110,9 +122,9 @@ int	init_pipes(char *ps, char *pe, t_list **pipelist)
 	{
 		ln = ft_divide(ps, pe, PIPE_OP, 0);
 		if (!peek(ln.lfts, ln.lfte, TKN_NONE))
-			return (syntax_panic(ln.lfte, ln.rghts, ERR_TKN), 258);
+			return (syntax_panic(ln.lfte, ERR_TKN), 258);
 		if (!peek(ln.rghts, ln.rghte, TKN_NONE))
-			return (syntax_panic(ln.rghts, ln.rghte, ERR_TKN), 1);
+			return (syntax_panic(ln.rghts, ERR_TKN), 1);
 		status = parser(ln.lfts, ln.lfte, &cmd);
 		if (status)
 			return (status);
