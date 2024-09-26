@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/23 00:31:59 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/26 15:04:21 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,7 @@ t_tokens	get_token_type(char *ts, char *te)
 		return (PIPE_OP);
 	else if (get_logicop(ts, te))
 		return (LOGIC_OP);
-	while (ts < te)
-		ts++;
-	if (ts == te && *ts != '(')
+	else
 		return (ARG);
 	return (TKN_NONE);
 }
@@ -72,6 +70,8 @@ t_tokens	peek(char *ps, char *pe, t_tokens token)
 		while (ps && ps != pe)
 		{
 			ps = pass_block(ps, pe);
+			if (!*ps)
+				return (TKN_NONE);
 			if (get_token(&ps, &pe, NULL, NULL) == token)
 				return (TKN_IN);
 		}

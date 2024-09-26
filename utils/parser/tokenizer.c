@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/23 02:02:33 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/23 06:02:15 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,16 @@ char	*pass_block(char *bs, char *pe)
 
 	if (peek(bs, pe, TKN_NONE) != BLK_OP)
 		return (bs);
-	get_token(&bs, &pe, NULL, NULL);
+	while ((bs != pe) && ft_strchr(SPACE, *bs))
+		bs++;
 	sem_block = 1;
 	while (bs != pe && sem_block)
 	{
+		bs++;
 		if (*bs == ')')
 			sem_block--;
 		if (*bs == '(')
 			sem_block++;
-		bs++;
 	}
 	return (bs);
 }
@@ -69,7 +70,8 @@ void	handle_sep(char **ps, char **pe, char **ts, char **te)
 		while (str != *pe && !ft_strchr(SEP, *str))
 		{
 			str = pass_quote(str, *pe);
-			str++;
+			if (*str)
+				str++;
 		}
 	if (te)
 		*te = str;

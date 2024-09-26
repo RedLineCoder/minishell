@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/23 02:07:27 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/26 14:51:54 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,25 +110,25 @@ void treeprint(t_cmd *root, int level)
 				switch (rtype)
 				{
 					case 1:	
-						printf("INPUT - ");
+						printf("INPUT ");
 						break;
 					case 2:
-						printf("OUTPUT - ");
+						printf("OUTPUT ");
 						break;
 					case 3:
-						printf("APPEND - ");
+						printf("APPEND ");
 						break;
 					case 4:
-						printf("HEREDOC - ");
+						printf("HEREDOC ");
 						break;
 					default:
-						printf("NONE - ");
+						printf("NONE ");
 						break;
 				}
-				printf("FD:%i\n", ((t_redircmd *)((t_execcmd *)root)->redirs->content)->fd);
+				printf("FD:%i ", ((t_redircmd *)((t_execcmd *)root)->redirs->content)->fd);
 				((t_execcmd *)root)->redirs = ((t_execcmd *)root)->redirs->next;
 			}
-			printf("%c", '\n');
+			printf("\n");
 		}
 }
 
@@ -182,7 +182,8 @@ int	main(int argc, char **argv, char **env)
 			mini_panic("An error occured.");
 		line = readline(prompt);
 		add_history(line);
-		t_cmd *root = parser(line, line + ft_strlen(line), msh);
+		t_cmd *root;
+		parser(line, line + ft_strlen(line), &root);
 		if (!root)
 			continue ;
 		//printf("%p\n", root->right);

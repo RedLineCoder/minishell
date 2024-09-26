@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/23 02:49:14 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/26 16:11:58 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@
 # define BLOCKS "()"
 # define DIGITS "0123456789"
 # define ERR_TKN "-msh: syntax error near unexpected token "
-# define ERR_MISS "-msh: syntax error missing token "
 
 typedef enum e_cmdtype
 {
@@ -53,7 +52,7 @@ typedef enum e_tokens
 	BLK_CLS,
 	LOGIC_OP,
 	PIPE_OP,
-	ERR_TOKEN
+	ERR_QUOTE
 }			t_tokens;
 
 typedef enum e_redir
@@ -136,12 +135,12 @@ typedef struct s_logiccmd
 }			t_logiccmd;
 
 // Parser
-t_cmd		*parser(char *ps, char *pe, t_msh *msh);
-t_cmd		*parse_exec(char *ps, char *pe, t_msh *msh);
-t_cmd		*parse_redir(char **ps, char **pe, t_msh *msh);
-t_cmd		*parse_pipe(char *ps, char *pe, t_msh *msh, t_pipecmd *pipe);
+int			parser(char *ps, char *pe, t_cmd **cmd);
+int			parse_redirs(char *ps, char *pe, int block, t_list **redirs);
+int			parse_args(char *ps, char *pe, t_list **args);
+int			init_pipes(char *ps, char *pe, t_list **pipelist);
+void		syntax_panic(char *ps, char *pe, char *msg);
 t_part		ft_divide(char *s, char *e, t_tokens tkn, int rev);
-void		*syntax_panic(char *ps, char *pe, int status, t_msh *msh);
 
 // Tokenizer
 t_tokens	get_token(char **ps, char **pe, char **ts, char **te);
