@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/26 15:04:21 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/27 19:04:56 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ t_tokens	get_token_type(char *ts, char *te)
 		return (LOGIC_OP);
 	else
 		return (ARG);
-	return (TKN_NONE);
 }
 
 t_tokens	peek(char *ps, char *pe, t_tokens token)

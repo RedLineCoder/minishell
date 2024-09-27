@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/26 18:12:17 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/27 18:58:10 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	*pass_quote(char *qs, char *pe)
 	char	quote;
 
 	if (!ft_strchr(QUOTES, *qs))
-		return(qs);
+		return (qs);
 	quote = *qs;
 	qs++;
 	while (qs != pe && *qs != quote)
@@ -60,21 +60,22 @@ void	handle_sep(char **ps, char **pe, char **ts, char **te)
 	char	*str;
 
 	str = *ps;
-	if (ts)
-		*ts = str;
+	*ts = str;
 	if (ft_strchr(BLOCKS, *str))
 		str++;
-	else if (ft_strchr(OPERATOR, *str) || peek_consecutive(str, *pe, REDIRS, DIGITS))
+	else if (ft_strchr(OPERATOR, *str)
+		|| peek_consecutive(str, *pe, REDIRS, DIGITS))
 		str = get_operator(str);
 	else
+	{
 		while (str != *pe && !ft_strchr(SEP, *str))
 		{
 			str = pass_quote(str, *pe);
 			if (*str)
 				str++;
 		}
-	if (te)
-		*te = str;
+	}
+	*te = str;
 	*ps = str;
 }
 

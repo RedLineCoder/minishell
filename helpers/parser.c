@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/27 16:04:15 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/27 18:21:59 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	parse_logic(char *ps, char *pe, t_cmd **cmd)
 	op->op_type = get_logicop(ln.lfte, ln.rghts);
 	*cmd = (t_cmd *)op;
 	if (!peek(ln.lfts, ln.lfte, TKN_NONE))
-		return (syntax_panic(ln.lfte, ERR_TKN), 258);
+		return (syntax_panic(ln.lfte), 258);
 	status = parser(ln.lfts, ln.lfte, &op->left);
 	if (status)
 		return (status);
@@ -33,7 +33,7 @@ int	parse_logic(char *ps, char *pe, t_cmd **cmd)
 	if (status)
 		return (status);
 	if (!peek(ln.rghts, ln.rghte, TKN_NONE))
-		return (syntax_panic(ln.rghts, ERR_TKN), 1);
+		return (syntax_panic(ln.rghts), 1);
 	return (status);
 }
 
@@ -62,9 +62,9 @@ int	parse_block(char *ps, char *pe, t_cmd **cmd)
 	get_token(&ps, &pe, &ts, &te);
 	te = pass_block(ts, pe);
 	if (!*te)
-		return (syntax_panic(te, ERR_TKN), 1);
+		return (syntax_panic(te), 1);
 	if (!peek(ts + 1, te, TKN_NONE))
-		return (syntax_panic(ts + 1, ERR_TKN), 258);
+		return (syntax_panic(ts + 1), 258);
 	status = parser(ts + 1, te, &block->subshell);
 	if (status)
 		return (status);
