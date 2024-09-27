@@ -16,7 +16,7 @@ GNL = lib/gnl/gnl.a
 GNL_PATH = lib/gnl
 
 CC = cc
-CFLAGS= -Wall -Wextra -Werror
+CFLAGS= -Wall -Wextra -Werror -fsanitize=address
 
 all: $(NAME)
 

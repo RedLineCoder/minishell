@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/26 18:50:53 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/27 16:04:15 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	parse_block(char *ps, char *pe, t_cmd **cmd)
 	status = parser(ts + 1, te, &block->subshell);
 	if (status)
 		return (status);
-	return (parse_redirs(te, pe, 1, &(block->redirs)));
+	return (parse_redirs(te + 1, pe, 1, &(block->redirs)));
 }
 
 int	parse_exec(char *ps, char *pe, t_cmd **cmd)

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/26 18:57:09 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/27 16:06:11 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,8 @@ void	syntax_panic(char *ls, char *msg)
 	char	*ts;
 	char	*te;
 
-	(void)ls;
-	(void)pe;
-	(void)ps;
-	(void)ts;
-	(void)te;
-	(void)msg;
-	//ps = ls;
-	/* pe = ps + ft_strlen(ps);
+	ps = ls;
+	pe = ps + ft_strlen(ps);
 	get_token(&ps, &pe, &ts, &te);
 	if (msg)
 	{
@@ -37,7 +31,7 @@ void	syntax_panic(char *ls, char *msg)
 		else
 			write(2, ts, te - ts);
 		ft_putendl_fd("'", 2);
-	} */
+	}
 }
 
 int	parse_args(char *ps, char *pe, t_list **args)
@@ -63,14 +57,17 @@ int	parse_args(char *ps, char *pe, t_list **args)
 	return (0);
 }
 
-int	parse_redir(char *ts, char *te, t_redircmd **cmd)
+int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 {
 	t_redircmd *const	redir = ft_calloc(sizeof(t_redircmd), 1);
 	char				*fd;
+	char				*ts;
+	char				*te;
 
 	if (!redir)
 		return (1);
 	redir->type = REDIR;
+	get_token(&ps, &pe, &ts, &te);
 	fd = ft_strndup(ts, te - ts);
 	if (!fd)
 		return (free(redir), 1);
@@ -82,33 +79,33 @@ int	parse_redir(char *ts, char *te, t_redircmd **cmd)
 		redir->fd = ft_atoi(fd);
 	free(fd);
 	*cmd = redir;
+	if (get_token(&ps, &pe, &ts, &te) == ARG)
+		redir->s_spec = ts, redir->e_spec = te;
+	else
+		return (syntax_panic(te, ERR_TKN), 258);
 	return (0);
 }
 
 int	parse_redirs(char *ps, char *pe, int block, t_list **redirs)
 {
+	t_tokens	token;
 	t_redircmd	*cmd;
 	char		*ts;
-	char		*te;
+	int			status;
 
-	if (peek(ps, pe, TKN_NONE) == REDIR_OP)
+	token = get_token(&ps, &pe, &ts, NULL);
+	if (token == REDIR_OP)
 	{
-		get_token(&ps, &pe, &ts, &te);
-		if (parse_redir(ts, te, &cmd))
-			return (1);
-		if (peek(ps, pe, TKN_NONE) == ARG)
-		{
-			get_token(&ps, &pe, &ts, &te);
-			cmd->s_spec = ts, cmd->e_spec = te;
-		}
-		else
-			return (syntax_panic(te, ERR_TKN), 258);
+		status = parse_redir(ts, pe, &cmd);
+		if (status)
+			return (status);
 		ft_lstadd_back(redirs, ft_lstnew(cmd));
+		get_token(&ps, &pe, &ts, NULL);
 	}
-	else if (!peek(ps, pe, TKN_NONE))
+	else if (!token)
 		return (0);
-	else if (peek(ps, pe, TKN_NONE) != ARG || block)
-		return (syntax_panic(ps, ERR_TKN), 258);
+	else if (token != ARG || block)
+		return (syntax_panic(ts, ERR_TKN), 258);
 	return(parse_redirs(ps, pe, block, redirs));
 }
 
@@ -118,27 +115,22 @@ int	init_pipes(char *ps, char *pe, t_list **pipelist)
 	t_cmd		*cmd;
 	int			status;
 
+	status = 0;
 	if (peek(ps, pe, PIPE_OP))
 	{
 		ln = ft_divide(ps, pe, PIPE_OP, 0);
 		if (!peek(ln.lfts, ln.lfte, TKN_NONE))
 			return (syntax_panic(ln.lfte, ERR_TKN), 258);
-		if (!peek(ln.rghts, ln.rghte, TKN_NONE))
-			return (syntax_panic(ln.rghts, ERR_TKN), 1);
 		status = parser(ln.lfts, ln.lfte, &cmd);
-		if (status)
-			return (status);
+		if (!peek(ln.rghts, ln.rghte, TKN_NONE) && !status)
+			return (syntax_panic(ln.rghts, ERR_TKN), 1);
 		ft_lstadd_back(pipelist, ft_lstnew(cmd));
 		status = init_pipes(ln.rghts, ln.rghte, pipelist);
-		if (status)
-			return (status);
 	}
 	else
 	{
 		status = parser(ps, pe, &cmd);
-		if (status)
-			return (status);
 		ft_lstadd_back(pipelist, ft_lstnew(cmd));
 	}
-	return (0);
+	return (status);
 }
