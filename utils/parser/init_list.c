@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/27 19:06:58 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/27 19:11:35 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,11 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	char				*ts;
 	char				*te;
 
-	if (!redir)
-		return (1);
-	redir->type = REDIR;
 	get_token(&ps, &pe, &ts, &te);
 	fd = ft_strndup(ts, te - ts);
-	if (!fd)
-		return (free(redir), 1);
+	if (!fd || !redir)
+		return (free(redir), free(fd), 1);
+	redir->type = REDIR;
 	redir->redir_type = get_redir(ts, te);
 	redir->fd = redir->redir_type % 2;
 	if (*fd != *ts)
