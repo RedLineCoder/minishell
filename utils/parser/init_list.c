@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 12:56:21 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 15:18:50 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	syntax_panic(char *ps)
 int	parse_args(char *ps, char *pe, t_list **args)
 {
 	t_tokens	token;
+	t_list		*lst;
 	char		*ts;
 	char		*te;
 
@@ -41,9 +42,10 @@ int	parse_args(char *ps, char *pe, t_list **args)
 	if (token == ARG)
 	{
 		ts = ft_strndup(ts, te - ts);
-		if (!ts)
-			return (1);
-		ft_lstadd_back(args, ft_lstnew(ts));
+		lst = ft_lstnew(ts);
+		if (!ts || !lst)
+			return (free(ts), free(lst), 1);
+		ft_lstadd_back(args, lst);
 		return (parse_args(ps, pe, args));
 	}
 	else if (token == REDIR_OP)

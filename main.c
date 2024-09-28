@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/28 13:02:34 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 15:40:11 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void treeprint(t_cmd *root, int level)
 			printf("CMD: ");
 			if (!((t_execcmd *)root)->args)
 				printf("NONE, ");
-			if (((t_execcmd *)root)->args)
+			else
 			{
 				printf("%s ", (char *)(((t_execcmd *)root)->args->content));
 				((t_execcmd *)root)->args = ((t_execcmd *)root)->args->next;
@@ -179,16 +179,18 @@ int	main(int argc, char **argv, char **env)
 		msh->user = get_user();
 		prompt = get_prompt(msh);
 		if (!prompt)
+		{
+			free(msh->user);
 			mini_panic("An error occured.");
+		}
 		line = readline(prompt);
 		add_history(line);
 		t_cmd *root;
 		parser(line, line + ft_strlen(line), &root);
-		if (!root)
-			continue ;
-		//printf("%p\n", root->right);
 		//executor(root, msh);
-		treeprint(root, 0);
+		//treeprint(root, 0);
+		clean_tree(root);
+		free(msh->user);
 		free(line);
 		free(prompt);
 	}

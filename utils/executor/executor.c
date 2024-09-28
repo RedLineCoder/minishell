@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 21:26:20 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 15:42:33 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ char	*get_cmd_path(char *command)
 	return (path);
 }
 
-char	**get_args_arr(t_list	*arglist)
+char	**get_args_arr(t_list *arglist)
 {
 	int			i;
 	char		**args;
@@ -89,5 +89,5 @@ char	**get_args_arr(t_list	*arglist)
 			return (free_string_array(args), NULL);
 		arglist = arglist->next;
 	}
-	return (args);		
+	return (args);
 }

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/28 12:50:10 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 15:42:50 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ void	handle_sep(char **ps, char **pe, char **ts, char **te)
 				str++;
 		}
 	}
-	*te = *ps = str;
+	*te = str;
+	*ps = str;
 }
 
 t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
