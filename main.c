@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/26 14:51:54 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 13:02:34 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,16 +109,16 @@ void treeprint(t_cmd *root, int level)
 				t_redir rtype = ((t_redircmd *)((t_execcmd *)root)->redirs->content)->redir_type;
 				switch (rtype)
 				{
-					case 1:	
+					case REDIR_INPUT:	
 						printf("INPUT ");
 						break;
-					case 2:
+					case REDIR_OUTPUT:
 						printf("OUTPUT ");
 						break;
-					case 3:
+					case REDIR_APPEND:
 						printf("APPEND ");
 						break;
-					case 4:
+					case REDIR_HDOC:
 						printf("HEREDOC ");
 						break;
 					default:
@@ -188,7 +188,7 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		//printf("%p\n", root->right);
 		//executor(root, msh);
-		//treeprint(root, 0);
+		treeprint(root, 0);
 		free(line);
 		free(prompt);
 	}

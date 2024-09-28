@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 12:31:41 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 12:56:21 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	parse_args(char *ps, char *pe, t_list **args)
 		if (!ts)
 			return (1);
 		ft_lstadd_back(args, ft_lstnew(ts));
-		return (free(ts), parse_args(ps, pe, args));
+		return (parse_args(ps, pe, args));
 	}
 	else if (token == REDIR_OP)
 	{
