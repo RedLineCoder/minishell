@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/27 18:21:59 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 12:28:00 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ int	parse_logic(char *ps, char *pe, t_cmd **cmd)
 	t_part				ln;
 	int					status;
 
+	*cmd = (t_cmd *)op;
 	if (!op)
 		return (1);
 	ln = ft_divide(ps, pe, LOGIC_OP, 1);
 	op->type = LOGIC;
 	op->op_type = get_logicop(ln.lfte, ln.rghts);
-	*cmd = (t_cmd *)op;
 	if (!peek(ln.lfts, ln.lfte, TKN_NONE))
-		return (syntax_panic(ln.lfte), 258);
+		return (syntax_panic(ln.lfte));
 	status = parser(ln.lfts, ln.lfte, &op->left);
 	if (status)
 		return (status);
@@ -33,7 +33,7 @@ int	parse_logic(char *ps, char *pe, t_cmd **cmd)
 	if (status)
 		return (status);
 	if (!peek(ln.rghts, ln.rghte, TKN_NONE))
-		return (syntax_panic(ln.rghts), 1);
+		return (syntax_panic(ln.rghts));
 	return (status);
 }
 
@@ -41,10 +41,10 @@ int	parse_pipe(char *ps, char *pe, t_cmd **cmd)
 {
 	t_pipecmd *const	pipe = ft_calloc(sizeof(t_pipecmd), 1);
 
+	*cmd = (t_cmd *)pipe;
 	if (!pipe)
 		return (1);
 	pipe->type = PIPE;
-	*cmd = (t_cmd *)pipe;
 	return (init_pipes(ps, pe, &(pipe->pipelist)));
 }
 
@@ -55,16 +55,16 @@ int	parse_block(char *ps, char *pe, t_cmd **cmd)
 	char			*ts;
 	char			*te;
 
+	*cmd = (t_cmd *)block;
 	if (!block)
 		return (1);
 	block->type = SUBSHELL;
-	*cmd = (t_cmd *)block;
 	get_token(&ps, &pe, &ts, &te);
 	te = pass_block(ts, pe);
 	if (!*te)
-		return (syntax_panic(te), 1);
+		return (syntax_panic(te));
 	if (!peek(ts + 1, te, TKN_NONE))
-		return (syntax_panic(ts + 1), 258);
+		return (syntax_panic(ts + 1));
 	status = parser(ts + 1, te, &block->subshell);
 	if (status)
 		return (status);
@@ -76,10 +76,10 @@ int	parse_exec(char *ps, char *pe, t_cmd **cmd)
 	t_execcmd *const	exec = ft_calloc(sizeof(t_execcmd), 1);
 	int					status;
 
+	*cmd = (t_cmd *)exec;
 	if (!exec)
 		return (1);
 	exec->type = EXEC;
-	*cmd = (t_cmd *)exec;
 	status = parse_redirs(ps, pe, 0, &(exec->redirs));
 	if (status)
 		return (status);

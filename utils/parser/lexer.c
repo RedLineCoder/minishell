@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/27 19:04:56 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 12:26:04 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,16 @@ t_tokens	get_token_type(char *ts, char *te)
 	else if (get_logicop(ts, te))
 		return (LOGIC_OP);
 	else
+	{
+		while (ts != te)
+		{
+			ts = pass_quote(ts, te);
+			if (!*ts)
+				return (ERR_QUOTE);
+			ts++;
+		}
 		return (ARG);
+	}
 }
 
 t_tokens	peek(char *ps, char *pe, t_tokens token)

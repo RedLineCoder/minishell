@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/27 18:58:10 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 12:21:37 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ char	*pass_quote(char *qs, char *pe)
 
 	if (!ft_strchr(QUOTES, *qs))
 		return (qs);
-	quote = *qs;
-	qs++;
+	quote = *(qs++);
 	while (qs != pe && *qs != quote)
 		qs++;
 	return (qs);
@@ -55,7 +54,7 @@ char	*get_operator(char *te)
 	return (te);
 }
 
-void	handle_sep(char **ps, char **pe, char **ts, char **te)
+t_tokens	handle_sep(char **ps, char **pe, char **ts, char **te)
 {
 	char	*str;
 
@@ -75,8 +74,8 @@ void	handle_sep(char **ps, char **pe, char **ts, char **te)
 				str++;
 		}
 	}
-	*te = str;
-	*ps = str;
+	*te = *ps = str;
+	return (TKN_IN);
 }
 
 t_tokens	get_token(char **ps, char **pe, char **ts, char **te)

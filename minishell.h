@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/27 18:21:15 by moztop           ###   ########.fr       */
+/*   Updated: 2024/09/28 12:27:32 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ int			parser(char *ps, char *pe, t_cmd **cmd);
 int			parse_redirs(char *ps, char *pe, int block, t_list **redirs);
 int			parse_args(char *ps, char *pe, t_list **args);
 int			init_pipes(char *ps, char *pe, t_list **pipelist);
-void		syntax_panic(char *ps);
+int			syntax_panic(char *ps);
 t_part		ft_divide(char *s, char *e, t_tokens tkn, int rev);
 
 // Tokenizer
