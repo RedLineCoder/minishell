@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/24 17:57:20 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/27 18:32:52 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ typedef struct s_redircmd
 typedef struct s_pipecmd
 {
 	int		type;
-	int		**pipes;
 	t_list	*pipelist;
 }			t_pipecmd;
 
@@ -179,7 +178,6 @@ t_cmdop		get_logicop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-int			init_pipes(t_pipecmd *pipecmd);
 pid_t		execute_cmd(t_cmd *cmd, t_msh *msh);
 void		mini_panic(char *str);
 char		**get_args_arr(t_list	*arglist);
@@ -187,7 +185,7 @@ void		executor(t_cmd *block, t_msh *msh);
 void		close_pipe(int	fd[2]);
 void		mini_panic(char *str);
 void		wait_child_processes();
-int			execute_redir(t_execcmd *cmd, t_redircmd *redir);
+int			execute_redir(t_redircmd *redir);
 void 		exec_hdoc(t_redircmd *redir);
 
 // Utils
@@ -203,6 +201,10 @@ void		execute_command(char *command, char **args, char **env);
 
 // ls&&cat||can|meta 3<file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
 // (ls | ls && cat < redir) || ls && cmd || (echo "afbf|&&" || ls)
+
+//EXEC
+// ls|cat&&ls|echo me 3>file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
+
 
 /* 
 

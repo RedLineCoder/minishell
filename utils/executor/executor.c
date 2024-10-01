@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/23 02:00:27 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/28 13:52:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,3 @@ char	**get_args_arr(t_list	*arglist)
 	}
 	return (args);		
 }
-
-/* 
-t_node	*get_next_block(t_node *block, int status)
-{
-	t_cmdop	const	token = get_node_type(block);
-	
-	if ((!status && token == OP_OR) || (status && token == OP_AND))
-	{
-		block = block->right;
-		while (block && get_node_type(block) == OP_PIPE)
-			block = block->right;
-	}
-	return (block);
-}
- */

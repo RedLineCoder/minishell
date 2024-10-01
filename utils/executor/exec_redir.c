@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/24 17:57:07 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/09/28 13:24:04 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,13 @@ void exec_hdoc(t_redircmd *redir)
 {
 	char			*buffer;
 	const size_t	len = redir->e_spec - redir->s_spec;
-	
-	close_pipe(redir->pipe);
+
 	if (pipe(redir->pipe) == -1)
-		return ;
+		return ; 
 	while (1)
 	{
 		buffer = readline("> ");
-		if (ft_strlen(buffer) == len && !ft_strncmp(buffer, redir->s_spec, len))
+		if (!buffer || (ft_strlen(buffer) == len && !ft_strncmp(buffer, redir->s_spec, len)))
 		{
 			free(buffer);
 			close(redir->pipe[1]);
@@ -35,7 +34,7 @@ void exec_hdoc(t_redircmd *redir)
 	}
 }
 
-int	execute_redir(t_execcmd *cmd, t_redircmd *redir)
+int	execute_redir(t_redircmd *redir)
 {
 	int				fd;
 	char			*file;
@@ -44,7 +43,9 @@ int	execute_redir(t_execcmd *cmd, t_redircmd *redir)
 
 	if (type == REDIR_HDOC)
 	{
-		cmd->in_file = redir->pipe[0];
+		printf("%d\n", redir->fd);
+		dup2(redir->pipe[0], redir->fd);
+		close(redir->pipe[0]);
 		return (1);
 	}
 	flags = O_RDWR;
@@ -58,8 +59,9 @@ int	execute_redir(t_execcmd *cmd, t_redircmd *redir)
 	if (fd == -1)
 		return (0);
 	if (type == REDIR_APPEND || type == REDIR_OUTPUT)
-		cmd->out_file = fd;
+		dup2(fd, redir->fd);
 	else
-		cmd->in_file = fd;
+		dup2(fd, redir->fd);
+	close(fd);
 	return (1);
 }

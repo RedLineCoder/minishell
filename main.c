@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/24 17:34:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/01 17:10:13 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void treeprint(t_cmd *root, int level)
 void	mini_panic(char *str)
 {
 	ft_putstr_fd(str, STDOUT_FILENO);
-	exit(1);
+	exit(127);
 }
 
 char	*get_prompt(t_msh *msh)
