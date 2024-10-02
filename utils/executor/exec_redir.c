@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 13:24:04 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/02 19:01:19 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ int	execute_redir(t_redircmd *redir)
 
 	if (type == REDIR_HDOC)
 	{
-		printf("%d\n", redir->fd);
 		dup2(redir->pipe[0], redir->fd);
 		close(redir->pipe[0]);
 		return (1);

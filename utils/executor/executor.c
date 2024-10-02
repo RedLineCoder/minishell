@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 13:52:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/02 15:56:25 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,10 @@ void	execute_command(char *command, char **args, char **env)
 		args = ft_split(command, ' ');
 		args_created = true;
 	}
-	if (execve(path, args, env) == -1)
-	{
-		if (args_created)
-			free_string_array(args);
-		exit(EXIT_FAILURE);
-	}
+	execve(path, args, env);
+	if (args_created)
+		free_string_array(args);
+	exit(EXIT_FAILURE);
 }
 
 char	*get_cmd_path(char *command)

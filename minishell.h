@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/27 18:32:52 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/02 18:40:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ t_cmdop		get_logicop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-pid_t		execute_cmd(t_cmd *cmd, t_msh *msh);
+pid_t		execute_cmd(t_cmd *cmd, t_msh *msh, int forked);
 void		mini_panic(char *str);
 char		**get_args_arr(t_list	*arglist);
 void		executor(t_cmd *block, t_msh *msh);
