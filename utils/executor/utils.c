@@ -1,21 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor.c                                         :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/02 15:56:25 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/03 17:43:25 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	close_pipe(int	fd[2])
+void	close_pipe(int fd[2])
 {
 	close(fd[0]);
 	close(fd[1]);
+}
+
+int	wait_child_processes(int pid)
+{
+	int		status;
+
+	waitpid(pid, &status, 0);
+	while (wait(NULL) != -1)
+		;
+	return (status >> 8);
 }
 
 void	execute_command(char *command, char **args, char **env)
@@ -25,7 +35,7 @@ void	execute_command(char *command, char **args, char **env)
 
 	path = get_cmd_path(command);
 	if (!path)
-		mini_panic("Command not found.\n");
+		mini_panic("Command not found.\n", true, EXIT_FAILURE);
 	args_created = false;
 	if (!args)
 	{
@@ -44,7 +54,7 @@ char	*get_cmd_path(char *command)
 	char		**paths;
 	char		*path;
 	size_t		i;
-	
+
 	if (!access(command, F_OK))
 		return (command);
 	if (!pathenv)
@@ -73,7 +83,7 @@ char	**get_args_arr(t_list	*arglist)
 	char		**args;
 	t_argcmd	*arg;
 	const int	len = ft_lstsize(arglist);
-	
+
 	if (!len)
 		return (NULL);
 	args = ft_calloc(sizeof(char *), len + 1);
@@ -88,5 +98,5 @@ char	**get_args_arr(t_list	*arglist)
 			return (free_string_array(args), NULL);
 		arglist = arglist->next;
 	}
-	return (args);		
+	return (args);
 }

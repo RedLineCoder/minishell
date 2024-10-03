@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/02 18:40:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/03 16:22:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,15 +178,17 @@ t_cmdop		get_logicop(char *ts, char *te);
 t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
-pid_t		execute_cmd(t_cmd *cmd, t_msh *msh, int forked);
-void		mini_panic(char *str);
-char		**get_args_arr(t_list	*arglist);
+int			wait_child_processes(int pid);
+int			execute_redir(t_redircmd *redir);
+int			execute_logic(t_opcmd *opcmd, t_msh *msh);
+int			execute_cmd(t_cmd *cmd, t_msh *msh, int forked);
+void		execute_exec(t_execcmd *exec, char **env);
+void		execute_block(t_blockcmd *block, t_msh *msh);
+void		execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
 void		executor(t_cmd *block, t_msh *msh);
 void		close_pipe(int	fd[2]);
-void		mini_panic(char *str);
-void		wait_child_processes();
-int			execute_redir(t_redircmd *redir);
-void 		exec_hdoc(t_redircmd *redir);
+void		mini_panic(char *str, int exit_flag, int exit_status);
+char		**get_args_arr(t_list	*arglist);
 
 // Utils
 char		*get_user(void);

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/02 19:07:12 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/03 17:43:50 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,12 @@ void treeprint(t_cmd *root, int level)
 		}
 }
 
-void	mini_panic(char *str)
+void	mini_panic(char *str, int exit_flag, int exit_status)
 {
+	ft_putstr_fd("msh: ", STDOUT_FILENO);
 	ft_putstr_fd(str, STDOUT_FILENO);
-	exit(127);
+	if (exit_flag)
+		exit(exit_status);
 }
 
 char	*get_prompt(t_msh *msh)
@@ -104,7 +106,7 @@ int	main(int argc, char **argv, char **env)
 		msh->user = get_user();
 		prompt = get_prompt(msh);
 		if (!prompt)
-			mini_panic("An error occured.");
+			mini_panic("Readline error", false, false);
 		line = readline(prompt);
 		if (!line) 
 			exit(0);
