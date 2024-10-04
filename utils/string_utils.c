@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:00:52 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 17:46:10 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,24 +63,16 @@ int	str_append(char **s1, char const *s2)
 	return (1);
 }
 
-t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
+char	*str_include(const char *s, int c)
 {
-	t_part	ln;
-	char	*ts;
-	char	*te;
+	size_t	i;
 
-	ln.lfts = s;
-	while (s && s != e)
+	i = 0;
+	while (s[i])
 	{
-		pass_block(s, &s, e);
-		if (get_token(&s, &e, &ts, &te) == tkn)
-		{
-			ln.lfte = ts;
-			ln.rghts = te;
-			if (!rev)
-				break ;
-		}
+		if ((unsigned char) s[i] == c)
+			return ((char *) s + i);
+		i++;
 	}
-	ln.rghte = e;
-	return (ln);
+	return (0);
 }
