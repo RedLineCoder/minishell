@@ -3,50 +3,141 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/14 22:35:23 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 13:51:31 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void treeprint(t_node *root, int level)
+void treeprint(t_cmd *root, int level)
 {
         if (root == NULL)
 			return;
         for (int i = 0; i < level; i++)
                 printf(i == level - 1 ? "|-" : "  ");
-		if (root->cmd)
+		if (root->type == LOGIC)
 		{
-			t_tokens token = root->cmd->type;
-			switch (token)
+			t_logicop type = ((t_logiccmd *)root)->op_type;
+			switch (type)
 			{
-				case 1: 	
-					printf(" BLOCK\n");
+				case 1:	
+					printf("AND\n");
 					break;
-				case 3:
-					printf(" CMD OP\n");
-					break;
-				case 5:
-					printf(" EXEC\n");
+				case 2:
+					printf("OR\n");
 					break;
 				default:
-					printf(" null\n");
+					printf("NONE\n");
 					break;
 			}
+			treeprint(((t_logiccmd *)root)->left, level + 1);
+			treeprint(((t_logiccmd *)root)->right, level + 1);
 		}
-		else
-			printf("null\n");
-        treeprint(root->left, level + 1);
-        treeprint(root->right, level + 1);
-} 
+		if (root->type == SUBSHELL)
+		{
+			printf("SUBSHELL - ");
+			printf("REDIRS: ");
+			if (!((t_blockcmd *)root)->redirs)
+				printf("NONE");
+			while (((t_blockcmd *)root)->redirs)
+			{
+				printf("%s ", ft_strndup(((t_redircmd *)((t_blockcmd *)root)->redirs->content)->s_spec,
+				((t_redircmd *)((t_blockcmd *)root)->redirs->content)->e_spec - ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->s_spec));
+				t_redir rtype = ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->redir_type;
+				switch (rtype)
+				{
+					case REDIR_INPUT:	
+						printf("INPUT - ");
+						break;
+					case REDIR_OUTPUT:
+						printf("OUTPUT - ");
+						break;
+					case REDIR_APPEND:
+						printf("APPEND - ");
+						break;
+					case REDIR_HDOC:
+						printf("HEREDOC - ");
+						break;
+					default:
+						printf("NONE - ");
+						break;
+				}
+				printf("FD:%i", ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->fd);
+				((t_blockcmd *)root)->redirs = ((t_blockcmd *)root)->redirs->next;
+			}
+			printf("\n");
+			treeprint(((t_blockcmd *)root)->subshell, level + 1);
+		}
+        if (root->type == PIPE)
+		{
+			printf("PIPELIST\n");
+			while (((t_pipecmd *)root)->pipelist)
+			{
+				treeprint((((t_pipecmd *)root)->pipelist)->content, level + 1);
+				((t_pipecmd *)root)->pipelist = ((t_pipecmd *)root)->pipelist->next;
+			}
+		}
+		if (root->type == EXEC)
+		{
+			printf("EXEC = ");
+			printf("CMD: ");
+			if (!((t_execcmd *)root)->args)
+				printf("NONE, ");
+			else
+			{
+				printf("%s ", (char *)(((t_execcmd *)root)->args->content));
+				((t_execcmd *)root)->args = ((t_execcmd *)root)->args->next;
+			}
+			printf("ARGS: ");
+			if (!((t_execcmd *)root)->args)
+				printf("NONE, ");
+			while (((t_execcmd *)root)->args)
+			{
+				printf("%s ", (char *)((t_execcmd *)root)->args->content);
+				((t_execcmd *)root)->args = ((t_execcmd *)root)->args->next;
+			}
+			printf("REDIRS: ");
+			if (!((t_execcmd *)root)->redirs)
+				printf("NONE");
+			while (((t_execcmd *)root)->redirs)
+			{
+				printf("%s ", ft_strndup(((t_redircmd *)((t_execcmd *)root)->redirs->content)->s_spec,
+				((t_redircmd *)((t_execcmd *)root)->redirs->content)->e_spec - ((t_redircmd *)((t_execcmd *)root)->redirs->content)->s_spec));
+				t_redir rtype = ((t_redircmd *)((t_execcmd *)root)->redirs->content)->redir_type;
+				switch (rtype)
+				{
+					case REDIR_INPUT:	
+						printf("INPUT ");
+						break;
+					case REDIR_OUTPUT:
+						printf("OUTPUT ");
+						break;
+					case REDIR_APPEND:
+						printf("APPEND ");
+						break;
+					case REDIR_HDOC:
+						printf("HEREDOC ");
+						break;
+					default:
+						printf("NONE ");
+						break;
+				}
+				printf("FD:%i ", ((t_redircmd *)((t_execcmd *)root)->redirs->content)->fd);
+				((t_execcmd *)root)->redirs = ((t_execcmd *)root)->redirs->next;
+			}
+			printf("\n");
+		}
+}
 
-void	mini_panic(char *str)
+void	mini_panic(char *str, int exit_flag, int exit_status)
 {
+	ft_putstr_fd("msh: ", STDOUT_FILENO);
 	ft_putstr_fd(str, STDOUT_FILENO);
-	exit(1);
+	if (exit_flag)
+		exit(exit_status);
 }
 
 char	*get_prompt(t_msh *msh)
@@ -83,19 +174,25 @@ int	main(int argc, char **argv, char **env)
 	char			*prompt;
 	char			*line;
 
-	(void)argv;
-	(void)argc;
+	(void)argv, (void)argc;
 	msh->env = env;
 	while (1)
 	{
 		msh->user = get_user();
 		prompt = get_prompt(msh);
 		if (!prompt)
-			mini_panic("An error occured.");
+		{
+			free(msh->user);
+			mini_panic("An error occured.", false, -1);
+		}
 		line = readline(prompt);
+		if (!line) 
+			exit(0);
 		add_history(line);
-		t_node *root = get_node(NULL, 0);
-		parser(line, root);
+		t_cmd *root;
+		parser(line, line + ft_strlen(line), &root);
+		if (!root)
+			continue ;
 		//printf("%p\n", root->right);
 		executor(root, msh);
 		//treeprint(root, 0);
