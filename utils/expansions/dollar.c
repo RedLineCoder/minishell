@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/29 16:56:59 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 15:15:31 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,12 @@ char	*get_envvar(char *start, char *end)
 char	*get_argsize(char *arg)
 {
 	int		len;
-	char	*tmp;
 	char	*start;
 	char	*end;
 
 	while (*arg)
 	{
-		tmp = arg;
-		arg = pass_quote(arg, arg + ft_strlen(arg), "\'");
-		len += arg - tmp;
+		len += pass_quote(&arg, arg + ft_strlen(arg), "\'");
 		if (*arg++ == '$')
 		{
 			start = arg;

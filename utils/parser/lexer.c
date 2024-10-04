@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:01:04 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 17:48:02 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ t_redir	get_redir(char *ts, char *te)
 {
 	int	len;
 
-	while (ts < te && !ft_strchr(REDIRS, *ts))
+	while (ts < te && !str_include(REDIRS, *ts))
 		ts++;
 	len = te - ts;
 	if (!len)
@@ -62,7 +62,7 @@ t_tokens	get_token_type(char *ts, char *te)
 	{
 		while (ts != te)
 		{
-			if (!pass_quote(&ts, te, QUOTES))
+			if (pass_quote(&ts, te, QUOTES) == -1)
 				return (ERR_QUOTE);
 			ts++;
 		}

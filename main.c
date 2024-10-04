@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 13:51:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/04 16:55:13 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,12 +190,10 @@ int	main(int argc, char **argv, char **env)
 			exit(0);
 		add_history(line);
 		t_cmd *root;
-		parser(line, line + ft_strlen(line), &root);
-		if (!root)
-			continue ;
+		if (!parser(line, line + ft_strlen(line), &root))
+			executor(root, msh);
 		//printf("%p\n", root->right);
-		executor(root, msh);
-		//treeprint(root, 0);
+		treeprint(root, 0);
 		free(line);
 		free(prompt);
 	}

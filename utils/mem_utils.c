@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 12:35:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/28 15:10:29 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 17:43:27 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,26 @@ void	clean_tree(void *cmd)
 		ft_lstclear(&((t_execcmd *)cmd)->args, free);
 	}
 	free(cmd);
+}
+
+t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
+{
+	t_part	ln;
+	char	*ts;
+	char	*te;
+
+	ln.lfts = s;
+	while (s && s != e)
+	{
+		pass_block(s, &s, e);
+		if (get_token(&s, &e, &ts, &te) == tkn)
+		{
+			ln.lfte = ts;
+			ln.rghts = te;
+			if (!rev)
+				break ;
+		}
+	}
+	ln.rghte = e;
+	return (ln);
 }

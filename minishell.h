@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 13:48:49 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/04 17:46:57 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,7 @@ char			*get_cmd_path(char *command);
 char			*ft_strndup(char *src, int size);
 int				str_append(char **s1, char const *s2);
 int				str_arr_size(char **arr);
+char			*str_include(const char *s, int c);
 void			free_string_array(char **arr);
 void			execute_command(char *command, char **args, char **env);
 
