@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/03 17:55:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:50:51 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,13 +106,13 @@ void	execute_pipe(t_pipecmd *pipecmd, t_msh *msh)
 	exit(wait_child_processes(pid));
 }
 
-int	execute_logic(t_opcmd *opcmd, t_msh *msh)
+int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 {
-	t_cmdop const	op = opcmd->op_type;
+	t_logicop const	op = logiccmd->op_type;
 	int				status;
 
-	status = execute_cmd(opcmd->left, msh, true);
+	status = execute_cmd(logiccmd->left, msh, true);
 	if ((status && op == OP_OR) || (!status && op == OP_AND))
-		status = execute_cmd(opcmd->right, msh, true);
+		status = execute_cmd(logiccmd->right, msh, true);
 	return (status);
 }

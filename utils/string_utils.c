@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/22 16:32:31 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 13:00:52 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	*ft_strndup(char *src, int size)
 {
-	char	*const str = malloc(sizeof(char) * (size + 1));
-	
+	char *const	str = malloc(sizeof(char) * (size + 1));
+
 	if (!str)
 		return (NULL);
 	str[size] = '\0';
@@ -26,7 +26,7 @@ char	*ft_strndup(char *src, int size)
 
 int	str_arr_size(char **arr)
 {
-	int		size;
+	int	size;
 
 	size = -1;
 	while (arr[++size])
@@ -36,7 +36,7 @@ int	str_arr_size(char **arr)
 
 void	free_string_array(char **arr)
 {
-	int		i;
+	int	i;
 
 	if (!arr)
 		return ;
@@ -54,7 +54,7 @@ int	str_append(char **s1, char const *s2)
 
 	s1_len = ft_strlen(*s1);
 	s2_len = ft_strlen(s2);
-	str = (char *) malloc(sizeof(char) * (s1_len + s2_len + 1));
+	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 1));
 	if (!str)
 		return (0);
 	ft_strlcpy(str, *s1, s1_len + 1);
@@ -63,24 +63,24 @@ int	str_append(char **s1, char const *s2)
 	return (1);
 }
 
-t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token, int reverse)
+t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
 {
-	t_lnsplit 	ln;
-	char		*ts;
-	char		*te;
+	t_part	ln;
+	char	*ts;
+	char	*te;
 
-	ln.lfts = line;
-	while (line && line != end)
+	ln.lfts = s;
+	while (s && s != e)
 	{
-		line = pass_block(line, end);
-		if (get_token(&line, &end, &ts, &te) == token)
+		pass_block(s, &s, e);
+		if (get_token(&s, &e, &ts, &te) == tkn)
 		{
 			ln.lfte = ts;
 			ln.rghts = te;
-			if (!reverse)
+			if (!rev)
 				break ;
 		}
 	}
-	ln.rghte = end;
+	ln.rghte = e;
 	return (ln);
 }

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/03 17:47:38 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:51:50 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 	else if (token == SUBSHELL)
 		execute_block((t_blockcmd *)cmd, msh);
 	else if (token == LOGIC)
-		return (execute_logic((t_opcmd *)cmd, msh));
+		return (execute_logic((t_logiccmd *)cmd, msh));
 	return (EXIT_FAILURE);
 }
 
@@ -77,8 +77,8 @@ int	loop_heredocs(t_cmd *cmd)
 		lst = ((t_pipecmd *)cmd)->pipelist;
 	else if (token == LOGIC)
 	{
-		loop_heredocs(((t_opcmd *)cmd)->left);
-		loop_heredocs(((t_opcmd *)cmd)->right);
+		loop_heredocs(((t_logiccmd *)cmd)->left);
+		loop_heredocs(((t_logiccmd *)cmd)->right);
 	}
 	else if (token == SUBSHELL)
 		loop_heredocs(((t_blockcmd *)cmd)->subshell);
