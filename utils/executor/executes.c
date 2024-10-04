@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:50:51 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 02:36:46 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,21 @@ int	execute_redir(t_redircmd *redir)
 	if (type == REDIR_HDOC)
 		return (dup2(redir->pipe[0], redir->fd), \
 		close(redir->pipe[0]), true);
-	flags = O_RDWR;
+	flags = 0;
+	if (type == REDIR_INPUT)
+		flags |= O_RDONLY;
+	if (type == REDIR_OUTPUT)
+		flags |= O_WRONLY;
 	if (type == REDIR_APPEND)
 		flags |= O_APPEND;
 	if (type != REDIR_INPUT)
 		flags |= O_CREAT;
 	file = ft_strndup(redir->s_spec, redir->e_spec - redir->s_spec);
 	fd = open(file, flags, S_IRWXU);
-	free(file);
-	if (fd == -1)
-		return (false);
-	if (type == REDIR_APPEND || type == REDIR_OUTPUT)
-		dup2(fd, redir->fd);
-	else
-		dup2(fd, redir->fd);
+	if (fd == -1 || dup2(fd, redir->fd) == -1)
+		return (mini_panic(file, NULL, false, -1), free(file), false);
 	close(fd);
+	free(file);
 	return (true);
 }
 
@@ -46,7 +46,7 @@ void	execute_exec(t_execcmd *exec, char **env)
 	char **const	args = get_args_arr(exec->args);
 
 	if (!args)
-		mini_panic("Malloc error\n", true, EXIT_FAILURE);
+		mini_panic(NULL, NULL, true, EXIT_FAILURE);
 	lst = exec->redirs;
 	while (lst)
 	{
@@ -89,10 +89,13 @@ void	execute_pipe(t_pipecmd *pipecmd, t_msh *msh)
 	while (lst)
 	{
 		if (pipe(p))
-			exit(1);
+			mini_panic(NULL, NULL, true, EXIT_FAILURE);
 		pid = fork();
 		if (pid == -1)
-			exit(EXIT_FAILURE);
+		{
+			close_pipe(p);
+			mini_panic(NULL, NULL, true, EXIT_FAILURE);
+		}
 		if (pid)
 			dup2(p[0], STDIN_FILENO);
 		else if (ft_lstlast(lst) != lst)

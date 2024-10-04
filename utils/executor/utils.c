@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:46:35 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 02:38:00 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,21 @@ int	wait_child_processes(int pid)
 
 void	execute_command(char *command, char **args, char **env)
 {
+	int		args_created;
 	char	*path;
-	bool	args_created;
-
+	char	*err;
+	t_stat	file;
+	
+	err = NULL;
 	path = get_cmd_path(command);
 	if (!path)
-		mini_panic("Command not found.\n", true, EXIT_FAILURE);
+		err = "command not found\n";
+	else if (stat(path, &file))
+		err = "error reading file information\n";
+	else if (S_ISDIR(file.st_mode))
+		err = "is a directory\n";
+	if (err)
+		mini_panic(args[0], err, true, EXIT_FAILURE);
 	args_created = false;
 	if (!args)
 	{
@@ -55,8 +64,6 @@ char	*get_cmd_path(char *command)
 	char		*path;
 	size_t		i;
 
-	if (!access(command, F_OK))
-		return (command);
 	if (!pathenv)
 		return (NULL);
 	paths = ft_split(pathenv, ':');
@@ -74,6 +81,8 @@ char	*get_cmd_path(char *command)
 		path = NULL;
 	}
 	free_string_array(paths);
+	if (!access(command, F_OK | X_OK))
+		return (command);
 	return (path);
 }
 
@@ -83,8 +92,6 @@ char	**get_args_arr(t_list *arglist)
 	char		**args;
 	const int	len = ft_lstsize(arglist);
 
-	if (!len)
-		return (NULL);
 	args = ft_calloc(sizeof(char *), len + 1);
 	if (!args)
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 13:48:49 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/04 19:07:18 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdio.h>
 # include <stdbool.h>
 # include <unistd.h>
+# include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 
@@ -31,6 +32,8 @@
 # define BLOCKS "()"
 # define DIGITS "0123456789"
 # define ERR_TKN "-msh: syntax error near unexpected token "
+# define ERR_TAG "-msh"
+typedef struct stat t_stat;
 
 typedef enum e_cmdtype
 {
@@ -178,13 +181,13 @@ t_tokens		get_token_type(char *ts, char *te);
 int			wait_child_processes(int pid);
 int			execute_redir(t_redircmd *redir);
 int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
-int			execute_cmd(t_cmd *cmd, t_msh *msh, int forked);
+int			execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork);
 void		execute_exec(t_execcmd *exec, char **env);
 void		execute_block(t_blockcmd *block, t_msh *msh);
 void		execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
 void		executor(t_cmd *block, t_msh *msh);
 void		close_pipe(int	fd[2]);
-void		mini_panic(char *str, int exit_flag, int exit_status);
+void		mini_panic(char *title, char *content, int exit_flag, int exit_status);
 char		**get_args_arr(t_list	*arglist);
 
 // Utils

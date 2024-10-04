@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:51:50 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 02:33:26 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 	{
 		pid = fork();
 		if (pid == -1)
-			return (EXIT_FAILURE);
+			return (mini_panic(NULL, NULL, false, -1), EXIT_FAILURE);
 		if (pid)
 			return (wait_child_processes(pid));
 	}
@@ -43,7 +43,7 @@ int	run_heredoc(t_redircmd *redir)
 	const size_t	len = redir->e_spec - redir->s_spec;
 
 	if (pipe(redir->pipe) == -1)
-		return (false);
+		return (mini_panic(NULL, NULL, false, -1), false);
 	while (1)
 	{
 		buffer = readline("> ");
@@ -54,7 +54,7 @@ int	run_heredoc(t_redircmd *redir)
 			close(redir->pipe[1]);
 			if (!buffer)
 			{
-				mini_panic("Heredoc error.", false, false);
+				mini_panic(NULL, "readline error.", false, false);
 				return (false);
 			}
 			return (true);
@@ -69,7 +69,9 @@ int	loop_heredocs(t_cmd *cmd)
 {
 	t_tokens const	token = cmd->type;
 	t_list			*lst;
+	int				status;
 
+	status = true;
 	lst = NULL;
 	if (token == EXEC)
 		lst = ((t_execcmd *)cmd)->redirs;
@@ -81,16 +83,25 @@ int	loop_heredocs(t_cmd *cmd)
 		loop_heredocs(((t_logiccmd *)cmd)->right);
 	}
 	else if (token == SUBSHELL)
+	{
 		loop_heredocs(((t_blockcmd *)cmd)->subshell);
+		lst = ((t_blockcmd *)cmd)->redirs;
+	}
 	while (lst)
 	{
-		if (token == EXEC
+		if ((token == EXEC || token == SUBSHELL)
 			&& ((t_redircmd *)lst->content)->redir_type == REDIR_HDOC)
-			run_heredoc((t_redircmd *)lst->content);
+		{
+			status = run_heredoc((t_redircmd *)lst->content);
+			if (!status)
+				break;
+		}
 		else if (token == PIPE)
 			loop_heredocs(lst->content);
 		lst = lst->next;
 	}
+	if (!status)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 

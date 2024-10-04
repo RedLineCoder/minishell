@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 13:51:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 02:38:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,10 +132,27 @@ void treeprint(t_cmd *root, int level)
 		}
 }
 
-void	mini_panic(char *str, int exit_flag, int exit_status)
+void	mini_panic(char *title, char *content, int exit_flag, int exit_status)
 {
-	ft_putstr_fd("msh: ", STDOUT_FILENO);
-	ft_putstr_fd(str, STDOUT_FILENO);
+	char	*tag;
+
+	tag = ft_strdup(ERR_TAG);
+	if (!tag)
+		perror(ERR_TAG);
+	if (title)
+	{
+		str_append(&tag, ": ");
+		str_append(&tag, title);
+	}
+	if (content)
+	{
+		ft_putstr_fd(tag, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(content, STDERR_FILENO);
+	}
+	else
+		perror(tag);
+	free(tag);
 	if (exit_flag)
 		exit(exit_status);
 }
@@ -183,18 +200,18 @@ int	main(int argc, char **argv, char **env)
 		if (!prompt)
 		{
 			free(msh->user);
-			mini_panic("An error occured.", false, -1);
+			mini_panic(NULL, "An error occured.", false, -1);
 		}
 		line = readline(prompt);
 		if (!line) 
 			exit(0);
 		add_history(line);
-		t_cmd *root;
+		t_cmd *root = NULL;
 		parser(line, line + ft_strlen(line), &root);
-		if (!root)
-			continue ;
+		if (!parser(line, line + ft_strlen(line), &root))
+			if (root)
+				executor(root, msh); 
 		//printf("%p\n", root->right);
-		executor(root, msh);
 		//treeprint(root, 0);
 		free(line);
 		free(prompt);
