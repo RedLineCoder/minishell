@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 15:15:31 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 19:21:24 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,23 +43,34 @@ char	*get_argsize(char *arg)
 	return (len);
 }
 
+/* int	set_string(char **str, int size)
+{
+	char	*line;
+	int		index;
+
+	if (!str | !*str)
+		return (0);
+	line = *str;
+	while (size--)
+		*line++ = *ps++;
+	return (1);
+} */
+
 char	*expand_dollar(char *arg)
 {
 	char	*expanded;
+	char	*start;
 	int		size;
-	int		index;
+	int		len;
 
 	size = get_argsize(arg);
-	expanded = ft_calloc(sizeof(char), size + 1);
-	index = -1;
-	while (++index < size)
+	expanded = malloc(sizeof(char) * size + 1);
+	while (*arg)
 	{
-		if (*arg == '\'')
+		/* if (*arg == '\'')
 		{
-			expanded[index++] = *arg++;
-			while (index < size && *arg && *arg != '\'')
-				expanded[index++] = *arg++;
-		}
+			len = pass_quote(&arg, arg + ft_strlen(arg), "'");
+		} */
 	}
 }
 

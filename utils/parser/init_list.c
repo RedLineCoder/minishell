@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 12:12:48 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 18:42:30 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	syntax_panic(char *ps)
 
 	pe = ps + ft_strlen(ps);
 	token = get_token(&ps, &pe, &ts, &te);
-	ft_putstr_fd(ERR_TKN, 2);
+	ft_putstr_fd("-msh: syntax error near unexpected token ", 2);
 	ft_putstr_fd("'", 2);
 	if (!token || token == ERR_QUOTE)
 		write(2, "newline", 7);

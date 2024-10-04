@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 17:47:51 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 19:11:41 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int	pass_quote(char **qs, char *pe, char *quotes)
 			(*qs)++;
 			size++;
 		}
+		if (**qs)
+			size++;
 	}
 	if (!**qs)
 		return (-1);
@@ -69,9 +71,8 @@ int	get_operator(char **te)
 	}
 	else if (!str_include(OPERATOR, *str))
 		return (0);
-	if (*(str + 1))
-		if (*str == *(str + 1))
-			str++;
+	if (*(str + 1) && *str == *(str + 1))
+		str++;
 	*te = str + 1;
 	return (1);
 }

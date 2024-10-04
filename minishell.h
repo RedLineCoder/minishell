@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 17:46:57 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 18:42:17 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 # define QUOTES "'\""
 # define BLOCKS "()"
 # define DIGITS "0123456789"
-# define ERR_TKN "-msh: syntax error near unexpected token "
 
 typedef enum e_cmdtype
 {
