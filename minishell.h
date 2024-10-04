@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/03 16:22:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:44:56 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,29 +153,6 @@ typedef struct s_opcmd
 	t_cmd	*left;
 	t_cmd	*right;
 }			t_opcmd;
-
-// Parser
-t_cmd		*parser(char *ps, char *pe);
-t_cmd		*parse_cmd(char **ps, char **pe);
-t_cmd		*parse_redir(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_exec(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_cmdop(char **ps, char **pe, char *ts, char *te);
-t_cmd		*parse_arg(char **ps, char **pe, char *ts, char *te);
-t_lnsplit	ft_lnsplit(char *line, char *end, t_tokens token, int reverse);
-char		*pass_block(char *bs, char *pe);
-
-// Tokenizer
-t_tokens	get_token(char **ps, char **pe, char **ts, char **te);
-t_tokens	peek(char *ps, char *pe, t_tokens token);
-bool		peek_consecutive(char *ps, char *pe, char *charset, char *filter);
-char		*pass_quote(char *qs, char *pe);
-char		*pass_block(char *bs, char *pe);
-char		*get_operator(char *te);
-
-// Lexer
-t_redir		get_redir(char *ts, char *te);
-t_cmdop		get_logicop(char *ts, char *te);
-t_tokens	get_token_type(char *ts, char *te);
 
 // Executor
 int			wait_child_processes(int pid);
