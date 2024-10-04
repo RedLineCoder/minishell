@@ -6,18 +6,18 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/28 15:42:50 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 13:01:39 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-char	*pass_block(char *bs, char *pe)
+int	pass_block(char *bs, char **be, char *pe)
 {
 	int		sem_block;
 
 	if (peek(bs, pe, TKN_NONE) != BLK_OP)
-		return (bs);
+		return (1);
 	while ((bs != pe) && ft_strchr(SPACE, *bs))
 		bs++;
 	sem_block = 1;
@@ -29,53 +29,45 @@ char	*pass_block(char *bs, char *pe)
 		if (*bs == '(')
 			sem_block++;
 	}
-	return (bs);
+	if (!*bs)
+		return (0);
+	return (*be = bs, 1);
 }
 
-char	*pass_quote(char *qs, char *pe)
+int	pass_quote(char **qs, char *pe, char *quotes)
 {
 	char	quote;
 
-	if (!ft_strchr(QUOTES, *qs))
-		return (qs);
-	quote = *(qs++);
-	while (qs != pe && *qs != quote)
-		qs++;
-	return (qs);
+	if (ft_strchr(quotes, **qs))
+	{
+		quote = **qs;
+		(*qs)++;
+		while (*qs != pe && **qs != quote)
+			(*qs)++;
+	}
+	if (!**qs)
+		return (0);
+	return (1);
 }
 
-char	*get_operator(char *te)
-{
-	while (ft_isdigit(*te))
-		te++;
-	if (*te == *(te + 1))
-		te++;
-	te++;
-	return (te);
-}
-
-void	handle_sep(char **ps, char **pe, char **ts, char **te)
+int	get_operator(char **te)
 {
 	char	*str;
 
-	str = *ps;
-	*ts = str;
-	if (ft_strchr(BLOCKS, *str))
-		str++;
-	else if (ft_strchr(OPERATOR, *str)
-		|| peek_consecutive(str, *pe, REDIRS, DIGITS))
-		str = get_operator(str);
-	else
+	str = *te;
+	if (ft_isdigit(*str))
 	{
-		while (str != *pe && !ft_strchr(SEP, *str))
-		{
-			str = pass_quote(str, *pe);
-			if (*str)
-				str++;
-		}
+		while (ft_isdigit(*str))
+			str++;
+		if (!ft_strchr(REDIRS, *str))
+			return (0);
 	}
-	*te = str;
-	*ps = str;
+	else if (!ft_strchr(OPERATOR, *str))
+		return (0);
+	if (*str == *(str + 1))
+		str++;
+	*te = str + 1;
+	return (1);
 }
 
 t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
@@ -89,7 +81,16 @@ t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
 		(*ps)++;
 	if (*ps == *pe)
 		return (TKN_NONE);
-	handle_sep(ps, pe, &start, &end);
+	start = *ps;
+	if (ft_strchr(BLOCKS, **ps))
+		(*ps)++;
+	else if (get_operator(ps))
+		;
+	else
+		while (*ps != *pe && !ft_strchr(SEP, **ps))
+			if (pass_quote(ps, *pe, QUOTES))
+				(*ps)++;
+	end = *ps;
 	if (ts)
 		*ts = start;
 	if (te)

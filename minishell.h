@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/09/28 15:41:28 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 12:59:24 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 # include "lib/libft/libft.h"
 # include <fcntl.h>
 # include <limits.h>
+# include <stdio.h>
+# include <stdbool.h>
+# include <unistd.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdbool.h>
-# include <stdio.h>
-# include <unistd.h>
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
@@ -146,11 +146,8 @@ t_part			ft_divide(char *s, char *e, t_tokens tkn, int rev);
 // Tokenizer
 t_tokens		get_token(char **ps, char **pe, char **ts, char **te);
 t_tokens		peek(char *ps, char *pe, t_tokens token);
-bool			peek_consecutive(char *ps, char *pe, char *charset,
-					char *filter);
-char			*pass_quote(char *qs, char *pe);
-char			*pass_block(char *bs, char *pe);
-char			*get_operator(char *te);
+int				pass_quote(char **qs, char *pe, char *quotes);
+int				pass_block(char *bs, char **be, char *pe);
 
 // Lexer
 t_redir			get_redir(char *ts, char *te);
@@ -225,4 +222,24 @@ is_struct ?
 			write(2, ts, te - ts);
 		ft_putendl_fd("'", 2);
 	}
+} */
+
+/* int	get_operator(char **te)
+{
+	char	*str;
+
+	str = *te;
+	if (ft_isdigit(*str))
+	{
+		while (ft_isdigit(*str))
+			str++;
+		if (!ft_strchr(REDIRS, *str))
+			return (0);
+	}
+	else if (!ft_strchr(OPERATOR, *str))
+		return (0);
+	if (*str == *(str + 1))
+		str++;
+	*te = str + 1;
+	return (1);
 } */

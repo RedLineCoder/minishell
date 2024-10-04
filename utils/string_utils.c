@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 14:55:56 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 13:00:52 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
 	ln.lfts = s;
 	while (s && s != e)
 	{
-		s = pass_block(s, e);
+		pass_block(s, &s, e);
 		if (get_token(&s, &e, &ts, &te) == tkn)
 		{
 			ln.lfte = ts;

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 15:13:44 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 12:59:52 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,7 @@ int	parse_block(char *ps, char *pe, t_cmd **cmd)
 		return (1);
 	block->type = SUBSHELL;
 	get_token(&ps, &pe, &ts, &te);
-	te = pass_block(ts, pe);
-	if (!*te)
+	if (!pass_block(ts, &te, pe))
 		return (syntax_panic(te));
 	if (!peek(ts + 1, te, TKN_NONE))
 		return (syntax_panic(ts + 1));

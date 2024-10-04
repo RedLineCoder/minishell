@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 15:18:50 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 12:12:48 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	redir->type = REDIR;
 	redir->redir_type = get_redir(ts, te);
 	redir->fd = redir->redir_type % 2;
-	if (*fd != *ts)
+	if (ft_isdigit(*ts))
 		redir->fd = ft_atoi(fd);
 	if (peek(ps, pe, TKN_NONE) == ARG)
 	{

@@ -12,7 +12,7 @@ RL_FLAGS = -L${PWD}/lib/readline/lib -I${PWD}/lib/readline/include/readline -lre
 LIBFT = lib/libft/libft.a
 LIBFT_PATH = lib/libft
 
-GNL = lib/gnl/gnl.a 
+GNL = lib/gnl/gnl.a
 GNL_PATH = lib/gnl
 
 CC = cc

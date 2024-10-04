@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 00:19:57 by emyildir          #+#    #+#             */
-/*   Updated: 2024/09/28 12:26:04 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 13:01:04 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ t_tokens	get_token_type(char *ts, char *te)
 	{
 		while (ts != te)
 		{
-			ts = pass_quote(ts, te);
-			if (!*ts)
+			if (!pass_quote(&ts, te, QUOTES))
 				return (ERR_QUOTE);
 			ts++;
 		}
@@ -77,7 +76,7 @@ t_tokens	peek(char *ps, char *pe, t_tokens token)
 	{
 		while (ps && ps != pe)
 		{
-			ps = pass_block(ps, pe);
+			pass_block(ps, &ps, pe);
 			if (!*ps)
 				return (TKN_NONE);
 			if (get_token(&ps, &pe, NULL, NULL) == token)
@@ -86,19 +85,4 @@ t_tokens	peek(char *ps, char *pe, t_tokens token)
 		return (TKN_NONE);
 	}
 	return (get_token(&ps, &pe, NULL, NULL));
-}
-
-bool	peek_consecutive(char *ps, char *pe, char *charset, char *filter)
-{
-	if (!ps || ps == pe)
-		return (false);
-	while (*ps && (ps != pe))
-	{
-		if (ft_strchr(charset, *ps))
-			return (true);
-		if (ft_strchr(SEP, *ps) || !ft_strchr(filter, *ps))
-			break ;
-		ps++;
-	}
-	return (false);
 }
