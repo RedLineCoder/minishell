@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 09:15:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 14:13:21 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 15:15:25 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ void	print_env(t_list *lst, int quotes, int hide_null)
 			printf("%s", env->key);
 			if (env->pair)
 			{
+				printf("=");
 				if (quotes)
-					printf("=\"");
+					printf("\"");
 				printf("%s", env->pair);
 				if (quotes)
 					printf("\"");

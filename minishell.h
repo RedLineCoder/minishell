@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 14:10:26 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 15:30:40 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 # define DIGITS "0123456789"
 # define ERR_TKN "-msh: syntax error near unexpected token "
 # define ERR_TAG "-msh"
-# define MSH_TAG "msh$ "
+# define MSH_TAG "msh $ "
 
 typedef struct stat t_stat;
 
@@ -82,7 +82,7 @@ typedef enum e_builtins
 	BUILTIN_ECHO,
 	BUILTIN_CD,
 	BUILTIN_PWD,
-	BULTIN_EXPORT,
+	BUILTIN_EXPORT,
 	BUILTIN_UNSET,
 	BUILTIN_ENV,
 	BUILTIN_EXIT
@@ -192,7 +192,7 @@ int			execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork);
 int			execute_exec(t_execcmd *exec, t_msh *msh, int builtin);
 void		execute_block(t_blockcmd *block, t_msh *msh);
 void		execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
-int			execute_builtin(char **args, t_msh *msh);
+int			execute_builtin(int builtin, char **args, t_msh *msh);
 void		executor(t_cmd *block, t_msh *msh);
 void		close_pipe(int	fd[2]);
 void		mini_panic(char *title, char *content, int exit_flag, int exit_status);

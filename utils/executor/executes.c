@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 09:51:44 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 14:53:46 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 	if (!builtin)
 		execute_command(args[0], args, msh->env, false);
 	else
-		status = execute_builtin(args, msh);
+		status = execute_builtin(builtin, args, msh);
 	free_string_array(args);
 	if (!builtin)
 		exit(EXIT_FAILURE);

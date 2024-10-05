@@ -6,52 +6,49 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 09:16:25 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 15:29:06 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	is_builtin(t_list *argslist)
+int	is_builtin(t_execcmd *exec)
 {
-	char	**const args = get_args_arr(argslist);
+	int			i;
+	char		*cmd;
+	char		*cmds[8];
 	
-	if (!argslist)
+	if (exec->type != EXEC || !(exec->args && exec->args->content))
 		return (false);
-	if (!ft_strncmp(args[0], "cd", 3)
-		|| !ft_strncmp(args[0], "exit", 5)
-		|| !ft_strncmp(args[0], "pwd", 4)
-		|| !ft_strncmp(args[0], "echo", 5)
-		|| !ft_strncmp(args[0], "export", 7)
-		|| !ft_strncmp(args[0], "unset", 6)
-		|| !ft_strncmp(args[0], "env", 4))
-		return (true);
-	return (false);
+	cmd = exec->args->content;
+	cmds[BUILTIN_ECHO] = "echo";
+	cmds[BUILTIN_CD] = "cd";
+	cmds[BUILTIN_PWD] = "pwd";	
+	cmds[BUILTIN_EXPORT] = "export";	
+	cmds[BUILTIN_UNSET] = "unset";	
+	cmds[BUILTIN_ENV] = "env";	
+	cmds[BUILTIN_EXIT] = "exit";
+	i = 0;
+	while (++i < 8)
+		if (!ft_strncmp(cmds[i], cmd, ft_strlen(cmd) + 1))
+			return (i);
+	return (BUILTIN_NONE);
 }
 
-int	execute_builtin(char **args, t_msh *msh)
+int	execute_builtin(int builtin, char **args, t_msh *msh)
 {
-	int		args_size;
-	int		status;
-	(void)msh;
+	int const	args_size = str_arr_size(args);
+	int			(*f[8])(int, char **, t_msh *);
 
-	args_size = str_arr_size(args);
-	status = EXIT_FAILURE;
-	if (!ft_strncmp(args[0], "cd", 3))
-		status = builtin_cd(args_size, args, msh);
-	else if (!ft_strncmp(args[0], "exit", 5))
-		status = builtin_exit(args_size, args, msh);
-	else if (!ft_strncmp(args[0], "pwd", 4))
-		status = builtin_pwd(args_size, args, msh);
-	else if (!ft_strncmp(args[0], "echo", 5))
-		status = builtin_echo(args_size, args, msh);
-	else if (!ft_strncmp(args[0], "export", 7))
-		status = builtin_export(args_size, args, msh);
-	else if (!ft_strncmp(args[0], "unset", 6))
-		status = builtin_unset(args_size, args, msh);
-	else if (!ft_strncmp(args[0], "env", 4))
-		status = builtin_env(args_size, args, msh);
-	return (status);
+	f[BUILTIN_NONE] = NULL;
+	f[BUILTIN_ECHO] = builtin_echo;
+	f[BUILTIN_CD] = builtin_cd;
+	f[BUILTIN_PWD] = builtin_pwd;	
+	f[BUILTIN_EXPORT] = builtin_export;	
+	f[BUILTIN_UNSET] = builtin_unset;	
+	f[BUILTIN_ENV] = builtin_env;	
+	f[BUILTIN_EXIT] = builtin_exit;
+	return (f[builtin](args_size, args, msh));
 }
 
 int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
@@ -60,7 +57,7 @@ int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 	pid_t			pid;
 	t_tokens const	token = cmd->type;
 	
-	builtin = token == EXEC && is_builtin(((t_execcmd *)cmd)->args);
+	builtin = is_builtin((t_execcmd *)cmd);
 	if ((should_fork && !builtin)
 		&& (token == EXEC || token == PIPE || token == SUBSHELL))
 	{
@@ -70,12 +67,12 @@ int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 		if (pid)
 			return (wait_child_processes(pid));
 	}
-	if (token == EXEC)
-		execute_exec((t_execcmd *)cmd, msh, builtin);
-	else if (token == PIPE)
+	if (token == PIPE)
 		execute_pipe((t_pipecmd *)cmd, msh);
 	else if (token == SUBSHELL)
 		execute_block((t_blockcmd *)cmd, msh);
+	else if (token == EXEC)
+		return (execute_exec((t_execcmd *)cmd, msh, builtin));
 	else if (token == LOGIC)
 		return (execute_logic((t_logiccmd *)cmd, msh));
 	return (EXIT_FAILURE);

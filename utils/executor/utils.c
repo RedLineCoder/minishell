@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 10:18:19 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 15:25:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	execute_command(char *command, char **args, t_list	*env, int silence)
 		if(envarr)
 			free_string_array(envarr);
 		if (!silence)
-			mini_panic(command, err, true, EXIT_FAILURE);
+			mini_panic(command, err, true, 127);
 		exit(EXIT_FAILURE);
 	}
 	execve(path, args, get_env_arr(env));

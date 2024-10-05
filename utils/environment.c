@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 07:19:33 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 13:49:37 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 14:22:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	destroy_env(t_list *lst)
 t_list	*get_env_node(t_list *lst, char *key)
 {
 	t_env	*env;
-	
+
 	while (lst)
 	{
 		env = lst->content;
@@ -43,7 +43,7 @@ char	*get_env(t_list *root, char *key)
 {
 	t_list	*node;
 	t_env	*env;
-	
+
 	node = get_env_node(root, key);
 	if (!node)
 		return (NULL);
@@ -51,12 +51,11 @@ char	*get_env(t_list *root, char *key)
 	return (env->pair);
 }
 
-
 int	unset_env(t_list **root, char *key)
 {
 	t_list	*lst;
 	t_list	*target;
-	
+
 	lst = *root;
 	target = get_env_node(*root, key);
 	if (!target)
@@ -80,7 +79,7 @@ int	set_env(t_list **root, char *key, char *pair)
 {
 	t_list	*lst;
 	t_env	*env;
-	
+
 	lst = get_env_node(*root, key);
 	if (lst)
 		env = lst->content;
@@ -103,4 +102,3 @@ int	set_env(t_list **root, char *key, char *pair)
 		env->pair = ft_strdup(pair);
 	return (true);
 }
-
