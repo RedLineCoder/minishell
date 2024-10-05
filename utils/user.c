@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 22:20:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 09:57:46 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 16:49:22 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	*get_user(t_list *env)
 	user = get_next_line(p[0]);
 	close(p[0]);
 	if (!user)
-		return (free(args), NULL);
+		return (free_string_array(args), NULL);
 	user[ft_strlen(user) - 1] = '\0';
-	return (free(args), user);
+	return (free_string_array(args), user);
 }

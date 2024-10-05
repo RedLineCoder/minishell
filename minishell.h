@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 15:30:40 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 18:42:22 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,15 +190,17 @@ int			execute_redir(t_redircmd *redir);
 int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
 int			execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork);
 int			execute_exec(t_execcmd *exec, t_msh *msh, int builtin);
+int			loop_redirects(t_list *redirs);
 void		execute_block(t_blockcmd *block, t_msh *msh);
-void		execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
+void		execute_pipe(t_list *pipelist, t_msh *msh);
 int			execute_builtin(int builtin, char **args, t_msh *msh);
 void		executor(t_cmd *block, t_msh *msh);
 void		close_pipe(int	fd[2]);
-void		mini_panic(char *title, char *content, int exit_flag, int exit_status);
+int			mini_panic(char *title, char *content, int exit_flag, int status);
 void		print_env(t_list *lst, int quotes, int hide_null);
 char		**get_args_arr(t_list	*arglist);
 char		**get_env_arr(t_list *mshenv);
+int			get_builtin(t_execcmd *exec);
 
 // Utils
 char			*get_user(t_list *env);
@@ -208,6 +210,7 @@ int				str_append(char **s1, char const *s2);
 int				str_arr_size(char **arr);
 void			free_string_array(char **arr);
 void			execute_command(char *command, char **args, t_list	*env, int silence);
+int				tree_map(t_cmd *cmd, int (*f)(void *));
 
 //Builtins
 int		builtin_cd(int args_size, char **args, t_msh *msh);

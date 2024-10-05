@@ -4,8 +4,8 @@ PARSER_PATH = utils/parser/
 PARSER = $(PARSER_PATH)init_list.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c
 EXECUTOR_PATH = utils/executor/
 EXECUTOR = $(EXECUTOR_PATH)utils.c $(EXECUTOR_PATH)executes.c 
-SOURCES = $(PARSER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c helpers/parser.c helpers/executor.c utils/environment.c helpers/environment.c
-BUILTINS = builtins/cd.c builtins/exit.c builtins/pwd.c builtins/echo.c builtins/export.c builtins/unset.c builtins/env.c
+SOURCES = $(PARSER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c helpers/parser.c helpers/executor.c utils/environment.c helpers/environment.c utils/mem_utils.c utils/tree.c
+BUILTINS = builtins/cd.c builtins/exit.c builtins/pwd.c builtins/echo.c builtins/export.c builtins/unset.c builtins/env.c helpers/builtins.c 
 
 READLINE = lib/readline/lib/libreadline.a
 RL_FLAGS = -L${PWD}/lib/readline/lib -I${PWD}/lib/readline/include/readline -lreadline
@@ -17,7 +17,7 @@ GNL = lib/gnl/gnl.a
 GNL_PATH = lib/gnl
 
 CC = cc
-CFLAGS= -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS= -Wall -Wextra -Werror
 
 all: $(NAME)
 

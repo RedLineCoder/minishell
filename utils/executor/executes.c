@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 14:53:46 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 18:56:25 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@ int	execute_redir(t_redircmd *redir)
 	t_redir const	type = redir->redir_type;
 
 	if (type == REDIR_HDOC)
-		return (dup2(redir->pipe[0], redir->fd), \
-		close(redir->pipe[0]), true);
+		fd = redir->pipe[0];
 	flags = 0;
 	if (type == REDIR_INPUT)
 		flags |= O_RDONLY;
@@ -32,7 +31,8 @@ int	execute_redir(t_redircmd *redir)
 	if (type != REDIR_INPUT)
 		flags |= O_CREAT;
 	file = ft_strndup(redir->s_spec, redir->e_spec - redir->s_spec);
-	fd = open(file, flags, S_IRWXU);
+	if (type != REDIR_HDOC)
+		fd = open(file, flags, S_IRWXU);
 	if (fd == -1 || dup2(fd, redir->fd) == -1)
 		return (mini_panic(file, NULL, false, -1), free(file), false);
 	close(fd);
@@ -42,66 +42,47 @@ int	execute_redir(t_redircmd *redir)
 
 int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 {
-	t_list			*lst;		
-	int				status;
-	char **const	args = get_args_arr(exec->args);
+	int			status;
+	char		**args;
 
+	if (loop_redirects(exec->redirs))
+		return (mini_panic("exec", "malloc error\n", !builtin, EXIT_FAILURE));
+	args = get_args_arr(exec->args);
 	if (!args)
-		mini_panic(NULL, NULL, !builtin, EXIT_FAILURE);
-	lst = exec->redirs;
-	while (lst)
-	{
-		if (!execute_redir(lst->content))
-		{
-			free(args);
-			if (!builtin)
-				exit(EXIT_FAILURE);
-		}
-		lst = lst->next;
-	}
+		return (mini_panic("exec", "malloc error\n", !builtin, EXIT_FAILURE));
 	if (!*args)
 	{
+		free_string_array(args);
 		if (builtin)
 			return (EXIT_SUCCESS);
-		exit(EXIT_SUCCESS);
-	}
-	if (!builtin)
-		execute_command(args[0], args, msh->env, false);
-	else
-		status = execute_builtin(builtin, args, msh);
-	free_string_array(args);
-	if (!builtin)
 		exit(EXIT_FAILURE);
-	return (status);
+	}
+	if (builtin)
+		status = execute_builtin(builtin, args, msh);
+	else
+		execute_command(args[0], args, msh->env, false);
+	free_string_array(args);
+	if (builtin)
+		return (status);
+	exit(EXIT_FAILURE);
 }
 
 void	execute_block(t_blockcmd *block, t_msh *msh)
 {
 	int		status;
-	t_list	*lst;
-
-	lst = block->redirs;
-	while (lst)
-	{
-		if (!execute_redir(lst->content))
-		{
-			execute_redir(lst->content);
-			exit(EXIT_FAILURE);
-		}
-		lst = lst->next;
-	}
+	
+	if (loop_redirects(block->redirs))
+		mini_panic("exec", "malloc error\n", true, EXIT_FAILURE);
 	status = execute_cmd(block->subshell, msh, true);
 	exit(status);
 }
 
-void	execute_pipe(t_pipecmd *pipecmd, t_msh *msh)
+void	execute_pipe(t_list *pipelist, t_msh *msh)
 {
 	int		p[2];
 	pid_t	pid;
-	t_list	*lst;
 
-	lst = pipecmd->pipelist;
-	while (lst)
+	while (pipelist)
 	{
 		if (pipe(p))
 			mini_panic(NULL, NULL, true, EXIT_FAILURE);
@@ -113,12 +94,12 @@ void	execute_pipe(t_pipecmd *pipecmd, t_msh *msh)
 		}
 		if (pid)
 			dup2(p[0], STDIN_FILENO);
-		else if (ft_lstlast(lst) != lst)
+		else if (ft_lstlast(pipelist) != pipelist)
 			dup2(p[1], STDOUT_FILENO);
 		close_pipe(p);
 		if (!pid)
-			execute_cmd(lst->content, msh, false);
-		lst = lst->next;
+			execute_cmd(pipelist->content, msh, false);
+		pipelist = pipelist->next;
 	}
 	close(STDIN_FILENO);
 	exit(wait_child_processes(pid));

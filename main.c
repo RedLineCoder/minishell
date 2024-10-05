@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 12:22:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 19:02:02 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void treeprint(t_cmd *root, int level)
 		}
 }
 
-void	mini_panic(char *title, char *content, int exit_flag, int exit_status)
+int	mini_panic(char *title, char *content, int exit_flag, int status)
 {
 	char	*tag;
 
@@ -154,7 +154,8 @@ void	mini_panic(char *title, char *content, int exit_flag, int exit_status)
 		perror(tag);
 	free(tag);
 	if (exit_flag)
-		exit(exit_status);
+		exit(status);
+	return (status);
 }
 
 char	*get_prompt(t_msh *msh)
@@ -196,6 +197,8 @@ int	main(int argc, char **argv, char **env)
 	while (1)
 	{
 		prompt = MSH_TAG;
+		if (msh->user)
+			free(msh->user);
 		msh->user = get_user(msh->env);
 		if (msh->user)
 			prompt = get_prompt(msh);
@@ -209,7 +212,6 @@ int	main(int argc, char **argv, char **env)
 			exit(0);
 		add_history(line);
 		t_cmd *root = NULL;
-		parser(line, line + ft_strlen(line), &root);
 		if (!parser(line, line + ft_strlen(line), &root))
 			if (root)
 				executor(root, msh); 
@@ -218,6 +220,7 @@ int	main(int argc, char **argv, char **env)
 		free(line);
 		if (msh->user)
 			free(prompt);
+		//clean_tree(root);
 	}
 	return (0);
 }

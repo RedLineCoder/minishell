@@ -6,33 +6,34 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 13:57:43 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 14:15:30 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 18:49:28 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	tree_map(t_cmd *cmd, int (*f)(t_cmd *))
+int	tree_map(t_cmd *cmd, int (*f)(void *))
 {
 	t_tokens const	token = cmd->type;
 	t_list			*lst;
-	int				return_val;
-	return_val = f(cmd);
+	
+	if (!f(cmd))
+		return (false);
 	if (token == PIPE)
 	{
 		lst = ((t_pipecmd *)cmd)->pipelist;
 		while (lst)
 		{
-			tree_map(lst->content, f);
+			if (!tree_map(lst->content, f))
+				return (false);
 			lst = lst->next;
 		}
 	}
-	else if (token == LOGIC)
-	{
-		tree_map(((t_logiccmd *)cmd)->left, f);
-		tree_map(((t_logiccmd *)cmd)->right, f);
-	}
-	else if (token == SUBSHELL)
-		tree_map(((t_blockcmd *)cmd)->subshell, f);
-	return (return_val);
+	else if (token == LOGIC 
+		&& (!tree_map(((t_logiccmd *)cmd)->left, f) 
+		|| !tree_map(((t_logiccmd *)cmd)->right, f)))
+			return (false);
+	else if (token == SUBSHELL && !tree_map(((t_blockcmd *)cmd)->subshell, f))
+		return (false);
+	return (true);
 }
