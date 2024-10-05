@@ -6,97 +6,73 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 19:21:24 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 21:21:44 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-char	*get_envvar(char *start, char *end)
+char	*get_envvar(char **dollar)
 {
+	char	*start;
+	char	*end;
 	char	*envvar;
 	char	*var;
 
+	(*dollar)++;
+	start = *dollar;
+	while (ft_isdigit(**dollar) 
+		|| ft_isalpha(**dollar) || **dollar == '_')
+		(*dollar)++;
+	end = *dollar;
 	var = ft_strndup(start, end - start);
 	envvar = getenv(var);
+	if (!envvar)
+		return (" ");
 	return (free(var), envvar);
 }
 
-char	*get_argsize(char *arg)
+int	get_size(char *arg)
 {
 	int		len;
-	char	*start;
-	char	*end;
 
+	len = 0;
 	while (*arg)
 	{
 		len += pass_quote(&arg, arg + ft_strlen(arg), "\'");
-		if (*arg++ == '$')
-		{
-			start = arg;
-			while (ft_isdigit(arg) || ft_isalpha(arg) || *arg == '_')
-				arg++;
-			end = arg;
-			len += ft_strlen(get_envvar(start, end));
-		}
+		if (*arg == '$')
+			len += ft_strlen(get_envvar(&arg));
+		arg++;
+		len++;
 	}
 	return (len);
 }
 
-/* int	set_string(char **str, int size)
-{
-	char	*line;
-	int		index;
-
-	if (!str | !*str)
-		return (0);
-	line = *str;
-	while (size--)
-		*line++ = *ps++;
-	return (1);
-} */
-
 char	*expand_dollar(char *arg)
 {
 	char	*expanded;
-	char	*start;
-	int		size;
-	int		len;
-
-	size = get_argsize(arg);
-	expanded = malloc(sizeof(char) * size + 1);
-	while (*arg)
-	{
-		/* if (*arg == '\'')
-		{
-			len = pass_quote(&arg, arg + ft_strlen(arg), "'");
-		} */
-	}
-}
-
-/* char	*get_var(char *arg)
-{
 	char	*envvar;
-	char	*var;
-	char	*start;
-	char	*end;
+	int		expand;
+	int		index;
 
+	expand = 1;
+	index = 0;
+	expanded = ft_calloc(sizeof(char), get_size(arg) + 1);
+	if (!expanded)
+		return (NULL);
 	while (*arg)
 	{
 		if (*arg == '\'')
-			arg = pass_quote(arg, arg + ft_strlen(arg));
-		if (*arg == '$')
+			expand = !expand;
+		if (*arg == '$' && expand)
 		{
-			arg++;
-			start = arg;
-			while (ft_isdigit(arg) || ft_isalpha(arg) || *arg == '_')
-				arg++;
-			end = arg;
-			break ;
+			envvar = get_envvar(&arg);
+			ft_strlcpy(expanded + index, envvar, ft_strlen(envvar));
+			index += ft_strlen(envvar) - 1;
+			continue ;
 		}
-		arg++;
+		expanded[index] = *arg++;
+		index++;
 	}
-	var = ft_strndup(start, end - start);
-	envvar = getenv(var);
-	return (free(var), envvar);
-} */
+	return (expanded);
+}

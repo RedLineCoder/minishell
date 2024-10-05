@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 18:42:17 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/04 20:49:38 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,9 @@ int				pass_block(char *bs, char **be, char *pe);
 t_redir			get_redir(char *ts, char *te);
 t_logicop		get_logicop(char *ts, char *te);
 t_tokens		get_token_type(char *ts, char *te);
+
+// Expander
+char			*expand_dollar(char *arg);
 
 // Executor
 int			wait_child_processes(int pid);
