@@ -2,9 +2,11 @@ NAME = minishell
 HEADERS = minishell.h
 PARSER_PATH = utils/parser/
 PARSER = $(PARSER_PATH)init_list.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c
+EXPANDER_PATH = utils/expansions/
+EXPANDER = $(EXPANDER_PATH)dollar.c
 EXECUTOR_PATH = utils/executor/
 EXECUTOR = $(EXECUTOR_PATH)utils.c $(EXECUTOR_PATH)executes.c 
-SOURCES = $(PARSER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c utils/mem_utils.c helpers/parser.c helpers/executor.c 
+SOURCES = $(PARSER) $(EXPANDER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c utils/mem_utils.c helpers/parser.c helpers/executor.c 
 
 READLINE = lib/readline/lib/libreadline.a
 RL_FLAGS = -L${PWD}/lib/readline/lib -I${PWD}/lib/readline/include/readline -lreadline
