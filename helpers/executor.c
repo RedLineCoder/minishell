@@ -6,18 +6,62 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 02:33:26 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 09:16:25 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+int	is_builtin(t_list *argslist)
+{
+	char	**const args = get_args_arr(argslist);
+	
+	if (!argslist)
+		return (false);
+	if (!ft_strncmp(args[0], "cd", 3)
+		|| !ft_strncmp(args[0], "exit", 5)
+		|| !ft_strncmp(args[0], "pwd", 4)
+		|| !ft_strncmp(args[0], "echo", 5)
+		|| !ft_strncmp(args[0], "export", 7)
+		|| !ft_strncmp(args[0], "unset", 6)
+		|| !ft_strncmp(args[0], "env", 4))
+		return (true);
+	return (false);
+}
+
+int	execute_builtin(char **args, t_msh *msh)
+{
+	int		args_size;
+	int		status;
+	(void)msh;
+
+	args_size = str_arr_size(args);
+	status = EXIT_FAILURE;
+	if (!ft_strncmp(args[0], "cd", 3))
+		status = builtin_cd(args_size, args, msh);
+	else if (!ft_strncmp(args[0], "exit", 5))
+		status = builtin_exit(args_size, args, msh);
+	else if (!ft_strncmp(args[0], "pwd", 4))
+		status = builtin_pwd(args_size, args, msh);
+	else if (!ft_strncmp(args[0], "echo", 5))
+		status = builtin_echo(args_size, args, msh);
+	else if (!ft_strncmp(args[0], "export", 7))
+		status = builtin_export(args_size, args, msh);
+	else if (!ft_strncmp(args[0], "unset", 6))
+		status = builtin_unset(args_size, args, msh);
+	else if (!ft_strncmp(args[0], "env", 4))
+		status = builtin_env(args_size, args, msh);
+	return (status);
+}
+
 int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 {
-	t_tokens const	token = cmd->type;
+	int				builtin;
 	pid_t			pid;
-
-	if (should_fork
+	t_tokens const	token = cmd->type;
+	
+	builtin = token == EXEC && is_builtin(((t_execcmd *)cmd)->args);
+	if ((should_fork && !builtin)
 		&& (token == EXEC || token == PIPE || token == SUBSHELL))
 	{
 		pid = fork();
@@ -27,7 +71,7 @@ int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 			return (wait_child_processes(pid));
 	}
 	if (token == EXEC)
-		execute_exec((t_execcmd *)cmd, msh->env);
+		execute_exec((t_execcmd *)cmd, msh, builtin);
 	else if (token == PIPE)
 		execute_pipe((t_pipecmd *)cmd, msh);
 	else if (token == SUBSHELL)

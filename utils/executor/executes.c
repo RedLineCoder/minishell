@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 02:36:46 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 09:51:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,28 +40,39 @@ int	execute_redir(t_redircmd *redir)
 	return (true);
 }
 
-void	execute_exec(t_execcmd *exec, char **env)
+int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 {
 	t_list			*lst;		
+	int				status;
 	char **const	args = get_args_arr(exec->args);
 
 	if (!args)
-		mini_panic(NULL, NULL, true, EXIT_FAILURE);
+		mini_panic(NULL, NULL, !builtin, EXIT_FAILURE);
 	lst = exec->redirs;
 	while (lst)
 	{
 		if (!execute_redir(lst->content))
 		{
 			free(args);
-			exit(EXIT_FAILURE);
+			if (!builtin)
+				exit(EXIT_FAILURE);
 		}
 		lst = lst->next;
 	}
 	if (!*args)
+	{
+		if (builtin)
+			return (EXIT_SUCCESS);
 		exit(EXIT_SUCCESS);
-	execute_command(args[0], args, env);
+	}
+	if (!builtin)
+		execute_command(args[0], args, msh->env, false);
+	else
+		status = execute_builtin(args, msh);
 	free_string_array(args);
-	exit(EXIT_FAILURE);
+	if (!builtin)
+		exit(EXIT_FAILURE);
+	return (status);
 }
 
 void	execute_block(t_blockcmd *block, t_msh *msh)
@@ -72,7 +83,11 @@ void	execute_block(t_blockcmd *block, t_msh *msh)
 	lst = block->redirs;
 	while (lst)
 	{
-		execute_redir(lst->content);
+		if (!execute_redir(lst->content))
+		{
+			execute_redir(lst->content);
+			exit(EXIT_FAILURE);
+		}
 		lst = lst->next;
 	}
 	status = execute_cmd(block->subshell, msh, true);

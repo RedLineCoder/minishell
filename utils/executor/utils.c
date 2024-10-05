@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 02:38:00 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 10:18:19 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,38 +28,36 @@ int	wait_child_processes(int pid)
 	return (status >> 8);
 }
 
-void	execute_command(char *command, char **args, char **env)
+void	execute_command(char *command, char **args, t_list	*env, int silence)
 {
-	int		args_created;
-	char	*path;
-	char	*err;
-	t_stat	file;
+	char			*path;
+	char			*err;
+	t_stat			file;
+	char **const	envarr = get_env_arr(env);
 	
 	err = NULL;
-	path = get_cmd_path(command);
+	path = get_cmd_path(command, env);
 	if (!path)
 		err = "command not found\n";
 	else if (stat(path, &file))
 		err = "error reading file information\n";
 	else if (S_ISDIR(file.st_mode))
 		err = "is a directory\n";
-	if (err)
-		mini_panic(args[0], err, true, EXIT_FAILURE);
-	args_created = false;
-	if (!args)
+	if (err || !envarr)
 	{
-		args = ft_split(command, ' ');
-		args_created = true;
+		if(envarr)
+			free_string_array(envarr);
+		if (!silence)
+			mini_panic(command, err, true, EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-	execve(path, args, env);
-	if (args_created)
-		free_string_array(args);
+	execve(path, args, get_env_arr(env));
 	exit(EXIT_FAILURE);
 }
 
-char	*get_cmd_path(char *command)
+char	*get_cmd_path(char *command, t_list *env)
 {
-	char *const	pathenv = getenv("PATH");
+	char *const	pathenv = get_env(env, "PATH");
 	char		**paths;
 	char		*path;
 	size_t		i;

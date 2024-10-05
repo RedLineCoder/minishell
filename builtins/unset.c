@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/11 13:39:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 13:41:10 by emyildir         ###   ########.fr       */
+/*   Created: 2024/10/05 09:08:33 by emyildir          #+#    #+#             */
+/*   Updated: 2024/10/05 14:02:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../minishell.h"
 
-size_t	ft_strlen(const char *s)
+int	builtin_unset(int args_size, char **args, t_msh *msh)
 {
-	size_t	length;
-
-	length = 0;
-	while (*s++)
-	{
-		length++;
-	}
-	return (length);
+	int		i;
+	i = 0;
+	while (++i < args_size)
+		unset_env(&msh->env, args[i]);
+	return(EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 19:07:18 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 14:10:26 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 # define DIGITS "0123456789"
 # define ERR_TKN "-msh: syntax error near unexpected token "
 # define ERR_TAG "-msh"
+# define MSH_TAG "msh$ "
+
 typedef struct stat t_stat;
 
 typedef enum e_cmdtype
@@ -99,8 +101,13 @@ typedef struct s_msh
 {
 	int		last_status;
 	char	*user;
-	char	**env;
+	t_list	*env;
 }			t_msh;
+
+typedef struct s_env{
+	char	*key;
+	char	*pair;
+}				t_env;
 
 typedef struct s_cmd
 {
@@ -182,22 +189,42 @@ int			wait_child_processes(int pid);
 int			execute_redir(t_redircmd *redir);
 int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
 int			execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork);
-void		execute_exec(t_execcmd *exec, char **env);
+int			execute_exec(t_execcmd *exec, t_msh *msh, int builtin);
 void		execute_block(t_blockcmd *block, t_msh *msh);
 void		execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
+int			execute_builtin(char **args, t_msh *msh);
 void		executor(t_cmd *block, t_msh *msh);
 void		close_pipe(int	fd[2]);
 void		mini_panic(char *title, char *content, int exit_flag, int exit_status);
+void		print_env(t_list *lst, int quotes, int hide_null);
 char		**get_args_arr(t_list	*arglist);
+char		**get_env_arr(t_list *mshenv);
 
 // Utils
-char			*get_user(void);
-char			*get_cmd_path(char *command);
+char			*get_user(t_list *env);
+char			*get_cmd_path(char *command, t_list *env);
 char			*ft_strndup(char *src, int size);
 int				str_append(char **s1, char const *s2);
 int				str_arr_size(char **arr);
 void			free_string_array(char **arr);
-void			execute_command(char *command, char **args, char **env);
+void			execute_command(char *command, char **args, t_list	*env, int silence);
+
+//Builtins
+int		builtin_cd(int args_size, char **args, t_msh *msh);
+int		builtin_exit(int args_size, char **args, t_msh *msh);
+int		builtin_pwd(int args_size, char **args, t_msh *msh);
+int		builtin_echo(int args_size, char **args, t_msh *msh);
+int		builtin_export(int args_size, char **args, t_msh *msh);
+int		builtin_unset(int args_size, char **args, t_msh *msh);
+int		builtin_env(int args_size, char **args, t_msh *msh);
+
+//Environment
+int		unset_env(t_list **root, char *key);
+int		set_env(t_list **root, char *key, char *pair);
+void	destroy_env(t_list *lst);
+void	init_environment(t_list **msh, char **env);
+char	*get_env(t_list *root, char *key);
+t_list	*get_env_node(t_list *lst, char *key);
 
 #endif
 

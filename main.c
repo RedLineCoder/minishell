@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 02:38:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/05 12:22:24 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,11 +192,13 @@ int	main(int argc, char **argv, char **env)
 	char			*line;
 
 	(void)argv, (void)argc;
-	msh->env = env;
+	init_environment(&msh->env, env);
 	while (1)
 	{
-		msh->user = get_user();
-		prompt = get_prompt(msh);
+		prompt = MSH_TAG;
+		msh->user = get_user(msh->env);
+		if (msh->user)
+			prompt = get_prompt(msh);
 		if (!prompt)
 		{
 			free(msh->user);
@@ -214,7 +216,8 @@ int	main(int argc, char **argv, char **env)
 		//printf("%p\n", root->right);
 		//treeprint(root, 0);
 		free(line);
-		free(prompt);
+		if (msh->user)
+			free(prompt);
 	}
 	return (0);
 }
