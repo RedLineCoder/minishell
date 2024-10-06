@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 18:49:42 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 19:56:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 void	execute_block(t_blockcmd *block, t_msh *msh)
 {
 	int		status;
-	
+
 	if (handle_redirects(block->redirs, REDIR_NONE))
 		mini_panic("exec", "malloc error\n", true, EXIT_FAILURE);
 	status = execute_cmd(block->subshell, msh, true);
@@ -72,23 +72,24 @@ void	execute_block(t_blockcmd *block, t_msh *msh)
 
 void	execute_pipe(t_list *pipelist, t_msh *msh)
 {
+	int		last;
 	int		p[2];
 	pid_t	pid;
 
 	while (pipelist)
 	{
-		if (pipe(p))
+		last = ft_lstlast(pipelist) == pipelist;
+		if (!last && pipe(p))
 			mini_panic(NULL, NULL, true, EXIT_FAILURE);
 		pid = fork();
-		if (pid == -1)
+		if (pid == -1
+			|| (!last && ((pid && dup2(p[0], STDIN_FILENO) == -1)
+					|| (!pid && dup2(p[1], STDOUT_FILENO) == -1))))
 		{
-			close_pipe(p);
+			if (!last)
+				close_pipe(p);
 			mini_panic(NULL, NULL, true, EXIT_FAILURE);
 		}
-		if (pid)
-			dup2(p[0], STDIN_FILENO);
-		else if (ft_lstlast(pipelist) != pipelist)
-			dup2(p[1], STDOUT_FILENO);
 		close_pipe(p);
 		if (!pid)
 			execute_cmd(pipelist->content, msh, false);

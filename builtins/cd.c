@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 02:41:44 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 12:32:30 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 20:02:31 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	builtin_cd(int args_size, char **args, t_msh *msh)
 {
 	char	*path;
 	char	*err;
-	
+
 	if (args_size == 1)
 	{
 		path = get_env(msh->env, "HOME");
@@ -27,7 +27,7 @@ int	builtin_cd(int args_size, char **args, t_msh *msh)
 		path = args[1];
 		err = NULL;
 	}
-	if(chdir(path) == -1)
+	if (chdir(path) == -1)
 		return (mini_panic("cd", err, false, -1), EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }

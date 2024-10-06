@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/06 19:17:35 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 19:25:05 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,7 @@ int	main(int argc, char **argv, char **env)
 			mini_panic(NULL, "An error occured.", false, -1);
 		}
 		line = readline(prompt);
+
 		if (!line) 
 			exit(0);
 		add_history(line);

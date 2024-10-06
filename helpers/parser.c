@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 12:59:52 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/06 20:02:08 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ int	parse_pipe(char *ps, char *pe, t_cmd **cmd)
 
 int	parse_block(char *ps, char *pe, t_cmd **cmd)
 {
-	t_blockcmd *const block = ft_calloc(sizeof(t_blockcmd), 1);
-	int				status;
-	char			*ts;
-	char			*te;
+	t_blockcmd *const	block = ft_calloc(sizeof(t_blockcmd), 1);
+	int					status;
+	char				*ts;
+	char				*te;
 
 	*cmd = (t_cmd *)block;
 	if (!block)

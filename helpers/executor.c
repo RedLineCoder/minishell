@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 18:23:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 20:01:46 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 int	handle_redirects(t_list *redirs, int filter)
 {
 	t_redircmd	*redir;
-	
+
 	while (redirs)
 	{
 		redir = redirs->content;
-		if ((!filter || redir->redir_type == filter) 
-		&& !execute_redir(redirs->content))
+		if ((!filter || redir->redir_type == filter)
+			&& !execute_redir(redirs->content))
 			return (EXIT_FAILURE);
 		redirs = redirs->next;
 	}
@@ -33,8 +33,8 @@ int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 	t_tokens const	token = cmd->type;
 	int const		builtin = get_builtin((t_execcmd *)cmd);
 
-	should_fork = should_fork && !builtin && 
-		(token == EXEC || token == PIPE || token == SUBSHELL);
+	should_fork = should_fork && !builtin
+		&& (token == EXEC || token == PIPE || token == SUBSHELL);
 	if (should_fork)
 	{
 		pid = fork();
@@ -85,7 +85,7 @@ int	run_heredoc(t_redircmd *redir)
 int	loop_heredocs(void *ptr)
 {
 	t_list			*lst;
-	t_redircmd 		*redir;
+	t_redircmd		*redir;
 	t_tokens const	token = ((t_cmd *)ptr)->type;
 
 	lst = NULL;
@@ -98,7 +98,7 @@ int	loop_heredocs(void *ptr)
 		redir = lst->content;
 		if (redir->redir_type == REDIR_HDOC)
 			run_heredoc(redir);
-		lst = lst->next; 
+		lst = lst->next;
 	}
 	return (EXIT_SUCCESS);
 }
@@ -106,6 +106,7 @@ int	loop_heredocs(void *ptr)
 void	executor(t_cmd *root, t_msh *msh)
 {
 	int		status;
+
 	status = tree_map(root, loop_heredocs);
 	if (!status)
 		msh->last_status = execute_cmd(root, msh, true);

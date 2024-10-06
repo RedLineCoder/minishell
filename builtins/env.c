@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 09:15:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 15:15:25 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 20:03:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	print_env(t_list *lst, int quotes, int hide_null)
 {
 	t_env	*env;
-	
+
 	while (lst)
 	{
 		env = lst->content;
@@ -38,9 +38,9 @@ void	print_env(t_list *lst, int quotes, int hide_null)
 }
 
 int	builtin_env(int args_size, char **args, t_msh *msh)
-{	
+{
 	(void)args;
 	(void)args_size;
 	print_env(msh->env, false, true);
-	return(EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
 }

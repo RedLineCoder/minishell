@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dollar.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 21:21:44 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/06 19:57:39 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*get_envvar(char **dollar)
 
 	(*dollar)++;
 	start = *dollar;
-	while (ft_isdigit(**dollar) 
+	while (ft_isdigit(**dollar)
 		|| ft_isalpha(**dollar) || **dollar == '_')
 		(*dollar)++;
 	end = *dollar;

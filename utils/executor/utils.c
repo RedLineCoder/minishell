@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 18:36:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 19:57:12 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	execute_command(char *command, char **args, t_list	*env, int silence)
 	char			*err;
 	t_stat			file;
 	char **const	envarr = get_env_arr(env);
-	
+
 	err = NULL;
 	path = get_cmd_path(command, env);
 	if (!path)
@@ -45,7 +45,7 @@ void	execute_command(char *command, char **args, t_list	*env, int silence)
 		err = "is a directory\n";
 	if (err || !envarr)
 	{
-		if(envarr)
+		if (envarr)
 			free_string_array(envarr);
 		if (!silence)
 			mini_panic(command, err, true, 127);

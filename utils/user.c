@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 22:20:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 16:49:22 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 20:06:56 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*get_user(t_list *env)
 	pid_t	pid;
 	char	*user;
 	char	**args;
-	
+
 	args = ft_split("whoami", ' ');
 	if (!args)
 		return (NULL);
