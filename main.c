@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 21:24:10 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/06 19:17:35 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,12 +132,30 @@ void treeprint(t_cmd *root, int level)
 		}
 }
 
-void	mini_panic(char *str, int exit_flag, int exit_status)
+int	mini_panic(char *title, char *content, int exit_flag, int status)
 {
-	ft_putstr_fd("msh: ", STDOUT_FILENO);
-	ft_putstr_fd(str, STDOUT_FILENO);
+	char	*tag;
+
+	tag = ft_strdup(ERR_TAG);
+	if (!tag)
+		perror(ERR_TAG);
+	if (title)
+	{
+		str_append(&tag, ": ");
+		str_append(&tag, title);
+	}
+	if (content)
+	{
+		ft_putstr_fd(tag, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(content, STDERR_FILENO);
+	}
+	else
+		perror(tag);
+	free(tag);
 	if (exit_flag)
-		exit(exit_status);
+		exit(status);
+	return (status);
 }
 
 char	*get_prompt(t_msh *msh)
@@ -175,27 +193,33 @@ int	main(int argc, char **argv, char **env)
 	char			*line;
 
 	(void)argv, (void)argc;
-	msh->env = env;
+	init_environment(&msh->env, env);
 	while (1)
 	{
-		msh->user = get_user();
-		prompt = get_prompt(msh);
+		prompt = MSH_TAG;
+		if (msh->user)
+			free(msh->user);
+		msh->user = get_user(msh->env);
+		if (msh->user)
+			prompt = get_prompt(msh);
 		if (!prompt)
 		{
 			free(msh->user);
-			mini_panic("An error occured.", false, -1);
+			mini_panic(NULL, "An error occured.", false, -1);
 		}
 		line = readline(prompt);
 		if (!line) 
 			exit(0);
 		add_history(line);
-		/* t_cmd *root;
+		t_cmd *root;
 		if (!parser(line, line + ft_strlen(line), &root))
-			executor(root, msh); */
+			executor(root, msh);
 		//printf("%p\n", root->right);
 		//treeprint(root, 0);
 		free(line);
-		free(prompt);
+		if (msh->user)
+			free(prompt);
+		//clean_tree(root);
 	}
 	return (0);
 }

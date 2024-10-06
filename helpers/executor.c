@@ -6,32 +6,49 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:51:50 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 18:23:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+int	handle_redirects(t_list *redirs, int filter)
+{
+	t_redircmd	*redir;
+	
+	while (redirs)
+	{
+		redir = redirs->content;
+		if ((!filter || redir->redir_type == filter) 
+		&& !execute_redir(redirs->content))
+			return (EXIT_FAILURE);
+		redirs = redirs->next;
+	}
+	return (EXIT_SUCCESS);
+}
+
 int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 {
-	t_tokens const	token = cmd->type;
 	pid_t			pid;
+	t_tokens const	token = cmd->type;
+	int const		builtin = get_builtin((t_execcmd *)cmd);
 
-	if (should_fork
-		&& (token == EXEC || token == PIPE || token == SUBSHELL))
+	should_fork = should_fork && !builtin && 
+		(token == EXEC || token == PIPE || token == SUBSHELL);
+	if (should_fork)
 	{
 		pid = fork();
 		if (pid == -1)
-			return (EXIT_FAILURE);
+			return (mini_panic(NULL, NULL, false, -1), EXIT_FAILURE);
 		if (pid)
 			return (wait_child_processes(pid));
 	}
-	if (token == EXEC)
-		execute_exec((t_execcmd *)cmd, msh->env);
-	else if (token == PIPE)
-		execute_pipe((t_pipecmd *)cmd, msh);
+	if (token == PIPE)
+		execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
 	else if (token == SUBSHELL)
 		execute_block((t_blockcmd *)cmd, msh);
+	else if (token == EXEC)
+		return (execute_exec((t_execcmd *)cmd, msh, builtin));
 	else if (token == LOGIC)
 		return (execute_logic((t_logiccmd *)cmd, msh));
 	return (EXIT_FAILURE);
@@ -43,7 +60,7 @@ int	run_heredoc(t_redircmd *redir)
 	const size_t	len = redir->e_spec - redir->s_spec;
 
 	if (pipe(redir->pipe) == -1)
-		return (false);
+		return (mini_panic(NULL, NULL, false, -1), false);
 	while (1)
 	{
 		buffer = readline("> ");
@@ -54,7 +71,7 @@ int	run_heredoc(t_redircmd *redir)
 			close(redir->pipe[1]);
 			if (!buffer)
 			{
-				mini_panic("Heredoc error.", false, false);
+				mini_panic(NULL, "readline error.", false, false);
 				return (false);
 			}
 			return (true);
@@ -65,31 +82,23 @@ int	run_heredoc(t_redircmd *redir)
 	}
 }
 
-int	loop_heredocs(t_cmd *cmd)
+int	loop_heredocs(void *ptr)
 {
-	t_tokens const	token = cmd->type;
 	t_list			*lst;
+	t_redircmd 		*redir;
+	t_tokens const	token = ((t_cmd *)ptr)->type;
 
 	lst = NULL;
 	if (token == EXEC)
-		lst = ((t_execcmd *)cmd)->redirs;
-	else if (token == PIPE)
-		lst = ((t_pipecmd *)cmd)->pipelist;
-	else if (token == LOGIC)
-	{
-		loop_heredocs(((t_logiccmd *)cmd)->left);
-		loop_heredocs(((t_logiccmd *)cmd)->right);
-	}
+		lst = ((t_execcmd *)ptr)->redirs;
 	else if (token == SUBSHELL)
-		loop_heredocs(((t_blockcmd *)cmd)->subshell);
+		lst = ((t_blockcmd *)ptr)->redirs;
 	while (lst)
 	{
-		if (token == EXEC
-			&& ((t_redircmd *)lst->content)->redir_type == REDIR_HDOC)
-			run_heredoc((t_redircmd *)lst->content);
-		else if (token == PIPE)
-			loop_heredocs(lst->content);
-		lst = lst->next;
+		redir = lst->content;
+		if (redir->redir_type == REDIR_HDOC)
+			run_heredoc(redir);
+		lst = lst->next; 
 	}
 	return (EXIT_SUCCESS);
 }
@@ -97,8 +106,7 @@ int	loop_heredocs(t_cmd *cmd)
 void	executor(t_cmd *root, t_msh *msh)
 {
 	int		status;
-
-	status = loop_heredocs(root);
+	status = tree_map(root, loop_heredocs);
 	if (!status)
 		msh->last_status = execute_cmd(root, msh, true);
 }
