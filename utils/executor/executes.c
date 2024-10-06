@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 18:56:25 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/06 18:49:42 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ int	execute_redir(t_redircmd *redir)
 	int				flags;
 	t_redir const	type = redir->redir_type;
 
-	if (type == REDIR_HDOC)
-		fd = redir->pipe[0];
 	flags = 0;
 	if (type == REDIR_INPUT)
 		flags |= O_RDONLY;
@@ -31,13 +29,13 @@ int	execute_redir(t_redircmd *redir)
 	if (type != REDIR_INPUT)
 		flags |= O_CREAT;
 	file = ft_strndup(redir->s_spec, redir->e_spec - redir->s_spec);
-	if (type != REDIR_HDOC)
+	if (type == REDIR_HDOC)
+		fd = redir->pipe[0];
+	else
 		fd = open(file, flags, S_IRWXU);
 	if (fd == -1 || dup2(fd, redir->fd) == -1)
-		return (mini_panic(file, NULL, false, -1), free(file), false);
-	close(fd);
-	free(file);
-	return (true);
+		return (mini_panic(file, NULL, false, -1), free(file), EXIT_FAILURE);
+	return (close(fd), free(file), EXIT_SUCCESS);
 }
 
 int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
@@ -45,23 +43,18 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 	int			status;
 	char		**args;
 
-	if (loop_redirects(exec->redirs))
-		return (mini_panic("exec", "malloc error\n", !builtin, EXIT_FAILURE));
+	status = handle_redirects(exec->redirs, REDIR_NONE);
 	args = get_args_arr(exec->args);
-	if (!args)
-		return (mini_panic("exec", "malloc error\n", !builtin, EXIT_FAILURE));
-	if (!*args)
+	if (!status && !args)
+		return (mini_panic(NULL, "malloc error\n", !builtin, EXIT_FAILURE));
+	else if (!status && *args)
 	{
-		free_string_array(args);
 		if (builtin)
-			return (EXIT_SUCCESS);
-		exit(EXIT_FAILURE);
+			status = execute_builtin(builtin, args, msh);
+		else
+			execute_command(args[0], args, msh->env, false);
 	}
-	if (builtin)
-		status = execute_builtin(builtin, args, msh);
-	else
-		execute_command(args[0], args, msh->env, false);
-	free_string_array(args);
+	free(args);
 	if (builtin)
 		return (status);
 	exit(EXIT_FAILURE);
@@ -71,7 +64,7 @@ void	execute_block(t_blockcmd *block, t_msh *msh)
 {
 	int		status;
 	
-	if (loop_redirects(block->redirs))
+	if (handle_redirects(block->redirs, REDIR_NONE))
 		mini_panic("exec", "malloc error\n", true, EXIT_FAILURE);
 	status = execute_cmd(block->subshell, msh, true);
 	exit(status);
