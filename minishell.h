@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 20:49:38 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/08 20:04:26 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 # include "lib/libft/libft.h"
 # include <fcntl.h>
 # include <limits.h>
-# include <stdio.h>
-# include <stdbool.h>
-# include <unistd.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <stdbool.h>
+# include <stdio.h>
+# include <unistd.h>
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
@@ -80,7 +80,7 @@ typedef enum e_builtins
 	BUILTIN_UNSET,
 	BUILTIN_ENV,
 	BUILTIN_EXIT
-}		t_builtins;
+}				t_builtins;
 
 // Structs
 typedef struct s_part
@@ -93,10 +93,10 @@ typedef struct s_part
 
 typedef struct s_msh
 {
-	int		last_status;
-	char	*user;
-	char	**env;
-}			t_msh;
+	int			last_status;
+	char		*user;
+	char		**env;
+}				t_msh;
 
 typedef struct s_cmd
 {
@@ -105,38 +105,31 @@ typedef struct s_cmd
 
 typedef struct s_blockcmd
 {
-	int		type;
-	int		out_file;
-	int		in_file;
-	t_cmd	*subshell;
-	t_list	*redirs;
-}			t_blockcmd;
+	int			type;
+	int			out_file;
+	int			in_file;
+	t_cmd		*subshell;
+	t_list		*redirs;
+}				t_blockcmd;
 
 typedef struct s_execcmd
 {
-	int		type;
-	int		out_file;
-	int		in_file;
-	t_list	*args;
-	t_list	*redirs;
-}			t_execcmd;
-
-typedef struct s_argcmd
-{
-	int		type;
-	char	*s_arg;
-	char	*e_arg;
-}			t_argcmd;
+	int			type;
+	int			out_file;
+	int			in_file;
+	t_list		*args;
+	t_list		*redirs;
+}				t_execcmd;
 
 typedef struct s_redircmd
 {
-	int		type;
-	int		redir_type;
-	int		fd;
-	int		pipe[2];
-	char	*s_spec;
-	char	*e_spec;
-}			t_redircmd;
+	int			type;
+	int			redir_type;
+	int			fd;
+	int			pipe[2];
+	char		*s_spec;
+	char		*e_spec;
+}				t_redircmd;
 
 typedef struct s_pipecmd
 {
@@ -174,20 +167,21 @@ t_logicop		get_logicop(char *ts, char *te);
 t_tokens		get_token_type(char *ts, char *te);
 
 // Expander
-char			*expand_dollar(char *arg);
+char			*expand_dollar(char *arg, t_list **explst);
+char			*expander(char *arg);
 
 // Executor
-int			wait_child_processes(int pid);
-int			execute_redir(t_redircmd *redir);
-int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
-int			execute_cmd(t_cmd *cmd, t_msh *msh, int forked);
-void		execute_exec(t_execcmd *exec, char **env);
-void		execute_block(t_blockcmd *block, t_msh *msh);
-void		execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
-void		executor(t_cmd *block, t_msh *msh);
-void		close_pipe(int	fd[2]);
-void		mini_panic(char *str, int exit_flag, int exit_status);
-char		**get_args_arr(t_list	*arglist);
+int				wait_child_processes(int pid);
+int				execute_redir(t_redircmd *redir);
+int				execute_logic(t_logiccmd *opcmd, t_msh *msh);
+int				execute_cmd(t_cmd *cmd, t_msh *msh, int forked);
+void			execute_exec(t_execcmd *exec, char **env);
+void			execute_block(t_blockcmd *block, t_msh *msh);
+void			execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
+void			executor(t_cmd *block, t_msh *msh);
+void			close_pipe(int fd[2]);
+void			mini_panic(char *str, int exit_flag, int exit_status);
+char			**get_args_arr(t_list *arglist);
 
 // Utils
 char			*get_user(void);
@@ -204,11 +198,10 @@ void			execute_command(char *command, char **args, char **env);
 // ls&&cat||can|meta 3<file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
 // (ls | ls && cat < redir) || ls && cmd || (echo "afbf|&&" || ls)
 
-//EXEC
+// EXEC
 // ls|cat&&ls|echo me 3>file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
 
-
-/* 
+/*
 
 <REDIRECTION> ::=  '>' <WORD>
 				|  '<' <WORD>

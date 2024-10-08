@@ -3,7 +3,7 @@ HEADERS = minishell.h
 PARSER_PATH = utils/parser/
 PARSER = $(PARSER_PATH)init_list.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c
 EXPANDER_PATH = utils/expansions/
-EXPANDER = $(EXPANDER_PATH)dollar.c
+EXPANDER = $(EXPANDER_PATH)dollar.c $(EXPANDER_PATH)expander.c
 EXECUTOR_PATH = utils/executor/
 EXECUTOR = $(EXECUTOR_PATH)utils.c $(EXECUTOR_PATH)executes.c 
 SOURCES = $(PARSER) $(EXPANDER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c utils/mem_utils.c helpers/parser.c helpers/executor.c 
@@ -49,4 +49,4 @@ fclean: clean
 test: all
 		bash test.bash
 
-re: fclean
+re: fclean all

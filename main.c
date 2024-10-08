@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 21:24:10 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/08 20:02:45 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,8 @@ int	main(int argc, char **argv, char **env)
 			executor(root, msh); */
 		//printf("%p\n", root->right);
 		//treeprint(root, 0);
+		char *test = expander(line);
+		printf("%s\n", test);
 		free(line);
 		free(prompt);
 	}
