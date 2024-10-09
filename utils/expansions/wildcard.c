@@ -6,28 +6,13 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 05:29:12 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/09 14:10:28 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	get_wildsize(char *arg)
-{
-	int	size;
-
-	size = 0;
-	while (*arg && *arg != '*')
-	{
-		arg++;
-		size++;
-	}
-	if (arg != '*')
-		return (-size);
-	return (size);
-}
-
-int	is_pattern(char *arg)
+/* int	is_pattern(char *arg)
 {
 	int	quoted;
 
@@ -41,64 +26,45 @@ int	is_pattern(char *arg)
 		arg++;
 	}
 	return (0);
+} */
+
+int	ft_dstrncmp(char **arg, char **file)
+{
+	while (**arg == **file && **arg && **file)
+	{
+		(*arg)++;
+		(*file)++;
+	}
+	return (**arg - **file);
+	// Solve star problem
 }
 
-int	ft_dstrncmp(char **arg, char **file, int n)
+int	check_pattern(t_list *explst, char *arg, char *file)
 {
-	if (n > 0)
-	{
-		while (**arg == **file && n)
-		{
-			(*arg)++;
-			(*file)++;
-			n--;
-		}
-		return (**arg - **file);
-	}
-	if (n < 0)
-	{
-		while (**file)
-			file++;
-		while (**arg == **file && n)
-		{
-			(*arg)--;
-			(*file)--;
-			n++;
-		}
-		return (**arg - **file);
-	}
-	return (0);
-}
-
-int	check_pattern(char *arg, char *file)
-{
-	int	size;
-	int	diff;
+	int		diff;
+	char	qs;
+	char	qd;
 
 	diff = 0;
+	qs = 0;
+	qd = 0;
 	while (*arg && !diff)
 	{
 		while (*arg == '*')
 			arg++;
-		size = get_wildsize(arg);
-		while (*file && size > 0)
+		while (*file)
 		{
+			if (*arg == '"' && !qs && !is_expanded(explst, *arg))
+				qd = !qd;
+			if (*arg == '\'' && !qd && !is_expanded(explst, *arg))
+				qs = !qs;
 			if (*arg == *file)
 			{
-				diff = ft_dstrncmp(&arg, &file, size);
+				diff = ft_dstrncmp(&arg, &file);
 				break ;
 			}
 			file++;
 		}
 	}
-	if (diff)
-		return (diff);
-	if (size < 0)
-		diff = ft_dstrncmp(&arg, &file, size);
 	return (diff);
-}
-
-t_list	*file_expansion(char *arg)
-{
-	
 }

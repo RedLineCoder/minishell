@@ -1,4 +1,5 @@
-NAME = minishell
+
+AME = minishell
 HEADERS = minishell.h
 PARSER_PATH = utils/parser/
 PARSER = $(PARSER_PATH)init_list.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c

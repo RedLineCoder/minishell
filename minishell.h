@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/08 20:04:26 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/09 13:29:19 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,8 @@ t_logicop		get_logicop(char *ts, char *te);
 t_tokens		get_token_type(char *ts, char *te);
 
 // Expander
+int				is_expanded(t_list *explst, char *ptr);
+int				set_exptrack(t_list **explst, char *start, char *end);
 char			*expand_dollar(char *arg, t_list **explst);
 char			*expander(char *arg);
 

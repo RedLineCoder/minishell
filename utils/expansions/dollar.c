@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/08 22:08:40 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/09 13:25:22 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,6 @@ int	get_size(char *arg)
 		len++;
 	}
 	return (len);
-}
-
-int	set_exptrack(t_list **explst, char *start, char *end)
-{
-	t_list	*item;
-	char	**ptrs;
-
-	ptrs = ft_calloc(sizeof(char *), 2);
-	if (!ptrs)
-		return (0);
-	*ptrs = start;
-	*(ptrs + 1) = end;
-	item = ft_lstnew(ptrs);
-	if (!item)
-		return (free(ptrs), 0);
-	ft_lstadd_back(explst, item);
-	return (1);
 }
 
 int	print_env(char *arg, char *exp, t_list **explst)
