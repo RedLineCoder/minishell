@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 13:28:53 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/09 18:47:47 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,22 @@ int	is_expanded(t_list *explst, char *ptr)
 	return (0);
 }
 
-char	*expander(char *arg)
+t_list	*expander(t_list *args)
 {
 	t_list	*explst;
+	t_list	*wldexp;
 	char	*expanded;
+	int		status;
 
-	expanded = expand_dollar(arg, &explst);
-	if (!explst)
-		return (NULL);
+	status = 0;
+	while (args)
+	{
+		expanded = expand_dollar(args->content, &explst);
+		if (!expanded)
+			return (NULL);
+		status = expand_wildcard(&expanded, explst, expanded);
+		if ( < 1)
+			ft_lstclear(&expanded, free);
+	}
 	return (expanded);
 }

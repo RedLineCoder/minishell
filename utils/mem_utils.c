@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 12:35:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 17:43:27 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/09 17:51:45 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,15 @@ t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
 	}
 	ln.rghte = e;
 	return (ln);
+}
+
+int	lst_addback_content(t_list **lst, void *content)
+{
+	t_list	*item;
+
+	item = ft_lstnew(content);
+	if (!item)
+		return (free(content), 0);
+	ft_lstadd_back(lst, item);
+	return (1);
 }

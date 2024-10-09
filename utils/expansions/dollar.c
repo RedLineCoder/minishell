@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 13:25:22 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/09 18:19:30 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,10 @@ char	*expand_dollar(char *arg, t_list **explst)
 	if (!exp)
 		return (NULL);
 	if (!print_env(arg, exp, explst))
+	{
+		ft_lstclear(explst, free);
+		*explst = NULL;
 		return (NULL);
+	}
 	return (exp);
 }

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 13:29:19 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/09 18:20:23 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <unistd.h>
+# include <sys/types.h>
+# include <dirent.h>
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
@@ -167,10 +169,12 @@ t_logicop		get_logicop(char *ts, char *te);
 t_tokens		get_token_type(char *ts, char *te);
 
 // Expander
+int				is_wildcard(t_list *explst, char *arg);
 int				is_expanded(t_list *explst, char *ptr);
 int				set_exptrack(t_list **explst, char *start, char *end);
+int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
 char			*expand_dollar(char *arg, t_list **explst);
-char			*expander(char *arg);
+
 
 // Executor
 int				wait_child_processes(int pid);
@@ -191,6 +195,7 @@ char			*get_cmd_path(char *command);
 char			*ft_strndup(char *src, int size);
 int				str_append(char **s1, char const *s2);
 int				str_arr_size(char **arr);
+int				lst_addback_content(t_list **lst, void *content);
 char			*str_include(const char *s, int c);
 void			free_string_array(char **arr);
 void			execute_command(char *command, char **args, char **env);
