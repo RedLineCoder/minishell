@@ -6,13 +6,13 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 18:19:30 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/10 17:36:00 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-char	*get_envvar(char **dollar)
+char	*get_envvar(char **dollar, char *status)
 {
 	char	*start;
 	char	*end;
@@ -20,6 +20,13 @@ char	*get_envvar(char **dollar)
 	char	*var;
 
 	(*dollar)++;
+	if (*dollar == '$')
+		return ("");
+	else if (*dollar == '?')
+	{
+		(*dollar)++;
+		return (status);
+	}
 	start = *dollar;
 	while ((ft_isalnum(**dollar) || **dollar == '_') && *dollar)
 		(*dollar)++;
@@ -27,11 +34,11 @@ char	*get_envvar(char **dollar)
 	var = ft_strndup(start, end - start);
 	envvar = getenv(var);
 	if (!envvar)
-		return ("");
+		return (free(var), "");
 	return (free(var), envvar);
 }
 
-int	get_size(char *arg)
+int	get_size(char *arg, char *status)
 {
 	int	len;
 	int	dq;
@@ -46,7 +53,7 @@ int	get_size(char *arg)
 			len += pass_quote(&arg, arg + ft_strlen(arg), "\'");
 		if (*arg == '$')
 		{
-			len += ft_strlen(get_envvar(&arg));
+			len += ft_strlen(get_envvar(&arg, status));
 			continue ;
 		}
 		arg++;
@@ -55,7 +62,7 @@ int	get_size(char *arg)
 	return (len);
 }
 
-int	print_env(char *arg, char *exp, t_list **explst)
+int	print_env(char *arg, char *exp, char *status, t_list **explst)
 {
 	char	*envvar;
 	char	qs;
@@ -72,7 +79,7 @@ int	print_env(char *arg, char *exp, t_list **explst)
 			qs = !qs;
 		if (*arg == '$' && !qs)
 		{
-			envvar = get_envvar(&arg);
+			envvar = get_envvar(&arg, status);
 			start = exp;
 			exp += ft_strlcpy(exp, envvar, ft_strlen(envvar) + 1);
 			if (!set_exptrack(explst, start, exp - 1))
@@ -84,18 +91,20 @@ int	print_env(char *arg, char *exp, t_list **explst)
 	return (1);
 }
 
-char	*expand_dollar(char *arg, t_list **explst)
+char	*expand_dollar(char *arg, char *status, t_list **explst)
 {
 	char	*exp;
 
-	exp = ft_calloc(sizeof(char), get_size(arg) + 1);
-	if (!exp)
+	if (!status)
 		return (NULL);
-	if (!print_env(arg, exp, explst))
+	exp = ft_calloc(sizeof(char), get_size(arg, status) + 1);
+	if (!exp)
+		return (free(status), NULL);
+	if (!print_env(arg, exp, explst, status))
 	{
 		ft_lstclear(explst, free);
 		*explst = NULL;
-		return (NULL);
+		return (free(status), NULL);
 	}
-	return (exp);
+	return (free(status), exp);
 }

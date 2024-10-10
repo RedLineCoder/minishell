@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 18:20:23 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/10 17:36:08 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ int				is_wildcard(t_list *explst, char *arg);
 int				is_expanded(t_list *explst, char *ptr);
 int				set_exptrack(t_list **explst, char *start, char *end);
 int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
-char			*expand_dollar(char *arg, t_list **explst);
+char			*expand_dollar(char *arg, char *status, t_list **explst);
 
 
 // Executor

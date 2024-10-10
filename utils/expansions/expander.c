@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 18:47:47 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/10 19:58:31 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,22 +41,86 @@ int	is_expanded(t_list *explst, char *ptr)
 	return (0);
 }
 
-t_list	*expander(t_list *args)
+int	unquoted_size(t_list *explst, char *arg)
+{
+	int	len;
+	int	qd;
+	int	qs;
+
+	len = 0;
+	qd = 0;
+	qs = 0;
+	while (*arg)
+	{
+		if (*arg == '\'' && !qd && !is_expanded(explst, *arg))
+		{
+			arg++;
+			qs = !qs;
+			continue ;
+		}
+		if (*arg == '"' && !qs && !is_expanded(explst, *arg))
+		{
+			arg++;
+			qd = !qd;
+			continue ;
+		}
+		arg++;
+		len++;
+	}
+	return (len);
+}
+
+char	*unquote_arg(t_list *explst, char *arg)
+{
+	char	*exp;
+	int		qd;
+	int		qs;
+
+	qd = 0;
+	qs = 0;
+	exp = ft_calloc(sizeof(char), unquoted_size(explst, arg) + 1);
+	if (!exp)
+		return (NULL);
+	while (*arg)
+	{
+		if ((*arg == '\'' && !qd && !is_expanded(explst, *arg)) || (*arg == '"'
+				&& !qs && !is_expanded(explst, *arg)))
+		{
+			arg++;
+			if (*arg == '\'')
+				qs = !qs;
+			else
+				qd = !qd;
+			continue ;
+		}
+		*exp++ = *arg++;
+	}
+	return (free(arg), exp);
+}
+
+t_list	*expander(t_list *args, t_msh *msh)
 {
 	t_list	*explst;
-	t_list	*wldexp;
+	t_list	*newargs;
 	char	*expanded;
 	int		status;
 
 	status = 0;
 	while (args)
 	{
-		expanded = expand_dollar(args->content, &explst);
+		expanded = expand_dollar(args->content, &explst,
+				ft_itoa(msh->last_status));
 		if (!expanded)
 			return (NULL);
-		status = expand_wildcard(&expanded, explst, expanded);
-		if ( < 1)
-			ft_lstclear(&expanded, free);
+		status = expand_wildcard(&newargs, explst, expanded);
+		if (status == 0 && !lst_addback_content(&newargs, unquote_arg(explst,
+					expanded)))
+			return (ft_lstclear(&newargs, free), NULL);
+		else if (status == -1)
+			return (ft_lstclear(&newargs, free), NULL);
+		ft_lstclear(&explst, free);
+		explst = &(t_list){0};
+		args = args->next;
 	}
-	return (expanded);
+	return (ft_lstclear(&args, free), newargs);
 }
