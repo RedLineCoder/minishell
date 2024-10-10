@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 08:55:37 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 20:05:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:58:02 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@ int	builtin_export(int args_size, char **args, t_msh *msh)
 			*(pair++) = '\0';
 		if (!is_valid_identifier(key))
 			return (mini_panic("export", "not a valid identifier\n", \
-			false, EXIT_FAILURE));
+			EXIT_FAILURE));
 		if (!set_env(&msh->env, key, pair))
 			return (mini_panic("export", "malloc error\n", \
-			false, EXIT_FAILURE));
+			EXIT_FAILURE));
 	}
 	return (EXIT_SUCCESS);
 }

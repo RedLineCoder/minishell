@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 19:57:12 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:55:46 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	wait_child_processes(int pid)
 	return (status >> 8);
 }
 
-void	execute_command(char *command, char **args, t_list	*env, int silence)
+int	execute_command(char *command, char **args, t_list	*env, int silence)
 {
 	char			*path;
 	char			*err;
@@ -48,11 +48,10 @@ void	execute_command(char *command, char **args, t_list	*env, int silence)
 		if (envarr)
 			free_string_array(envarr);
 		if (!silence)
-			mini_panic(command, err, true, 127);
-		exit(EXIT_FAILURE);
+			return (mini_panic(command, err, 127));
 	}
 	execve(path, args, get_env_arr(env));
-	exit(EXIT_FAILURE);
+	return (mini_panic(command, err, EXIT_FAILURE));
 }
 
 char	*get_cmd_path(char *command, t_list *env)

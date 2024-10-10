@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/06 19:25:05 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/10 18:31:16 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void treeprint(t_cmd *root, int level)
 		}
 }
 
-int	mini_panic(char *title, char *content, int exit_flag, int status)
+int	mini_panic(char *title, char *content, int status)
 {
 	char	*tag;
 
@@ -153,8 +153,6 @@ int	mini_panic(char *title, char *content, int exit_flag, int status)
 	else
 		perror(tag);
 	free(tag);
-	if (exit_flag)
-		exit(status);
 	return (status);
 }
 
@@ -194,18 +192,16 @@ int	main(int argc, char **argv, char **env)
 
 	(void)argv, (void)argc;
 	init_environment(&msh->env, env);
-	while (1)
+	while (!msh->exit_flag)
 	{
 		prompt = MSH_TAG;
-		if (msh->user)
-			free(msh->user);
 		msh->user = get_user(msh->env);
 		if (msh->user)
 			prompt = get_prompt(msh);
 		if (!prompt)
 		{
 			free(msh->user);
-			mini_panic(NULL, "An error occured.", false, -1);
+			mini_panic(NULL, "An error occured.", -1);
 		}
 		line = readline(prompt);
 
@@ -219,8 +215,19 @@ int	main(int argc, char **argv, char **env)
 		//treeprint(root, 0);
 		free(line);
 		if (msh->user)
+		{
+			free(msh->user);
 			free(prompt);
-		//clean_tree(root);
+		}
+		clean_tree(root);
 	}
+	rl_clear_history();
+	destroy_environment(msh->env);
+	printf("exit\n");
 	return (0);
+}
+
+void __attribute__ ((destructor)) sa()
+{
+	system("leaks minishell");
 }

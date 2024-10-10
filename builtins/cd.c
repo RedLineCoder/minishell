@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 02:41:44 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 20:02:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:57:00 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,6 @@ int	builtin_cd(int args_size, char **args, t_msh *msh)
 		err = NULL;
 	}
 	if (chdir(path) == -1)
-		return (mini_panic("cd", err, false, -1), EXIT_FAILURE);
+		return (mini_panic("cd", err, EXIT_FAILURE));
 	return (EXIT_SUCCESS);
 }

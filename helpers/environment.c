@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 09:20:13 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 14:24:22 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/10 18:30:41 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,20 @@ void	init_environment(t_list **mshenv, char **env)
 		set_env(mshenv, splitted[0], splitted[1]);
 		free_string_array(splitted);
 		env++;
+	}
+}
+
+void	destroy_environment(t_list	*mshenv)
+{
+	t_list	*lst;
+	t_list	*next;
+
+	lst = mshenv;
+	while (lst)
+	{	
+		next = lst->next;
+		destroy_env(lst);
+		lst = next;
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 07:19:33 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/05 14:22:54 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/07 16:56:41 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,12 @@ int	set_env(t_list **root, char *key, char *pair)
 		lst = ft_lstnew(env);
 		if (!env || !lst)
 			return (ft_lstdelone(lst, free), \
-			mini_panic("env", NULL, false, -1), false);
+			mini_panic("env", NULL, false));
 		ft_lstadd_back(root, lst);
 		env->key = ft_strdup(key);
 		if (!env->key)
 			return (ft_lstdelone(lst, free), \
-			mini_panic("env", NULL, false, -1), false);
+			mini_panic("env", NULL, false));
 	}
 	free(env->pair);
 	env->pair = NULL;
