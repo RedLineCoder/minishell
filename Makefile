@@ -1,13 +1,12 @@
-
-AME = minishell
+NAME = minishell
 HEADERS = minishell.h
 PARSER_PATH = utils/parser/
 PARSER = $(PARSER_PATH)init_list.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c
 EXPANDER_PATH = utils/expansions/
-EXPANDER = $(EXPANDER_PATH)dollar.c $(EXPANDER_PATH)expander.c
+EXPANDER = $(EXPANDER_PATH)dollar.c $(EXPANDER_PATH)expander.c $(EXPANDER_PATH)wildcard.c
 EXECUTOR_PATH = utils/executor/
 EXECUTOR = $(EXECUTOR_PATH)utils.c $(EXECUTOR_PATH)executes.c 
-SOURCES = $(PARSER) $(EXECUTOR) main.c utils/user.c utils/string_utils.c helpers/parser.c helpers/executor.c utils/environment.c helpers/environment.c utils/mem_utils.c utils/tree.c
+SOURCES = $(PARSER) $(EXECUTOR) $(EXPANDER) main.c utils/user.c utils/string_utils.c helpers/parser.c helpers/executor.c utils/environment.c helpers/environment.c utils/mem_utils.c utils/tree.c
 BUILTINS = builtins/cd.c builtins/exit.c builtins/pwd.c builtins/echo.c builtins/export.c builtins/unset.c builtins/env.c helpers/builtins.c  builtins/status.c
 
 READLINE = lib/readline/lib/libreadline.a
@@ -20,7 +19,7 @@ GNL = lib/gnl/gnl.a
 GNL_PATH = lib/gnl
 
 CC = cc
-CFLAGS= -Wall -Wextra -Werror 
+CFLAGS= -Wall -Wextra -Werror -fsanitize=address -g
 
 all: $(NAME)
 

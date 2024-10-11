@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 14:28:55 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:00:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ int	is_wildcard(t_list *explst, char *arg)
 	qd = 0;
 	while (*arg)
 	{
-		if (*arg == '\'' && !qd && !is_expanded(explst, *arg))
+		if (*arg == '\'' && !qd && !is_expanded(explst, arg))
 			qs = !qs;
-		if (*arg == '"' && !qs && !is_expanded(explst, *arg))
+		if (*arg == '"' && !qs && !is_expanded(explst, arg))
 			qd = !qd;
 		if (!(qd || qs) && *arg == '*')
 			return (1);
@@ -41,9 +41,9 @@ int	ft_patterncmp(t_list *explst, char **arg, char **file)
 	qd = 0;
 	while (**arg && **file)
 	{
-		if (**arg == '\'' && !qd && !is_expanded(explst, **arg))
+		if (**arg == '\'' && !qd && !is_expanded(explst, *arg))
 			qs = !qs;
-		if (**arg == '"' && !qs && !is_expanded(explst, **arg))
+		if (**arg == '"' && !qs && !is_expanded(explst, *arg))
 			qd = !qd;
 		if ((!qd && **arg == '\'') || (!qs && **arg == '"'))
 		{

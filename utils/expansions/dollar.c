@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 14:28:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:01:29 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ char	*get_envvar(char **dollar, char *status)
 	char	*var;
 
 	(*dollar)++;
-	if (*dollar == '$')
+	if (**dollar == '$')
 		return ("");
-	else if (*dollar == '?')
+	else if (**dollar == '?')
 	{
 		(*dollar)++;
 		return (status);
@@ -62,7 +62,7 @@ int	get_size(char *arg, char *status)
 	return (len);
 }
 
-int	print_env(char *arg, char *exp, char *status, t_list **explst)
+int	write_env(char *arg, char *exp, char *status, t_list **explst)
 {
 	char	*envvar;
 	char	qs;
@@ -100,7 +100,7 @@ char	*expand_dollar(char *arg, char *status, t_list **explst)
 	exp = ft_calloc(sizeof(char), get_size(arg, status) + 1);
 	if (!exp)
 		return (free(status), NULL);
-	if (!print_env(arg, exp, explst, status))
+	if (!write_env(arg, exp, status, explst))
 	{
 		ft_lstclear(explst, free);
 		*explst = NULL;

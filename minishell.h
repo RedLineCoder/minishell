@@ -6,24 +6,25 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 14:38:16 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:03:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "lib/gnl/get_next_line.h"
-# include "lib/libft/libft.h"
+# include <stdio.h>
 # include <fcntl.h>
 # include <limits.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <stdbool.h>
-# include <stdio.h>
 # include <unistd.h>
 # include <sys/types.h>
 # include <dirent.h>
+# include <sys/stat.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include "lib/gnl/get_next_line.h"
+# include "lib/libft/libft.h"
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"

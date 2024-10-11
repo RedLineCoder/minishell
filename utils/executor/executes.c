@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/11 14:42:30 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:05:04 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 
 	if (!handle_redirects(exec->redirs, msh))
 		return (EXIT_FAILURE);
+	status = EXIT_SUCCESS;
+	exec->args = expander(exec->args, msh);
 	args = get_args_arr(exec->args);
 	if (!args)
 		return (mini_panic(NULL, "malloc error\n", EXIT_FAILURE));
