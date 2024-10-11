@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/10 18:38:27 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/10 19:50:19 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,7 @@ int	loop_heredocs(void *ptr)
 	{
 		redir = lst->content;
 		if (redir->redir_type == REDIR_HDOC && !run_heredoc(redir))
-		{
-			printf("sa\n");
 			return (false);
-		}
 		lst = lst->next;
 	}
 	return (true);

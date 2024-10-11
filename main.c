@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/10 18:31:16 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/10 18:45:21 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,7 +227,7 @@ int	main(int argc, char **argv, char **env)
 	return (0);
 }
 
-void __attribute__ ((destructor)) sa()
+/* void __attribute__ ((destructor)) sa()
 {
 	system("leaks minishell");
-}
+} */

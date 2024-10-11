@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 09:20:13 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/10 18:30:41 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/10 19:53:07 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 void	init_environment(t_list **mshenv, char **env)
 {
 	char	**splitted;
-
+	char	*shlvl;
+	
 	while (*env)
 	{
 		splitted = ft_split(*env, '=');
@@ -25,6 +26,18 @@ void	init_environment(t_list **mshenv, char **env)
 		free_string_array(splitted);
 		env++;
 	}
+	shlvl = get_env(*mshenv, "SHLVL");
+	if (shlvl)
+	{
+		shlvl = ft_itoa(ft_atoi(shlvl) + 1);
+		if (shlvl)
+		{
+			set_env(mshenv, "SHLVL", shlvl);
+			free(shlvl);
+		}
+	}
+	else
+		set_env(mshenv, "SHLVL", "1");
 }
 
 void	destroy_environment(t_list	*mshenv)
