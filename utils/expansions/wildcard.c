@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 17:56:30 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/11 19:16:31 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	is_wildcard(t_list *explst, char *arg)
 
 int	ft_patterncmp(t_list *explst, char **arg, char **file)
 {
+	int	diff;
 	int	qs;
 	int	qd;
 
@@ -50,14 +51,13 @@ int	ft_patterncmp(t_list *explst, char **arg, char **file)
 			(*arg)++;
 			continue ;
 		}
-		if (!(qd || qs) && *(*arg + 1) == '*')
-			break ;
-		if (**arg != **file)
+		if ((!(qd || qs) && *(*arg + 1) == '*') || **arg != **file)
 			break ;
 		(*arg)++;
 		(*file)++;
 	}
-	return (**arg - **file);
+	diff = **arg - **file;
+	return ((*arg)++, (*file)++, diff);
 }
 
 int	check_pattern(t_list *explst, char *arg, char *file)
