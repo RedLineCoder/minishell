@@ -6,13 +6,13 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/06 19:57:39 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 14:28:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-char	*get_envvar(char **dollar)
+char	*get_envvar(char **dollar, char *status)
 {
 	char	*start;
 	char	*end;
@@ -20,59 +20,91 @@ char	*get_envvar(char **dollar)
 	char	*var;
 
 	(*dollar)++;
+	if (*dollar == '$')
+		return ("");
+	else if (*dollar == '?')
+	{
+		(*dollar)++;
+		return (status);
+	}
 	start = *dollar;
-	while (ft_isdigit(**dollar)
-		|| ft_isalpha(**dollar) || **dollar == '_')
+	while ((ft_isalnum(**dollar) || **dollar == '_') && *dollar)
 		(*dollar)++;
 	end = *dollar;
 	var = ft_strndup(start, end - start);
 	envvar = getenv(var);
 	if (!envvar)
-		return (" ");
+		return (free(var), "");
 	return (free(var), envvar);
 }
 
-int	get_size(char *arg)
+int	get_size(char *arg, char *status)
 {
-	int		len;
+	int	len;
+	int	dq;
 
 	len = 0;
+	dq = 0;
 	while (*arg)
 	{
-		len += pass_quote(&arg, arg + ft_strlen(arg), "\'");
+		if (*arg == '"')
+			dq = !dq;
+		if (!dq)
+			len += pass_quote(&arg, arg + ft_strlen(arg), "\'");
 		if (*arg == '$')
-			len += ft_strlen(get_envvar(&arg));
+		{
+			len += ft_strlen(get_envvar(&arg, status));
+			continue ;
+		}
 		arg++;
 		len++;
 	}
 	return (len);
 }
 
-char	*expand_dollar(char *arg)
+int	print_env(char *arg, char *exp, char *status, t_list **explst)
 {
-	char	*expanded;
 	char	*envvar;
-	int		expand;
-	int		index;
+	char	qs;
+	char	qd;
+	char	*start;
 
-	expand = 1;
-	index = 0;
-	expanded = ft_calloc(sizeof(char), get_size(arg) + 1);
-	if (!expanded)
-		return (NULL);
+	qs = 0;
+	qd = 0;
 	while (*arg)
 	{
-		if (*arg == '\'')
-			expand = !expand;
-		if (*arg == '$' && expand)
+		if (*arg == '"')
+			qd = !qd;
+		if (*arg == '\'' && !qd)
+			qs = !qs;
+		if (*arg == '$' && !qs)
 		{
-			envvar = get_envvar(&arg);
-			ft_strlcpy(expanded + index, envvar, ft_strlen(envvar));
-			index += ft_strlen(envvar) - 1;
-			continue ;
+			envvar = get_envvar(&arg, status);
+			start = exp;
+			exp += ft_strlcpy(exp, envvar, ft_strlen(envvar) + 1);
+			if (!set_exptrack(explst, start, exp - 1))
+				return (0);
 		}
-		expanded[index] = *arg++;
-		index++;
+		else
+			*exp++ = *arg++;
 	}
-	return (expanded);
+	return (1);
+}
+
+char	*expand_dollar(char *arg, char *status, t_list **explst)
+{
+	char	*exp;
+
+	if (!status)
+		return (NULL);
+	exp = ft_calloc(sizeof(char), get_size(arg, status) + 1);
+	if (!exp)
+		return (free(status), NULL);
+	if (!print_env(arg, exp, explst, status))
+	{
+		ft_lstclear(explst, free);
+		*explst = NULL;
+		return (free(status), NULL);
+	}
+	return (free(status), exp);
 }

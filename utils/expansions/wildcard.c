@@ -6,98 +6,107 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/06 19:57:55 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 14:28:55 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	get_wildsize(char *arg)
+int	is_wildcard(t_list *explst, char *arg)
 {
-	int	size;
+	int	qs;
+	int	qd;
 
-	size = 0;
-	while (*arg && *arg != '*')
-	{
-		arg++;
-		size++;
-	}
-	if (arg != '*')
-		return (-size);
-	return (size);
-}
-
-int	is_pattern(char *arg)
-{
-	int	quoted;
-
-	quoted = 0;
+	qs = 0;
+	qd = 0;
 	while (*arg)
 	{
-		if (str_include(QUOTES, *arg))
-			quoted = !quoted;
-		if (*arg == '*' && !quoted)
+		if (*arg == '\'' && !qd && !is_expanded(explst, *arg))
+			qs = !qs;
+		if (*arg == '"' && !qs && !is_expanded(explst, *arg))
+			qd = !qd;
+		if (!(qd || qs) && *arg == '*')
 			return (1);
 		arg++;
 	}
 	return (0);
 }
 
-int	ft_dstrncmp(char **arg, char **file, int n)
+int	ft_patterncmp(t_list *explst, char **arg, char **file)
 {
-	if (n > 0)
+	int	qs;
+	int	qd;
+
+	qs = 0;
+	qd = 0;
+	while (**arg && **file)
 	{
-		while (**arg == **file && n)
+		if (**arg == '\'' && !qd && !is_expanded(explst, **arg))
+			qs = !qs;
+		if (**arg == '"' && !qs && !is_expanded(explst, **arg))
+			qd = !qd;
+		if ((!qd && **arg == '\'') || (!qs && **arg == '"'))
 		{
 			(*arg)++;
-			(*file)++;
-			n--;
+			continue ;
 		}
-		return (**arg - **file);
+		if (!(qd || qs) && *(*arg + 1) == '*')
+			break ;
+		if (**arg != **file)
+			break ;
+		(*arg)++;
+		(*file)++;
 	}
-	if (n < 0)
-	{
-		while (**file)
-			file++;
-		while (**arg == **file && n)
-		{
-			(*arg)--;
-			(*file)--;
-			n++;
-		}
-		return (**arg - **file);
-	}
-	return (0);
+	return (**arg - **file);
 }
 
-int	check_pattern(char *arg, char *file)
+int	check_pattern(t_list *explst, char *arg, char *file)
 {
-	int	size;
-	int	diff;
+	int		diff;
 
 	diff = 0;
+	diff = ft_patterncmp(explst, &arg, &file);
 	while (*arg && !diff)
 	{
 		while (*arg == '*')
 			arg++;
-		size = get_wildsize(arg);
-		while (*file && size > 0)
+		while (*file)
 		{
 			if (*arg == *file)
 			{
-				diff = ft_dstrncmp(&arg, &file, size);
+				diff = ft_patterncmp(explst, &arg, &file);
 				break ;
 			}
 			file++;
 		}
 	}
-	if (diff)
-		return (diff);
-	if (size < 0)
-		diff = ft_dstrncmp(&arg, &file, size);
 	return (diff);
 }
 
-t_list	*file_expansion(char *arg)
+int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 {
+	DIR *const		current_dir = opendir(".");
+	struct dirent	*dp;
+	char			*dirname;
+	int				count;
+
+	if (!is_wildcard(explst, arg))
+		return (0);
+	count = 0;
+	dp = readdir(current_dir);
+	while (dp)
+	{
+		if (!check_pattern(explst, arg, dp->d_name))
+		{
+			dirname = ft_strdup(dp->d_name);
+			if (!dirname)
+				return (-1);
+			if (!lst_addback_content(expanded, dirname))
+				return (-1);
+			count++;
+		}
+		dp = readdir(current_dir);
+	}
+	closedir(current_dir);
+	return (count);
 }

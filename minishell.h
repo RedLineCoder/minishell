@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 14:25:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 14:38:16 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,13 @@
 # include "lib/libft/libft.h"
 # include <fcntl.h>
 # include <limits.h>
-# include <stdio.h>
-# include <stdbool.h>
-# include <unistd.h>
-# include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <stdbool.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <sys/types.h>
+# include <dirent.h>
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
@@ -118,38 +119,30 @@ typedef struct s_cmd
 
 typedef struct s_blockcmd
 {
-	int		type;
-	int		out_file;
-	int		in_file;
-	t_cmd	*subshell;
-	t_list	*redirs;
-}			t_blockcmd;
+	int			type;
+	int			out_file;
+	int			in_file;
+	t_cmd		*subshell;
+	t_list		*redirs;
+}				t_blockcmd;
 
 typedef struct s_execcmd
 {
-	int		type;
-	int		out_file;
-	int		in_file;
-	t_list	*args;
-	t_list	*redirs;
-}			t_execcmd;
-
-typedef struct s_argcmd
-{
-	int		type;
-	char	*s_arg;
-	char	*e_arg;
-}			t_argcmd;
+	int			type;
+	int			out_file;
+	int			in_file;
+	t_list		*args;
+	t_list		*redirs;
+}				t_execcmd;
 
 typedef struct s_redircmd
 {
-	int		type;
-	int		redir_type;
-	int		fd;
-	int		pipe[2];
-	char	*s_spec;
-	char	*e_spec;
-}			t_redircmd;
+	int			type;
+	int			redir_type;
+	int			fd;
+	int			pipe[2];
+	t_list		*args;
+}				t_redircmd;
 
 typedef struct s_pipecmd
 {
@@ -187,15 +180,21 @@ t_logicop		get_logicop(char *ts, char *te);
 t_tokens		get_token_type(char *ts, char *te);
 
 // Expander
-char			*expand_dollar(char *arg);
+int				is_wildcard(t_list *explst, char *arg);
+int				is_expanded(t_list *explst, char *ptr);
+int				set_exptrack(t_list **explst, char *start, char *end);
+int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
+char			*expand_dollar(char *arg, char *status, t_list **explst);
+t_list			*expander(t_list *args, t_msh *msh);
+
 
 // Executor
 int			wait_child_processes(int pid);
-int			execute_redir(t_redircmd *redir);
+int			execute_redir(t_redircmd *redir, t_msh *msh);
 int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
 int			execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork);
 int			execute_exec(t_execcmd *exec, t_msh *msh, int builtin);
-int			handle_redirects(t_list *redirs);
+int			handle_redirects(t_list *redirs, t_msh *msh);
 int			execute_block(t_blockcmd *block, t_msh *msh);
 int			execute_pipe(t_list *pipelist, t_msh *msh);
 int			execute_builtin(int builtin, char **args, t_msh *msh);
@@ -213,6 +212,7 @@ char			*get_cmd_path(char *command, t_list *env);
 char			*ft_strndup(char *src, int size);
 int				str_append(char **s1, char const *s2);
 int				str_arr_size(char **arr);
+int				lst_addback_content(t_list **lst, void *content);
 char			*str_include(const char *s, int c);
 void			free_string_array(char **arr);
 int				execute_command(char *command, char **args, t_list	*env, int silence);
@@ -242,11 +242,10 @@ t_list	*get_env_node(t_list *lst, char *key);
 // ls&&cat||can|meta 3<file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
 // (ls | ls && cat < redir) || ls && cmd || (echo "afbf|&&" || ls)
 
-//EXEC
+// EXEC
 // ls|cat&&ls|echo me 3>file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
 
-
-/* 
+/*
 
 <REDIRECTION> ::=  '>' <WORD>
 				|  '<' <WORD>

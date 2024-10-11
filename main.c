@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/10 18:45:21 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 14:33:40 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,11 @@ void treeprint(t_cmd *root, int level)
 				printf("NONE");
 			while (((t_blockcmd *)root)->redirs)
 			{
-				printf("%s ", ft_strndup(((t_redircmd *)((t_blockcmd *)root)->redirs->content)->s_spec,
-				((t_redircmd *)((t_blockcmd *)root)->redirs->content)->e_spec - ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->s_spec));
+				while (((t_redircmd *)root)->args)
+				{
+					printf("%s ", (char *)((t_redircmd *)root)->args->content);
+					((t_redircmd *)root)->args = ((t_redircmd *)root)->args->next;
+				}
 				t_redir rtype = ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->redir_type;
 				switch (rtype)
 				{
@@ -104,8 +107,11 @@ void treeprint(t_cmd *root, int level)
 				printf("NONE");
 			while (((t_execcmd *)root)->redirs)
 			{
-				printf("%s ", ft_strndup(((t_redircmd *)((t_execcmd *)root)->redirs->content)->s_spec,
-				((t_redircmd *)((t_execcmd *)root)->redirs->content)->e_spec - ((t_redircmd *)((t_execcmd *)root)->redirs->content)->s_spec));
+				while (((t_execcmd *)root)->redirs)
+				{
+					printf("%s ", (char *)((t_execcmd *)root)->redirs->content);
+					((t_execcmd *)root)->redirs = ((t_execcmd *)root)->redirs->next;
+				}
 				t_redir rtype = ((t_redircmd *)((t_execcmd *)root)->redirs->content)->redir_type;
 				switch (rtype)
 				{
@@ -213,6 +219,8 @@ int	main(int argc, char **argv, char **env)
 			executor(root, msh);
 		//printf("%p\n", root->right);
 		//treeprint(root, 0);
+		/* char *test = expander(line);
+		printf("%s\n", test); */
 		free(line);
 		if (msh->user)
 		{

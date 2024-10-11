@@ -6,20 +6,20 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/10 19:50:19 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 14:44:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	handle_redirects(t_list *redirs)
+int	handle_redirects(t_list *redirs, t_msh *msh)
 {
 	t_redircmd	*redir;
 
 	while (redirs)
 	{
 		redir = redirs->content;
-		if (!execute_redir(redirs->content))
+		if (!execute_redir(redirs->content, msh))
 			return (false);
 		redirs = redirs->next;
 	}
@@ -59,15 +59,14 @@ int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
 int	run_heredoc(t_redircmd *redir)
 {
 	char			*buffer;
-	const size_t	len = redir->e_spec - redir->s_spec;
+	const char		*eof = redir->args->content;
 
 	if (pipe(redir->pipe) == -1)
 		return (mini_panic("heredoc", "pipe error", false));
 	while (1)
 	{
 		buffer = readline("> ");
-		if (!buffer || (ft_strlen(buffer) == len
-				&& !ft_strncmp(buffer, redir->s_spec, len)))
+		if (!buffer && !ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
 		{
 			free(buffer);
 			close(redir->pipe[1]);
