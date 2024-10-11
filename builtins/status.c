@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   status.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/11 13:39:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 13:41:10 by emyildir         ###   ########.fr       */
+/*   Created: 2024/10/07 17:13:11 by emyildir          #+#    #+#             */
+/*   Updated: 2024/10/07 17:15:19 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../minishell.h"
 
-size_t	ft_strlen(const char *s)
+int	builtin_status(int args_size, char **args, t_msh *msh)
 {
-	size_t	length;
-
-	length = 0;
-	while (*s++)
-	{
-		length++;
-	}
-	return (length);
+	(void)args_size;
+	(void)args;
+	printf("%d\n", msh->last_status);
+	return (EXIT_SUCCESS);
 }

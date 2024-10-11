@@ -6,104 +6,104 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:50:51 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:05:04 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	execute_redir(t_redircmd *redir)
+int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
 	int				fd;
 	char			*file;
 	int				flags;
 	t_redir const	type = redir->redir_type;
 
-	if (type == REDIR_HDOC)
-		return (dup2(redir->pipe[0], redir->fd), \
-		close(redir->pipe[0]), true);
-	flags = O_RDWR;
+	flags = 0;
+	if (type == REDIR_INPUT)
+		flags |= O_RDONLY;
+	if (type == REDIR_OUTPUT)
+		flags |= O_WRONLY;
 	if (type == REDIR_APPEND)
 		flags |= O_APPEND;
 	if (type != REDIR_INPUT)
 		flags |= O_CREAT;
-	file = ft_strndup(redir->s_spec, redir->e_spec - redir->s_spec);
-	fd = open(file, flags, S_IRWXU);
-	free(file);
-	if (fd == -1)
-		return (false);
-	if (type == REDIR_APPEND || type == REDIR_OUTPUT)
-		dup2(fd, redir->fd);
+	redir->args = expander(redir->args, msh);
+	if (ft_lstsize(redir->args) > 1)
+		return (mini_panic("*", "ambiguous redirect", false));
+	file = redir->args->content;
+	if (type == REDIR_HDOC)
+		fd = redir->pipe[0];
 	else
-		dup2(fd, redir->fd);
-	close(fd);
-	return (true);
+		fd = open(file, flags, S_IRWXU);
+	if (fd == -1 || dup2(fd, redir->fd) == -1)
+		return (mini_panic(file, NULL, false));
+	return (close(fd), true);
 }
 
-void	execute_exec(t_execcmd *exec, char **env)
+int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 {
-	t_list			*lst;		
-	char **const	args = get_args_arr(exec->args);
+	int			status;
+	char		**args;
 
+	if (!handle_redirects(exec->redirs, msh))
+		return (EXIT_FAILURE);
+	status = EXIT_SUCCESS;
+	exec->args = expander(exec->args, msh);
+	args = get_args_arr(exec->args);
 	if (!args)
-		mini_panic("Malloc error\n", true, EXIT_FAILURE);
-	lst = exec->redirs;
-	while (lst)
+		return (mini_panic(NULL, "malloc error\n", EXIT_FAILURE));
+	else if (*args)
 	{
-		if (!execute_redir(lst->content))
+		if (builtin)
+			status = execute_builtin(builtin, args, msh);
+		else
 		{
-			free(args);
-			exit(EXIT_FAILURE);
+			execute_command(args[0], args, msh->env, false);
+			status = EXIT_FAILURE;
 		}
-		lst = lst->next;
 	}
-	if (!*args)
-		exit(EXIT_SUCCESS);
-	execute_command(args[0], args, env);
-	free_string_array(args);
-	exit(EXIT_FAILURE);
+	free(args);
+	return (status);
 }
 
-void	execute_block(t_blockcmd *block, t_msh *msh)
+int	execute_block(t_blockcmd *block, t_msh *msh)
 {
 	int		status;
-	t_list	*lst;
 
-	lst = block->redirs;
-	while (lst)
-	{
-		execute_redir(lst->content);
-		lst = lst->next;
-	}
+	if (!handle_redirects(block->redirs, msh))
+		return (mini_panic("block", "malloc error\n", EXIT_FAILURE));
 	status = execute_cmd(block->subshell, msh, true);
-	exit(status);
+	return (status);
 }
 
-void	execute_pipe(t_pipecmd *pipecmd, t_msh *msh)
+int	execute_pipe(t_list *pipelist, t_msh *msh)
 {
+	int		last;
 	int		p[2];
 	pid_t	pid;
-	t_list	*lst;
 
-	lst = pipecmd->pipelist;
-	while (lst)
+	while (pipelist)
 	{
-		if (pipe(p))
-			exit(1);
+		last = ft_lstlast(pipelist) == pipelist;
+		if (!last && pipe(p))
+			return (mini_panic(NULL, NULL, EXIT_FAILURE));
 		pid = fork();
-		if (pid == -1)
-			exit(EXIT_FAILURE);
-		if (pid)
-			dup2(p[0], STDIN_FILENO);
-		else if (ft_lstlast(lst) != lst)
-			dup2(p[1], STDOUT_FILENO);
+		if (pid == -1
+			|| (!last && ((pid && dup2(p[0], STDIN_FILENO) == -1)
+					|| (!pid && dup2(p[1], STDOUT_FILENO) == -1))))
+		{
+			if (!last)
+				close_pipe(p);
+			return (mini_panic(NULL, NULL, EXIT_FAILURE));
+		}
 		close_pipe(p);
 		if (!pid)
-			execute_cmd(lst->content, msh, false);
-		lst = lst->next;
+			exit(execute_cmd(pipelist->content, msh, false));
+		pipelist = pipelist->next;
 	}
 	close(STDIN_FILENO);
-	exit(wait_child_processes(pid));
+	return (wait_child_processes(pid));
 }
 
 int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 18:36:27 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 19:11:41 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/11 14:28:39 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	pass_block(char *bs, char **be, char *pe)
 
 	if (peek(bs, pe, TKN_NONE) != BLK_OP)
 		return (1);
-	while ((bs != pe) && str_include(SPACE, *bs))
+	while ((bs != pe) && str_include(SPACES, *bs))
 		bs++;
 	sem_block = 1;
 	while (bs != pe && sem_block)
@@ -84,7 +84,7 @@ t_tokens	get_token(char **ps, char **pe, char **ts, char **te)
 
 	if ((!ps || !pe) || (ps == pe))
 		return (TKN_NONE);
-	while ((*ps != *pe) && str_include(SPACE, **ps))
+	while ((*ps != *pe) && str_include(SPACES, **ps))
 		(*ps)++;
 	if (*ps == *pe)
 		return (TKN_NONE);

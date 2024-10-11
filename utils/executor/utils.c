@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 13:46:35 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/11 16:15:40 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,35 +28,39 @@ int	wait_child_processes(int pid)
 	return (status >> 8);
 }
 
-void	execute_command(char *command, char **args, char **env)
+int	execute_command(char *command, char **args, t_list	*env, int silence)
 {
-	char	*path;
-	bool	args_created;
+	char			*path;
+	char			*err;
+	t_stat			file;
+	char **const	envarr = get_env_arr(env);
 
-	path = get_cmd_path(command);
+	err = NULL;
+	path = get_cmd_path(command, env);
 	if (!path)
-		mini_panic("Command not found.\n", true, EXIT_FAILURE);
-	args_created = false;
-	if (!args)
+		err = "command not found\n";
+	else if (stat(path, &file))
+		err = "error reading file information\n";
+	else if (S_ISDIR(file.st_mode))
+		err = "is a directory\n";
+	if (err || !envarr)
 	{
-		args = ft_split(command, ' ');
-		args_created = true;
+		if (envarr)
+			free_string_array(envarr);
+		if (!silence)
+			return (mini_panic(command, err, 127));
 	}
-	execve(path, args, env);
-	if (args_created)
-		free_string_array(args);
-	exit(EXIT_FAILURE);
+	execve(path, args, get_env_arr(env));
+	return (mini_panic(command, err, EXIT_FAILURE));
 }
 
-char	*get_cmd_path(char *command)
+char	*get_cmd_path(char *command, t_list *env)
 {
-	char *const	pathenv = getenv("PATH");
+	char *const	pathenv = get_env(env, "PATH");
 	char		**paths;
 	char		*path;
 	size_t		i;
 
-	if (!access(command, F_OK))
-		return (command);
 	if (!pathenv)
 		return (NULL);
 	paths = ft_split(pathenv, ':');
@@ -74,6 +78,8 @@ char	*get_cmd_path(char *command)
 		path = NULL;
 	}
 	free_string_array(paths);
+	if (!access(command, F_OK | X_OK))
+		return (command);
 	return (path);
 }
 
@@ -83,17 +89,13 @@ char	**get_args_arr(t_list *arglist)
 	char		**args;
 	const int	len = ft_lstsize(arglist);
 
-	if (!len)
-		return (NULL);
 	args = ft_calloc(sizeof(char *), len + 1);
 	if (!args)
 		return (NULL);
 	i = 0;
 	while (arglist)
 	{
-		args[i] = (char *)arglist->content;
-		if (!args[i++])
-			return (free_string_array(args), NULL);
+		args[i++] = (char *)arglist->content;
 		arglist = arglist->next;
 	}
 	return (args);

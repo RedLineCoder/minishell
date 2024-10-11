@@ -1,25 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/11 13:39:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 13:41:10 by emyildir         ###   ########.fr       */
+/*   Created: 2024/10/05 02:41:44 by emyildir          #+#    #+#             */
+/*   Updated: 2024/10/07 16:57:00 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../minishell.h"
 
-size_t	ft_strlen(const char *s)
+int	builtin_cd(int args_size, char **args, t_msh *msh)
 {
-	size_t	length;
+	char	*path;
+	char	*err;
 
-	length = 0;
-	while (*s++)
+	if (args_size == 1)
 	{
-		length++;
+		path = get_env(msh->env, "HOME");
+		err = "HOME not set\n";
 	}
-	return (length);
+	else
+	{
+		path = args[1];
+		err = NULL;
+	}
+	if (chdir(path) == -1)
+		return (mini_panic("cd", err, EXIT_FAILURE));
+	return (EXIT_SUCCESS);
 }

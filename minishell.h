@@ -6,30 +6,38 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/04 20:49:38 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/11 17:28:21 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "lib/gnl/get_next_line.h"
-# include "lib/libft/libft.h"
+# include <stdio.h>
 # include <fcntl.h>
 # include <limits.h>
-# include <stdio.h>
 # include <stdbool.h>
 # include <unistd.h>
+# include <sys/types.h>
+# include <dirent.h>
+# include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include "lib/gnl/get_next_line.h"
+# include "lib/libft/libft.h"
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
-# define SPACE " \t\n"
+# define SPACES " \t\n"
 # define REDIRS "<>"
 # define QUOTES "'\""
 # define BLOCKS "()"
 # define DIGITS "0123456789"
+# define ERR_TKN "-msh: syntax error near unexpected token "
+# define ERR_TAG "-msh"
+# define MSH_TAG "msh $ "
+
+typedef struct stat t_stat;
 
 typedef enum e_cmdtype
 {
@@ -76,10 +84,11 @@ typedef enum e_builtins
 	BUILTIN_ECHO,
 	BUILTIN_CD,
 	BUILTIN_PWD,
-	BULTIN_EXPORT,
+	BUILTIN_EXPORT,
 	BUILTIN_UNSET,
 	BUILTIN_ENV,
-	BUILTIN_EXIT
+	BUILTIN_EXIT,
+	BUILTIN_STATUS
 }		t_builtins;
 
 // Structs
@@ -94,9 +103,15 @@ typedef struct s_part
 typedef struct s_msh
 {
 	int		last_status;
+	int		exit_flag;
 	char	*user;
-	char	**env;
+	t_list	*env;
 }			t_msh;
+
+typedef struct s_env{
+	char	*key;
+	char	*pair;
+}				t_env;
 
 typedef struct s_cmd
 {
@@ -105,38 +120,30 @@ typedef struct s_cmd
 
 typedef struct s_blockcmd
 {
-	int		type;
-	int		out_file;
-	int		in_file;
-	t_cmd	*subshell;
-	t_list	*redirs;
-}			t_blockcmd;
+	int			type;
+	int			out_file;
+	int			in_file;
+	t_cmd		*subshell;
+	t_list		*redirs;
+}				t_blockcmd;
 
 typedef struct s_execcmd
 {
-	int		type;
-	int		out_file;
-	int		in_file;
-	t_list	*args;
-	t_list	*redirs;
-}			t_execcmd;
-
-typedef struct s_argcmd
-{
-	int		type;
-	char	*s_arg;
-	char	*e_arg;
-}			t_argcmd;
+	int			type;
+	int			out_file;
+	int			in_file;
+	t_list		*args;
+	t_list		*redirs;
+}				t_execcmd;
 
 typedef struct s_redircmd
 {
-	int		type;
-	int		redir_type;
-	int		fd;
-	int		pipe[2];
-	char	*s_spec;
-	char	*e_spec;
-}			t_redircmd;
+	int			type;
+	int			redir_type;
+	int			fd;
+	int			pipe[2];
+	t_list		*args;
+}				t_redircmd;
 
 typedef struct s_pipecmd
 {
@@ -174,41 +181,72 @@ t_logicop		get_logicop(char *ts, char *te);
 t_tokens		get_token_type(char *ts, char *te);
 
 // Expander
-char			*expand_dollar(char *arg);
+int				is_wildcard(t_list *explst, char *arg);
+int				is_expanded(t_list *explst, char *ptr);
+int				set_exptrack(t_list **explst, char *start, char *end);
+int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
+char			*expand_dollar(char *arg, char *status, t_list **explst);
+char			*unquote_arg(t_list *explst, char *arg);
+t_list			*expander(t_list *args, t_msh *msh);
 
 // Executor
 int			wait_child_processes(int pid);
-int			execute_redir(t_redircmd *redir);
+int			execute_redir(t_redircmd *redir, t_msh *msh);
 int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
-int			execute_cmd(t_cmd *cmd, t_msh *msh, int forked);
-void		execute_exec(t_execcmd *exec, char **env);
-void		execute_block(t_blockcmd *block, t_msh *msh);
-void		execute_pipe(t_pipecmd *pipecmd, t_msh *msh);
+int			execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork);
+int			execute_exec(t_execcmd *exec, t_msh *msh, int builtin);
+int			handle_redirects(t_list *redirs, t_msh *msh);
+int			execute_block(t_blockcmd *block, t_msh *msh);
+int			execute_pipe(t_list *pipelist, t_msh *msh);
+int			execute_builtin(int builtin, char **args, t_msh *msh);
 void		executor(t_cmd *block, t_msh *msh);
 void		close_pipe(int	fd[2]);
-void		mini_panic(char *str, int exit_flag, int exit_status);
+int			mini_panic(char *title, char *content, int exit_flag);
+void		print_env(t_list *lst, int quotes, int hide_null);
 char		**get_args_arr(t_list	*arglist);
+char		**get_env_arr(t_list *mshenv);
+int			get_builtin(t_execcmd *exec);
 
 // Utils
-char			*get_user(void);
-char			*get_cmd_path(char *command);
+char			*get_user(t_list *env);
+char			*get_cmd_path(char *command, t_list *env);
 char			*ft_strndup(char *src, int size);
 int				str_append(char **s1, char const *s2);
 int				str_arr_size(char **arr);
+int				lst_addback_content(t_list **lst, void *content);
 char			*str_include(const char *s, int c);
 void			free_string_array(char **arr);
-void			execute_command(char *command, char **args, char **env);
+int				execute_command(char *command, char **args, t_list	*env, int silence);
+int				tree_map(t_cmd *cmd, int (*f)(void *));
+
+//Builtins
+int		builtin_cd(int args_size, char **args, t_msh *msh);
+int		builtin_exit(int args_size, char **args, t_msh *msh);
+int		builtin_pwd(int args_size, char **args, t_msh *msh);
+int		builtin_echo(int args_size, char **args, t_msh *msh);
+int		builtin_export(int args_size, char **args, t_msh *msh);
+int		builtin_unset(int args_size, char **args, t_msh *msh);
+int		builtin_env(int args_size, char **args, t_msh *msh);
+int		builtin_status(int args_size, char **args, t_msh *msh);
+
+//Environment
+int		unset_env(t_list **root, char *key);
+int		set_env(t_list **root, char *key, char *pair);
+void	destroy_env(t_list *lst);
+void	destroy_environment(t_list	*mshenv);
+void	init_environment(t_list **msh, char **env);
+char	*get_env(t_list *root, char *key);
+t_list	*get_env_node(t_list *lst, char *key);
 
 #endif
 
 // ls&&cat||can|meta 3<file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
 // (ls | ls && cat < redir) || ls && cmd || (echo "afbf|&&" || ls)
 
-//EXEC
+// EXEC
 // ls|cat&&ls|echo me 3>file"2" &&echo "Here'me"''"heredoc<<"and'|<>& \n\t'
 
-
-/* 
+/*
 
 <REDIRECTION> ::=  '>' <WORD>
 				|  '<' <WORD>

@@ -1,25 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/11 13:39:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 13:41:10 by emyildir         ###   ########.fr       */
+/*   Created: 2024/10/05 07:03:27 by emyildir          #+#    #+#             */
+/*   Updated: 2024/10/06 20:02:49 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../minishell.h"
 
-size_t	ft_strlen(const char *s)
+int	builtin_echo(int args_size, char **args, t_msh *msh)
 {
-	size_t	length;
+	int		newline_flag;
+	int		i;
 
-	length = 0;
-	while (*s++)
+	(void)msh;
+	newline_flag = true;
+	i = 0;
+	while (++i < args_size)
 	{
-		length++;
+		if (i == 1 && !ft_strncmp(args[i], "-n", 3))
+			newline_flag = false;
+		else
+		{
+			printf("%s", args[i]);
+			if (i != args_size - 1)
+				printf(" ");
+		}
 	}
-	return (length);
+	if (newline_flag)
+		printf("\n");
+	return (EXIT_SUCCESS);
 }

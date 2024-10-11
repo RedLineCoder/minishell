@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/11 13:39:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/05 13:41:10 by emyildir         ###   ########.fr       */
+/*   Created: 2024/10/05 06:59:01 by emyildir          #+#    #+#             */
+/*   Updated: 2024/10/07 16:57:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../minishell.h"
 
-size_t	ft_strlen(const char *s)
+int	builtin_pwd(int args_size, char **args, t_msh *msh)
 {
-	size_t	length;
+	char	path[PATH_MAX];
 
-	length = 0;
-	while (*s++)
-	{
-		length++;
-	}
-	return (length);
+	(void)args_size;
+	(void)args;
+	(void)msh;
+	if (!getcwd(path, PATH_MAX))
+		return (mini_panic("pwd", NULL, EXIT_FAILURE));
+	printf("%s\n", path);
+	return (EXIT_SUCCESS);
 }

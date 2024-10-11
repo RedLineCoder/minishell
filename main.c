@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 14:19:12 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/11 17:31:56 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,11 @@ void treeprint(t_cmd *root, int level)
 				printf("NONE");
 			while (((t_blockcmd *)root)->redirs)
 			{
-				printf("%s ", ft_strndup(((t_redircmd *)((t_blockcmd *)root)->redirs->content)->s_spec,
-				((t_redircmd *)((t_blockcmd *)root)->redirs->content)->e_spec - ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->s_spec));
+				while (((t_redircmd *)root)->args)
+				{
+					printf("%s ", (char *)((t_redircmd *)root)->args->content);
+					((t_redircmd *)root)->args = ((t_redircmd *)root)->args->next;
+				}
 				t_redir rtype = ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->redir_type;
 				switch (rtype)
 				{
@@ -104,8 +107,11 @@ void treeprint(t_cmd *root, int level)
 				printf("NONE");
 			while (((t_execcmd *)root)->redirs)
 			{
-				printf("%s ", ft_strndup(((t_redircmd *)((t_execcmd *)root)->redirs->content)->s_spec,
-				((t_redircmd *)((t_execcmd *)root)->redirs->content)->e_spec - ((t_redircmd *)((t_execcmd *)root)->redirs->content)->s_spec));
+				while (((t_execcmd *)root)->redirs)
+				{
+					printf("%s ", (char *)((t_execcmd *)root)->redirs->content);
+					((t_execcmd *)root)->redirs = ((t_execcmd *)root)->redirs->next;
+				}
 				t_redir rtype = ((t_redircmd *)((t_execcmd *)root)->redirs->content)->redir_type;
 				switch (rtype)
 				{
@@ -132,12 +138,28 @@ void treeprint(t_cmd *root, int level)
 		}
 }
 
-void	mini_panic(char *str, int exit_flag, int exit_status)
+int	mini_panic(char *title, char *content, int status)
 {
-	ft_putstr_fd("msh: ", STDOUT_FILENO);
-	ft_putstr_fd(str, STDOUT_FILENO);
-	if (exit_flag)
-		exit(exit_status);
+	char	*tag;
+
+	tag = ft_strdup(ERR_TAG);
+	if (!tag)
+		perror(ERR_TAG);
+	if (title)
+	{
+		str_append(&tag, ": ");
+		str_append(&tag, title);
+	}
+	if (content)
+	{
+		ft_putstr_fd(tag, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(content, STDERR_FILENO);
+	}
+	else
+		perror(tag);
+	free(tag);
+	return (status);
 }
 
 char	*get_prompt(t_msh *msh)
@@ -175,17 +197,20 @@ int	main(int argc, char **argv, char **env)
 	char			*line;
 
 	(void)argv, (void)argc;
-	msh->env = env;
-	while (1)
+	init_environment(&msh->env, env);
+	while (!msh->exit_flag)
 	{
-		msh->user = get_user();
-		prompt = get_prompt(msh);
+		prompt = MSH_TAG;
+		msh->user = get_user(msh->env);
+		if (msh->user)
+			prompt = get_prompt(msh);
 		if (!prompt)
 		{
 			free(msh->user);
-			mini_panic("An error occured.", false, -1);
+			mini_panic(NULL, "An error occured.", -1);
 		}
 		line = readline(prompt);
+
 		if (!line) 
 			exit(0);
 		add_history(line);
@@ -194,8 +219,25 @@ int	main(int argc, char **argv, char **env)
 			executor(root, msh);
 		//printf("%p\n", root->right);
 		//treeprint(root, 0);
+		/* t_list	*test = ft_calloc(sizeof(t_list), 1);
+		test->content = line;
+		test = expander(test, msh);
+		printf("%s\n", test->content); */
 		free(line);
-		free(prompt);
+		if (msh->user)
+		{
+			free(msh->user);
+			free(prompt);
+		}
+		//clean_tree(root);
 	}
+	rl_clear_history();
+	destroy_environment(msh->env);
+	printf("exit\n");
 	return (0);
 }
+
+/* void __attribute__ ((destructor)) sa()
+{
+	system("leaks minishell");
+} */
