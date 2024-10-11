@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 12:35:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/09 17:51:45 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/11 13:44:14 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ void	clean_tree(void *cmd)
 		ft_lstclear(&((t_execcmd *)cmd)->redirs, clean_tree);
 		ft_lstclear(&((t_execcmd *)cmd)->args, free);
 	}
+	else if (((t_cmd *)cmd)->type == REDIR)
+		ft_lstclear(&((t_redircmd *)cmd)->args, free);
 	free(cmd);
 }
 

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/10 17:36:08 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/11 13:40:30 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,8 +129,7 @@ typedef struct s_redircmd
 	int			redir_type;
 	int			fd;
 	int			pipe[2];
-	char		*s_spec;
-	char		*e_spec;
+	t_list		*args;
 }				t_redircmd;
 
 typedef struct s_pipecmd

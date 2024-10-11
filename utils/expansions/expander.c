@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/10 19:58:31 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/11 14:02:28 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ int	set_exptrack(t_list **explst, char *start, char *end)
 
 int	is_expanded(t_list *explst, char *ptr)
 {
+	if (!explst)
+		return (0);
 	while (explst)
 	{
 		if (ptr >= (*(char **)explst->content)
@@ -79,8 +81,8 @@ char	*unquote_arg(t_list *explst, char *arg)
 	qd = 0;
 	qs = 0;
 	exp = ft_calloc(sizeof(char), unquoted_size(explst, arg) + 1);
-	if (!exp)
-		return (NULL);
+	if (!exp || !arg)
+		return (free(exp), NULL);
 	while (*arg)
 	{
 		if ((*arg == '\'' && !qd && !is_expanded(explst, *arg)) || (*arg == '"'
@@ -110,8 +112,6 @@ t_list	*expander(t_list *args, t_msh *msh)
 	{
 		expanded = expand_dollar(args->content, &explst,
 				ft_itoa(msh->last_status));
-		if (!expanded)
-			return (NULL);
 		status = expand_wildcard(&newargs, explst, expanded);
 		if (status == 0 && !lst_addback_content(&newargs, unquote_arg(explst,
 					expanded)))
