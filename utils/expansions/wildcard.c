@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 19:16:31 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/12 14:25:22 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,21 +65,24 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 	int		diff;
 
 	diff = 0;
-	diff = ft_patterncmp(explst, &arg, &file);
 	while (*arg && !diff)
 	{
 		while (*arg == '*')
 			arg++;
-		while (*file)
+		if (is_wildcard(explst, arg))
 		{
-			if (*arg == *file)
-			{
-				diff = ft_patterncmp(explst, &arg, &file);
+			while (*arg != *file)
+				file++;
+			diff = ft_patterncmp(explst, &arg, &file);
+			if (diff)
 				break ;
-			}
-			file++;
 		}
+		else
+			break;
 	}
+	file += ft_strlen(file) - ft_strlen(arg);
+	if (!diff)
+		diff = ft_patterncmp(explst, &arg, &file);
 	return (diff);
 }
 
