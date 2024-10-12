@@ -6,11 +6,37 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/12 14:25:22 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/12 19:26:20 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
+int	end_size(t_list *explst, char *arg)
+{
+	int	size;
+	int	qs;
+	int	qd;
+
+	qs = 0;
+	qd = 0;
+	size = 0;
+	while (*arg)
+	{
+		if (*arg == '\'' && !qd && !is_expanded(explst, arg))
+			qs = !qs;
+		if (*arg == '"' && !qs && !is_expanded(explst, arg))
+			qd = !qd;
+		if ((!qd && *arg == '\'') || (!qs && *arg == '"'))
+		{
+			arg++;
+			continue ;
+		}
+		arg++;
+		size++;
+	}
+		return (size);
+}
 
 int	is_wildcard(t_list *explst, char *arg)
 {
@@ -34,7 +60,6 @@ int	is_wildcard(t_list *explst, char *arg)
 
 int	ft_patterncmp(t_list *explst, char **arg, char **file)
 {
-	int	diff;
 	int	qs;
 	int	qd;
 
@@ -51,13 +76,14 @@ int	ft_patterncmp(t_list *explst, char **arg, char **file)
 			(*arg)++;
 			continue ;
 		}
-		if ((!(qd || qs) && *(*arg + 1) == '*') || **arg != **file)
+		if ((!(qd || qs) && **arg == '*'))
 			break ;
+		if (**arg != **file)
+			return (1);
 		(*arg)++;
 		(*file)++;
 	}
-	diff = **arg - **file;
-	return ((*arg)++, (*file)++, diff);
+	return (0);
 }
 
 int	check_pattern(t_list *explst, char *arg, char *file)
@@ -65,24 +91,26 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 	int		diff;
 
 	diff = 0;
+	if (*arg != '*')
+		diff = ft_patterncmp(explst, &arg, &file);
 	while (*arg && !diff)
 	{
 		while (*arg == '*')
 			arg++;
-		if (is_wildcard(explst, arg))
+		if (is_wildcard(explst, arg) && *file)
 		{
-			while (*arg != *file)
+			while (*arg != *file && *file)
 				file++;
 			diff = ft_patterncmp(explst, &arg, &file);
-			if (diff)
-				break ;
 		}
 		else
 			break;
 	}
-	file += ft_strlen(file) - ft_strlen(arg);
-	if (!diff)
+	if (!diff && *arg)
+	{
+		file += ft_strlen(file) - end_size(explst, arg);
 		diff = ft_patterncmp(explst, &arg, &file);
+	}
 	return (diff);
 }
 
