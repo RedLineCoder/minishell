@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/12 19:26:20 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/12 20:15:56 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,16 @@ int	end_size(t_list *explst, char *arg)
 			arg++;
 			continue ;
 		}
+		if (!(qd || qs) && *arg == '*')
+		{
+			size = 0;
+			arg++;
+			continue ;
+		}
 		arg++;
 		size++;
 	}
-		return (size);
+	return (size);
 }
 
 int	is_wildcard(t_list *explst, char *arg)
@@ -65,7 +71,7 @@ int	ft_patterncmp(t_list *explst, char **arg, char **file)
 
 	qs = 0;
 	qd = 0;
-	while (**arg && **file)
+	while (**arg || **file)
 	{
 		if (**arg == '\'' && !qd && !is_expanded(explst, *arg))
 			qs = !qs;
@@ -93,13 +99,13 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 	diff = 0;
 	if (*arg != '*')
 		diff = ft_patterncmp(explst, &arg, &file);
-	while (*arg && !diff)
+	while (!diff && is_wildcard(explst, arg))
 	{
 		while (*arg == '*')
 			arg++;
-		if (is_wildcard(explst, arg) && *file)
+		if (*(arg + end_size(explst, arg)))
 		{
-			while (*arg != *file && *file)
+			while (*arg != *file && *(file + end_size(explst, arg)))
 				file++;
 			diff = ft_patterncmp(explst, &arg, &file);
 		}
