@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 17:18:17 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 18:57:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 	pid_t			pid;
 	t_tokens const	token = cmd->type;
 	int const		builtin = get_builtin((t_execcmd *)cmd);
-	int	const		should_fork = !builtin && token != LOGIC;
+	int	const		should_fork = (!builtin || pipe) && token != LOGIC;
 	
 	if (should_fork)
 	{

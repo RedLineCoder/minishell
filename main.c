@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/13 17:17:37 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:44:16 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,6 @@ int	main(int argc, char **argv, char **env)
 	char			*line;
 
 	(void)argv, (void)argc;
-	child = 0;
 	init_environment(&msh->env, env);
 	while (!msh->exit_flag)
 	{
@@ -217,7 +216,8 @@ int	main(int argc, char **argv, char **env)
 			continue;
 		add_history(line);
 		t_cmd *root;
-		if (!parser(line, line + ft_strlen(line), &root))
+		msh->last_status = parser(line, line + ft_strlen(line), &root);
+		if (!msh->last_status)
 			executor(root, msh);
 		//printf("%p\n", root->right);
 		//treeprint(root, 0);
@@ -236,7 +236,7 @@ int	main(int argc, char **argv, char **env)
 	rl_clear_history();
 	destroy_environment(msh->env);
 	printf("exit\n");
-	return (0);
+	return (msh->last_status);
 }
 
 /* void __attribute__ ((destructor)) sa()

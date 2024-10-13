@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/13 17:24:36 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 18:58:18 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,6 @@ char	*get_env(t_list *root, char *key);
 t_list	*get_env_node(t_list *lst, char *key);
 
 //Signals
-void	wait_signals(t_msh *msh);
 
 int		child; 
 

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 08:55:37 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/07 16:58:02 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:22:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,14 @@
 
 int	is_valid_identifier(char *str)
 {
+	if (!*str)
+		return (false);
+	if (*str == '-' || *str == '_')
+		str++;
 	while (*str)
 	{
 		if (ft_isdigit(*str) || *str == ' '
-			|| (*str >= 9 && *str <= 13))
+			|| (*str >= 9 && *str <= 13) || !ft_isalpha(*str))
 			return (false);
 		str++;
 	}

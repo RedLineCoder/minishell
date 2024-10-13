@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 14:24:38 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:32:52 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 	flags = 0;
 	if (type == REDIR_INPUT)
 		flags |= O_RDONLY;
-	if (type == REDIR_OUTPUT)
+	if (type == REDIR_OUTPUT || type == REDIR_APPEND)
 		flags |= O_WRONLY;
 	if (type == REDIR_APPEND)
 		flags |= O_APPEND;
@@ -53,7 +53,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 	args = get_args_arr(exec->args);
 	if (!args)
 		return (mini_panic(NULL, "malloc error\n", EXIT_FAILURE));
-	else if (*args)
+	else if (*args && **args)
 	{
 		if (builtin)
 			status = execute_builtin(builtin, args, msh);

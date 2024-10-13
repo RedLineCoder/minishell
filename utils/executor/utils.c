@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 15:10:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:33:09 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,6 @@ void	close_pipe(int fd[2])
 {
 	close(fd[0]);
 	close(fd[1]);
-}
-
-int	wait_child_processes(int pid)
-{
-	int		status;
-
-	status = 0;
-	if (pid)
-		waitpid(pid, &status, 0);
-	while (wait(NULL) != -1)
-		;
-	return (status >> 8);
 }
 
 int	execute_command(char *command, char **args, t_list	*env)
@@ -90,7 +78,7 @@ char	**get_args_arr(t_list *arglist)
 	int			i;
 	char		**args;
 	const int	len = ft_lstsize(arglist);
-
+	
 	args = ft_calloc(sizeof(char *), len + 1);
 	if (!args)
 		return (NULL);
