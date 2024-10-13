@@ -6,13 +6,13 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/12 20:15:56 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/13 15:18:47 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	end_size(t_list *explst, char *arg)
+int	get_wld_size(t_list *explst, char *arg, int increment)
 {
 	int	size;
 	int	qs;
@@ -20,7 +20,7 @@ int	end_size(t_list *explst, char *arg)
 
 	qs = 0;
 	qd = 0;
-	size = 0;
+	size = 1;
 	while (*arg)
 	{
 		if (*arg == '\'' && !qd && !is_expanded(explst, arg))
@@ -29,39 +29,15 @@ int	end_size(t_list *explst, char *arg)
 			qd = !qd;
 		if ((!qd && *arg == '\'') || (!qs && *arg == '"'))
 		{
-			arg++;
+			arg += increment;
 			continue ;
 		}
 		if (!(qd || qs) && *arg == '*')
-		{
-			size = 0;
-			arg++;
-			continue ;
-		}
-		arg++;
+			break ;
+		arg += increment;
 		size++;
 	}
-	return (size);
-}
-
-int	is_wildcard(t_list *explst, char *arg)
-{
-	int	qs;
-	int	qd;
-
-	qs = 0;
-	qd = 0;
-	while (*arg)
-	{
-		if (*arg == '\'' && !qd && !is_expanded(explst, arg))
-			qs = !qs;
-		if (*arg == '"' && !qs && !is_expanded(explst, arg))
-			qd = !qd;
-		if (!(qd || qs) && *arg == '*')
-			return (1);
-		arg++;
-	}
-	return (0);
+	return (size * (*arg != 0));
 }
 
 int	ft_patterncmp(t_list *explst, char **arg, char **file)
@@ -94,30 +70,33 @@ int	ft_patterncmp(t_list *explst, char **arg, char **file)
 
 int	check_pattern(t_list *explst, char *arg, char *file)
 {
-	int		diff;
+	t_pattern *const	ptrn = &(t_pattern){0};
 
-	diff = 0;
-	if (*arg != '*')
-		diff = ft_patterncmp(explst, &arg, &file);
-	while (!diff && is_wildcard(explst, arg))
+	ptrn->end_size = get_wld_size(explst, arg + ft_strlen(arg) - 1, -1) - 1;
+	ptrn->start_size = get_wld_size(explst, arg, 1) - 1;
+	if (!ptrn->start_size && *file == '.')
+		ptrn->diff = 1;
+	if (ptrn->start_size)
+		ptrn->diff = ft_patterncmp(explst, &arg, &file);
+	while (!ptrn->diff)
 	{
 		while (*arg == '*')
 			arg++;
-		if (*(arg + end_size(explst, arg)))
+		if (*(arg + ptrn->end_size))
 		{
-			while (*arg != *file && *(file + end_size(explst, arg)))
+			while (*arg != *file && *(file + ptrn->end_size))
 				file++;
-			diff = ft_patterncmp(explst, &arg, &file);
+			ptrn->diff = ft_patterncmp(explst, &arg, &file);
 		}
 		else
 			break;
 	}
-	if (!diff && *arg)
+	if (!ptrn->diff && *arg)
 	{
-		file += ft_strlen(file) - end_size(explst, arg);
-		diff = ft_patterncmp(explst, &arg, &file);
+		file += ft_strlen(file) - ptrn->end_size;
+		ptrn->diff = ft_patterncmp(explst, &arg, &file);
 	}
-	return (diff);
+	return (ptrn->diff);
 }
 
 int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
@@ -127,7 +106,7 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 	char			*dirname;
 	int				count;
 
-	if (!is_wildcard(explst, arg))
+	if (!get_wld_size(explst, arg, 1))
 		return (0);
 	count = 0;
 	dp = readdir(current_dir);
