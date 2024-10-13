@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/13 16:58:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 17:24:36 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,13 @@ typedef struct s_part
 	char		*rghts;
 	char		*rghte;
 }				t_part;
+
+typedef struct s_pattern
+{
+	int	diff;
+	int	end_size;
+	int	start_size;
+}				t_pattern;
 
 typedef struct s_msh
 {
