@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 17:31:56 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/13 17:17:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void treeprint(t_cmd *root, int level)
+/* void treeprint(t_cmd *root, int level)
 {
         if (root == NULL)
 			return;
@@ -136,7 +136,7 @@ void treeprint(t_cmd *root, int level)
 			}
 			printf("\n");
 		}
-}
+} */
 
 int	mini_panic(char *title, char *content, int status)
 {
@@ -197,6 +197,7 @@ int	main(int argc, char **argv, char **env)
 	char			*line;
 
 	(void)argv, (void)argc;
+	child = 0;
 	init_environment(&msh->env, env);
 	while (!msh->exit_flag)
 	{
@@ -210,9 +211,10 @@ int	main(int argc, char **argv, char **env)
 			mini_panic(NULL, "An error occured.", -1);
 		}
 		line = readline(prompt);
-
 		if (!line) 
 			exit(0);
+		if (ft_strlen(line) == 0)
+			continue;
 		add_history(line);
 		t_cmd *root;
 		if (!parser(line, line + ft_strlen(line), &root))

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/11 15:05:04 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 14:24:38 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 		flags |= O_CREAT;
 	redir->args = expander(redir->args, msh);
 	if (ft_lstsize(redir->args) > 1)
-		return (mini_panic("*", "ambiguous redirect", false));
+		return (mini_panic("*", "ambiguous redirect\n", false));
 	file = redir->args->content;
 	if (type == REDIR_HDOC)
 		fd = redir->pipe[0];
@@ -58,10 +58,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 		if (builtin)
 			status = execute_builtin(builtin, args, msh);
 		else
-		{
-			execute_command(args[0], args, msh->env, false);
-			status = EXIT_FAILURE;
-		}
+			status = execute_command(args[0], args, msh->env);
 	}
 	free(args);
 	return (status);
@@ -70,17 +67,23 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 int	execute_block(t_blockcmd *block, t_msh *msh)
 {
 	int		status;
-
+	pid_t	pid;
+	
 	if (!handle_redirects(block->redirs, msh))
 		return (mini_panic("block", "malloc error\n", EXIT_FAILURE));
-	status = execute_cmd(block->subshell, msh, true);
-	return (status);
+	pid = execute_cmd(block->subshell, msh, &status, NULL);
+	if (pid == -1)
+		return (mini_panic(NULL, NULL, EXIT_FAILURE));
+	if (pid)
+		status = wait_child_processes(pid);
+	return (wait_child_processes(pid));
 }
 
 int	execute_pipe(t_list *pipelist, t_msh *msh)
 {
 	int		last;
 	int		p[2];
+	int		status;
 	pid_t	pid;
 
 	while (pipelist)
@@ -88,21 +91,19 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 		last = ft_lstlast(pipelist) == pipelist;
 		if (!last && pipe(p))
 			return (mini_panic(NULL, NULL, EXIT_FAILURE));
-		pid = fork();
-		if (pid == -1
-			|| (!last && ((pid && dup2(p[0], STDIN_FILENO) == -1)
-					|| (!pid && dup2(p[1], STDOUT_FILENO) == -1))))
+		pid = execute_cmd(pipelist->content, msh, &status, p);
+		if (pid == -1 || (!last && dup2(p[0], STDIN_FILENO) == -1))
 		{
 			if (!last)
 				close_pipe(p);
 			return (mini_panic(NULL, NULL, EXIT_FAILURE));
 		}
 		close_pipe(p);
-		if (!pid)
-			exit(execute_cmd(pipelist->content, msh, false));
 		pipelist = pipelist->next;
 	}
 	close(STDIN_FILENO);
+	if (!pid)
+		return (status);
 	return (wait_child_processes(pid));
 }
 
@@ -110,9 +111,20 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 {
 	t_logicop const	op = logiccmd->op_type;
 	int				status;
-
-	status = execute_cmd(logiccmd->left, msh, true);
+	pid_t			pid;
+	
+	pid = execute_cmd(logiccmd->left, msh, &status, NULL);
+	if (pid == -1)
+		return (mini_panic(NULL, NULL, EXIT_FAILURE));
+	if (pid)
+		status = wait_child_processes(pid);
 	if ((status && op == OP_OR) || (!status && op == OP_AND))
-		status = execute_cmd(logiccmd->right, msh, true);
+	{
+		pid = execute_cmd(logiccmd->right, msh, &status, NULL);
+		if (pid == -1)
+			return (mini_panic(NULL, NULL, EXIT_FAILURE));
+		if (pid)
+			status = wait_child_processes(pid);
+	}
 	return (status);
 }

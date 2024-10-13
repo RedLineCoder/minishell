@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 22:20:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 20:06:56 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 14:24:52 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*get_user(t_list *env)
 	if (pid == -1)
 		return (free(args), close(p[0]), close(p[1]), NULL);
 	else if (!pid && dup2(p[1], STDOUT_FILENO) == STDOUT_FILENO && !close(p[0]))
-		execute_command("whoami", args, env, true);
+		execute_command("whoami", args, env);
 	waitpid(pid, NULL, 0);
 	close(p[1]);
 	user = get_next_line(p[0]);

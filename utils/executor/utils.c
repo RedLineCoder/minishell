@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/11 16:15:40 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/13 15:10:31 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,36 +22,38 @@ int	wait_child_processes(int pid)
 {
 	int		status;
 
-	waitpid(pid, &status, 0);
+	status = 0;
+	if (pid)
+		waitpid(pid, &status, 0);
 	while (wait(NULL) != -1)
 		;
 	return (status >> 8);
 }
 
-int	execute_command(char *command, char **args, t_list	*env, int silence)
+int	execute_command(char *command, char **args, t_list	*env)
 {
 	char			*path;
 	char			*err;
 	t_stat			file;
 	char **const	envarr = get_env_arr(env);
 
+	if (!envarr)
+		return (mini_panic(command, NULL, EXIT_FAILURE));
 	err = NULL;
 	path = get_cmd_path(command, env);
 	if (!path)
-		err = "command not found\n";
+		return (free_string_array(envarr),\
+		mini_panic(command, ERR_CMD_NOTFOUND, EXIT_CMD_NOTFOUND));
 	else if (stat(path, &file))
-		err = "error reading file information\n";
+		return (free_string_array(envarr), free(path),\
+		mini_panic(command, NULL, EXIT_FAILURE)); 
 	else if (S_ISDIR(file.st_mode))
-		err = "is a directory\n";
-	if (err || !envarr)
-	{
-		if (envarr)
-			free_string_array(envarr);
-		if (!silence)
-			return (mini_panic(command, err, 127));
-	}
-	execve(path, args, get_env_arr(env));
-	return (mini_panic(command, err, EXIT_FAILURE));
+		return (free_string_array(envarr), free(path),\
+		mini_panic(command, ERR_CMD_ISDIR, EXIT_CMD_NOTEXECUTABLE));
+	execve(path, args, envarr);
+	free(path);
+	free_string_array(envarr);
+	return (mini_panic(command, NULL, EXIT_FAILURE));
 }
 
 char	*get_cmd_path(char *command, t_list *env)

@@ -6,7 +6,7 @@ EXPANDER_PATH = utils/expansions/
 EXPANDER = $(EXPANDER_PATH)dollar.c $(EXPANDER_PATH)expander.c $(EXPANDER_PATH)wildcard.c $(EXPANDER_PATH)quotes.c
 EXECUTOR_PATH = utils/executor/
 EXECUTOR = $(EXECUTOR_PATH)utils.c $(EXECUTOR_PATH)executes.c 
-SOURCES = $(PARSER) $(EXECUTOR) $(EXPANDER) main.c utils/user.c utils/string_utils.c helpers/parser.c helpers/executor.c utils/environment.c helpers/environment.c utils/mem_utils.c utils/tree.c
+SOURCES = $(PARSER) $(EXECUTOR) $(EXPANDER) main.c utils/user.c utils/string_utils.c helpers/parser.c helpers/executor.c utils/environment.c helpers/environment.c utils/mem_utils.c utils/tree.c utils/processes.c
 BUILTINS = builtins/cd.c builtins/exit.c builtins/pwd.c builtins/echo.c builtins/export.c builtins/unset.c builtins/env.c helpers/builtins.c  builtins/status.c
 
 READLINE = lib/readline/lib/libreadline.a

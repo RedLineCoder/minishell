@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 17:28:21 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/13 16:58:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <sys/stat.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include "lib/gnl/get_next_line.h"
 # include "lib/libft/libft.h"
 
@@ -37,7 +38,14 @@
 # define ERR_TAG "-msh"
 # define MSH_TAG "msh $ "
 
+# define ERR_CMD_NOTFOUND "command not found\n"
+# define ERR_CMD_ISDIR "is a directory\n"
+
+# define EXIT_CMD_NOTFOUND 127
+# define EXIT_CMD_NOTEXECUTABLE 126
+
 typedef struct stat t_stat;
+typedef struct sigaction t_action;
 
 typedef enum e_cmdtype
 {
@@ -102,6 +110,7 @@ typedef struct s_part
 
 typedef struct s_msh
 {
+	int		ischild;
 	int		last_status;
 	int		exit_flag;
 	char	*user;
@@ -193,7 +202,6 @@ t_list			*expander(t_list *args, t_msh *msh);
 int			wait_child_processes(int pid);
 int			execute_redir(t_redircmd *redir, t_msh *msh);
 int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
-int			execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork);
 int			execute_exec(t_execcmd *exec, t_msh *msh, int builtin);
 int			handle_redirects(t_list *redirs, t_msh *msh);
 int			execute_block(t_blockcmd *block, t_msh *msh);
@@ -206,6 +214,7 @@ void		print_env(t_list *lst, int quotes, int hide_null);
 char		**get_args_arr(t_list	*arglist);
 char		**get_env_arr(t_list *mshenv);
 int			get_builtin(t_execcmd *exec);
+pid_t		execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2]);
 
 // Utils
 char			*get_user(t_list *env);
@@ -216,8 +225,9 @@ int				str_arr_size(char **arr);
 int				lst_addback_content(t_list **lst, void *content);
 char			*str_include(const char *s, int c);
 void			free_string_array(char **arr);
-int				execute_command(char *command, char **args, t_list	*env, int silence);
-int				tree_map(t_cmd *cmd, int (*f)(void *));
+int				execute_command(char *command, char **args, t_list	*env);
+int				tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *));
+pid_t			create_child(int pipe[2], int fd);
 
 //Builtins
 int		builtin_cd(int args_size, char **args, t_msh *msh);
@@ -237,6 +247,11 @@ void	destroy_environment(t_list	*mshenv);
 void	init_environment(t_list **msh, char **env);
 char	*get_env(t_list *root, char *key);
 t_list	*get_env_node(t_list *lst, char *key);
+
+//Signals
+void	wait_signals(t_msh *msh);
+
+int		child; 
 
 #endif
 

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/11 14:44:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/13 17:18:17 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,64 +26,79 @@ int	handle_redirects(t_list *redirs, t_msh *msh)
 	return (true);
 }
 
-int	execute_cmd(t_cmd *cmd, t_msh *msh, int should_fork)
+/*
+	STATUS:
+	if no child created to execute cmd status set.
+	RETURN VALUES:
+	0  -> That means there is no child process to wait for.
+	>0 -> A child process created. You should wait for it.
+	-1 -> Error creating child process
+*/
+pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 {
-	int				status;
 	pid_t			pid;
 	t_tokens const	token = cmd->type;
 	int const		builtin = get_builtin((t_execcmd *)cmd);
-
-	should_fork = should_fork && !builtin
-		&& (token == EXEC || token == PIPE || token == SUBSHELL);
+	int	const		should_fork = !builtin && token != LOGIC;
+	
 	if (should_fork)
 	{
-		pid = fork();
-		if (pid == -1)
-			return (mini_panic(NULL, NULL, EXIT_FAILURE));
+		pid = create_child(pipe, STDOUT_FILENO);
 		if (pid)
-			return (wait_child_processes(pid));
+			return (pid);
 	}
 	if (token == PIPE)
-		status = execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
+		*status = execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
 	else if (token == SUBSHELL)
-		status = execute_block((t_blockcmd *)cmd, msh);
-	else if (token == EXEC)
-		status = execute_exec((t_execcmd *)cmd, msh, builtin);
+		*status = execute_block((t_blockcmd *)cmd, msh);
+	else  if (token == EXEC)
+		*status = execute_exec((t_execcmd *)cmd, msh, builtin);
 	else if (token == LOGIC)
-		return (execute_logic((t_logiccmd *)cmd, msh));
+		*status = execute_logic((t_logiccmd *)cmd, msh);
 	if (should_fork)
-		exit(status);
-	return (status);
+		exit(*status);
+	return (0);
 }
 
-int	run_heredoc(t_redircmd *redir)
+int	run_heredoc(t_redircmd *redir, t_msh *msh)
 {
 	char			*buffer;
-	const char		*eof = redir->args->content;
-
+	char			*temp;
+	char			*eof;
+	char			*const eof_arg = redir->args->content;
+	const int		expansion = !ft_strchr(eof_arg, '\"') && 1;
+	
 	if (pipe(redir->pipe) == -1)
 		return (mini_panic("heredoc", "pipe error", false));
+	eof = unquote_arg(NULL, eof_arg);
 	while (1)
 	{
 		buffer = readline("> ");
-		if (!buffer && !ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
+		if (!buffer || !ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
 		{
 			free(buffer);
 			close(redir->pipe[1]);
+			free(eof);
 			if (!buffer)
 				return (mini_panic("heredoc", "readline error.", false));
 			return (true);
 		}
+		temp = buffer;
+		if (expansion)
+			buffer = expand_dollar(buffer, ft_itoa(msh->last_status), NULL);
 		write(redir->pipe[1], buffer, ft_strlen(buffer));
 		write(redir->pipe[1], "\n", 1);
+		if (expansion)
+			free(temp);
 		free(buffer);
 	}
 }
 
-int	loop_heredocs(void *ptr)
+int	loop_heredocs(t_cmd *ptr, void *payload)
 {
 	t_list			*lst;
 	t_redircmd		*redir;
+	t_msh			*const msh = payload;
 	t_tokens const	token = ((t_cmd *)ptr)->type;
 	
 	lst = NULL;
@@ -94,7 +109,7 @@ int	loop_heredocs(void *ptr)
 	while (lst)
 	{
 		redir = lst->content;
-		if (redir->redir_type == REDIR_HDOC && !run_heredoc(redir))
+		if (redir->redir_type == REDIR_HDOC && !run_heredoc(redir, msh))
 			return (false);
 		lst = lst->next;
 	}
@@ -103,6 +118,13 @@ int	loop_heredocs(void *ptr)
 
 void	executor(t_cmd *root, t_msh *msh)
 {
-	if (tree_map(root, loop_heredocs))
-		msh->last_status = execute_cmd(root, msh, true);
+	pid_t	pid;
+	if (tree_map(root, msh, loop_heredocs))
+	{
+		pid = execute_cmd(root, msh, &msh->last_status, NULL);
+		if (pid == -1)
+			mini_panic(NULL, NULL, -1);
+		else if (pid != 0)
+			msh->last_status = wait_child_processes(pid);
+	}
 }
