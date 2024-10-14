@@ -21,13 +21,11 @@ void	close_pipe(int fd[2])
 int	execute_command(char *command, char **args, t_list	*env)
 {
 	char			*path;
-	char			*err;
 	t_stat			file;
 	char **const	envarr = get_env_arr(env);
 
 	if (!envarr)
 		return (mini_panic(command, NULL, EXIT_FAILURE));
-	err = NULL;
 	path = get_cmd_path(command, env);
 	if (!path)
 		return (free_string_array(envarr),\

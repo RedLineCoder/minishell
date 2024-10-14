@@ -14,7 +14,7 @@
 
 int	tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *))
 {
-	t_tokens const	token = cmd->type;
+	int const	token = cmd->type;
 	t_list			*lst;
 
 	if (!f(cmd, payload))

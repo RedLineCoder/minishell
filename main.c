@@ -201,7 +201,7 @@ int	main(int argc, char **argv, char **env)
 	while (!msh->exit_flag)
 	{
 		prompt = MSH_TAG;
-		msh->user = get_user(msh->env);
+		msh->user = get_user();
 		if (msh->user)
 			prompt = get_prompt(msh);
 		if (!prompt)

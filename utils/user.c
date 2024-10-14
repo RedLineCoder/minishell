@@ -12,34 +12,88 @@
 
 #include "../minishell.h"
 
-//Was working but need to rewrite this due errors causing by PATH variable.
-char	*get_user(t_list *env)
+//Was working but needed to rewrite this due errors causing by PATH variable.
+char	**read_fd(int fd)
 {
-	(void)env;
-	return (ft_strdup("emyildir"));
-	/*
-	int		p[2];
-	pid_t	pid;
-	char	*user;
-	char	**args;
+	char	*data;
+	char	*line;
 
-	args = ft_split("whoami", ' ');
-	if (!args)
+	data = ft_strdup("");
+	if (!data)
 		return (NULL);
-	if (pipe(p) < 0)
+	line = get_next_line(fd);
+	while (line)
+	{
+		str_append(&data, line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	return (ft_split(data, '\n'));
+}
+
+char	*parse_line(char *path, char seperator, int index, char *val)
+{
+	int	i;
+	int fd;
+	char	*line;
+	char	**splitted_line;
+	char	**data;
+
+	fd = open(path, O_RDONLY);
+	if (fd == -1)
 		return (NULL);
-	pid = fork();
-	if (pid == -1)
-		return (free(args), close(p[0]), close(p[1]), NULL);
-	else if (!pid && dup2(p[1], STDOUT_FILENO) == STDOUT_FILENO && !close(p[0]))
-		execute_command("whoami", args, env);
-	waitpid(pid, NULL, 0);
-	close(p[1]);
-	user = get_next_line(p[0]);
-	close(p[0]);
-	if (!user)
-		return (free_string_array(args), NULL);
-	user[ft_strlen(user) - 1] = '\0';
-	return (free_string_array(args), user);
-	*/
+	line = NULL;
+	i = -1;
+	data = read_fd(fd);
+	while (!line && data && data[++i])
+	{
+		splitted_line = ft_split(data[i], seperator);
+		if (splitted_line && index < str_arr_size(splitted_line) 
+				&& !ft_strncmp(splitted_line[index], val, ft_strlen(val) + 1))
+			line = ft_strdup(data[i]);
+		free_string_array(splitted_line);
+	}
+	free_string_array(data);
+	close(fd);
+	return (line);
+}
+
+char	*get_username_by_uid(char *uid)
+{
+	char		*username;
+  char    **splitted;
+	char		*const line = parse_line("/etc/passwd", ':', 2, uid);
+
+  if (!line)
+      return (NULL);
+  splitted = ft_split(line, ':');
+  if (!splitted)
+      return (free(line), NULL);
+  username = ft_strdup(splitted[0]);
+  free_string_array(splitted);
+	return (free(line), username);
+}	
+
+char	*get_user()
+{
+  int   i;
+  char  *sep;
+  char  *uid;
+  char  *username;
+	char  *line = parse_line("/proc/self/status", ':', 0, "Uid");
+	
+  sep = ft_strchr(line, ':');
+  if (!sep)
+      return (NULL);
+  uid = sep + 1;
+  i = 0;
+  while (uid[i] == 9)
+      i++;
+  uid += i;
+  while (uid[i] && uid[i] != 9)
+      i++;
+  uid[i] = '\0';
+  username = get_username_by_uid(uid);
+  free(line);
+	return (username);
 }

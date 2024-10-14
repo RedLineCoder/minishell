@@ -24,6 +24,8 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+# include <sys/wait.h>
+# include <errno.h>
 # include "lib/gnl/get_next_line.h"
 # include "lib/libft/libft.h"
 
@@ -157,6 +159,7 @@ typedef struct s_redircmd
 	int			type;
 	int			redir_type;
 	int			fd;
+  int     old_fd;
 	int			pipe[2];
 	t_list		*args;
 }				t_redircmd;
@@ -211,6 +214,7 @@ int			execute_redir(t_redircmd *redir, t_msh *msh);
 int			execute_logic(t_logiccmd *opcmd, t_msh *msh);
 int			execute_exec(t_execcmd *exec, t_msh *msh, int builtin);
 int			handle_redirects(t_list *redirs, t_msh *msh);
+int     handle_back_redirects(t_list *redirs);
 int			execute_block(t_blockcmd *block, t_msh *msh);
 int			execute_pipe(t_list *pipelist, t_msh *msh);
 int			execute_builtin(int builtin, char **args, t_msh *msh);
@@ -224,7 +228,7 @@ int			get_builtin(t_execcmd *exec);
 pid_t		execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2]);
 
 // Utils
-char			*get_user(t_list *env);
+char			*get_user();
 char			*get_cmd_path(char *command, t_list *env);
 char			*ft_strndup(char *src, int size);
 int				str_append(char **s1, char const *s2);
@@ -255,9 +259,7 @@ void	init_environment(t_list **msh, char **env);
 char	*get_env(t_list *root, char *key);
 t_list	*get_env_node(t_list *lst, char *key);
 
-//Signals
-
-int		child; 
+ 
 
 #endif
 

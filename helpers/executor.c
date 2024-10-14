@@ -14,16 +14,28 @@
 
 int	handle_redirects(t_list *redirs, t_msh *msh)
 {
-	t_redircmd	*redir;
-
 	while (redirs)
 	{
-		redir = redirs->content;
 		if (!execute_redir(redirs->content, msh))
 			return (false);
 		redirs = redirs->next;
 	}
 	return (true);
+}
+
+int handle_back_redirects(t_list *redirs)
+{
+  t_redircmd  *redir;
+
+  while (redirs)
+  {
+    redir = redirs->content;
+    if (dup2(redir->old_fd, redir->fd) == -1)
+      return (false);
+    close(redir->old_fd);
+    redirs = redirs->next;
+  }
+  return (true);
 }
 
 /*
@@ -37,7 +49,7 @@ int	handle_redirects(t_list *redirs, t_msh *msh)
 pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 {
 	pid_t			pid;
-	t_tokens const	token = cmd->type;
+	int const	token = cmd->type;
 	int const		builtin = get_builtin((t_execcmd *)cmd);
 	int	const		should_fork = (!builtin || pipe) && token != LOGIC;
 	
@@ -99,7 +111,7 @@ int	loop_heredocs(t_cmd *ptr, void *payload)
 	t_list			*lst;
 	t_redircmd		*redir;
 	t_msh			*const msh = payload;
-	t_tokens const	token = ((t_cmd *)ptr)->type;
+	int const	token = ((t_cmd *)ptr)->type;
 	
 	lst = NULL;
 	if (token == EXEC)

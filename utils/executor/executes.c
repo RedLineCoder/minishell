@@ -36,8 +36,12 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 		fd = redir->pipe[0];
 	else
 		fd = open(file, flags, S_IRWXU);
+  redir->old_fd = dup(redir->fd);
+  if (redir->old_fd == -1 && errno != EBADF)
+      return (mini_panic(file, NULL, false));
 	if (fd == -1 || dup2(fd, redir->fd) == -1)
-		return (mini_panic(file, NULL, false));
+		return (close(redir->old_fd), mini_panic(file, NULL, false));
+  
 	return (close(fd), true);
 }
 
@@ -60,6 +64,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 		else
 			status = execute_command(args[0], args, msh->env);
 	}
+  handle_back_redirects(exec->redirs);
 	free(args);
 	return (status);
 }
@@ -101,7 +106,7 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 		close_pipe(p);
 		pipelist = pipelist->next;
 	}
-	close(STDIN_FILENO);
+  close(STDIN_FILENO);
 	if (!pid)
 		return (status);
 	return (wait_child_processes(pid));
