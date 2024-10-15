@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/11 17:31:56 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/15 15:27:05 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,12 +210,12 @@ int	main(int argc, char **argv, char **env)
 			mini_panic(NULL, "An error occured.", -1);
 		}
 		line = readline(prompt);
-
 		if (!line) 
 			exit(0);
 		add_history(line);
 		t_cmd *root;
-		if (!parser(line, line + ft_strlen(line), &root))
+		msh->last_status = parser(line, line + ft_strlen(line), &root);
+		if (!msh->last_status)
 			executor(root, msh);
 		//printf("%p\n", root->right);
 		//treeprint(root, 0);
