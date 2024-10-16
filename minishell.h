@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/13 18:58:18 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 15:49:56 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@
 # include <sys/types.h>
 # include <dirent.h>
 # include <sys/stat.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <signal.h>
 # include <sys/wait.h>
 # include <errno.h>
 # include "lib/gnl/get_next_line.h"
 # include "lib/libft/libft.h"
+# include "lib/readline/include/readline/readline.h"
+# include "lib/readline/include/readline/history.h"
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
@@ -38,7 +38,7 @@
 # define DIGITS "0123456789"
 # define ERR_TKN "-msh: syntax error near unexpected token "
 # define ERR_TAG "-msh"
-# define MSH_TAG "msh $ "
+# define MSH_TAG "msh-1.0"
 
 # define ERR_CMD_NOTFOUND "command not found\n"
 # define ERR_CMD_ISDIR "is a directory\n"
@@ -239,6 +239,7 @@ void			free_string_array(char **arr);
 int				execute_command(char *command, char **args, t_list	*env);
 int				tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *));
 pid_t			create_child(int pipe[2], int fd);
+char			*get_prompt(t_msh *msh);
 
 //Builtins
 int		builtin_cd(int args_size, char **args, t_msh *msh);

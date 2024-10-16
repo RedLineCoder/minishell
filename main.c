@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/13 19:44:16 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 15:46:32 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,34 +161,6 @@ int	mini_panic(char *title, char *content, int status)
 	free(tag);
 	return (status);
 }
-
-char	*get_prompt(t_msh *msh)
-{
-	bool	is_tilde;
-	int		size;
-	char	path[PATH_MAX];
-	char	*prompt;
-	char	**path_splitted;
-
-	getcwd(path, PATH_MAX);
-	prompt = ft_strjoin(msh->user, " ");
-	path_splitted = ft_split(path, '/');
-	if (!prompt || !path_splitted)
-		return (free(prompt), free_string_array(path_splitted), NULL);
-	size = str_arr_size(path_splitted);
-	is_tilde = (size == 2) && !ft_strncmp(path_splitted[0], "Users", 6)
-		&& !ft_strncmp(path_splitted[1], msh->user, ft_strlen(msh->user));
-	if (size <= 1 && (!str_append(&prompt, "/")))
-		return (free_string_array(path_splitted), free(prompt), NULL);
-	else if (is_tilde && !str_append(&prompt, "~"))
-		return (free_string_array(path_splitted), free(prompt), NULL);
-	else if (size >= 1 && !is_tilde && !str_append(&prompt, path_splitted[size - 1]))
-		return (free_string_array(path_splitted), free(prompt), NULL);
-	free_string_array(path_splitted);
-	if (!str_append(&prompt, " $ "))
-		return (free(prompt), NULL);
-	return (prompt);
-}
  
 int	main(int argc, char **argv, char **env)
 {
@@ -200,14 +172,11 @@ int	main(int argc, char **argv, char **env)
 	init_environment(&msh->env, env);
 	while (!msh->exit_flag)
 	{
-		prompt = MSH_TAG;
-		msh->user = get_user();
-		if (msh->user)
-			prompt = get_prompt(msh);
+		prompt = get_prompt(msh);
 		if (!prompt)
 		{
-			free(msh->user);
-			mini_panic(NULL, "An error occured.", -1);
+			mini_panic(ERR_TAG, NULL, -1);
+			continue;
 		}
 		line = readline(prompt);
 		if (!line) 
