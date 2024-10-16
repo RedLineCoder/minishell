@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 06:55:00 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/16 16:09:23 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 17:53:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	builtin_exit(int args_size, char **args, t_msh *msh)
 	{
 		status = args[1];
 		if (!is_valid_status(status))
-			return (mini_panic("exit", "numeric argument required\n", 255));
+			return (mini_panic("exit", "numeric argument required\n", 2));
 		msh->exit_flag = true;
 		return (ft_atoi(status));
 	}

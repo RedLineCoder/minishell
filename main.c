@@ -6,18 +6,21 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 15:58:38 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 18:21:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* void treeprint(t_cmd *root, int level)
+void treeprint(t_cmd *root, int level)
 {
         if (root == NULL)
 			return;
         for (int i = 0; i < level; i++)
+		{
+			
                 printf(i == level - 1 ? "|-" : "  ");
+		}
 		if (root->type == LOGIC)
 		{
 			t_logicop type = ((t_logiccmd *)root)->op_type;
@@ -136,7 +139,7 @@
 			}
 			printf("\n");
 		}
-} */
+} 
 
 int	mini_panic(char *title, char *content, int status)
 {
@@ -167,6 +170,7 @@ int	main(int argc, char **argv, char **env)
 	t_msh *const	msh = &(t_msh){0};
 	char			*prompt;
 	char			*line;
+	int				status;
 
 	(void)argv, (void)argc;
 	init_environment(&msh->env, env);
@@ -185,30 +189,21 @@ int	main(int argc, char **argv, char **env)
 			continue;
 		add_history(line);
 		t_cmd *root;
-		msh->last_status = parser(line, line + ft_strlen(line), &root);
-		if (!msh->last_status)
+		status = parser(line, line + ft_strlen(line), &root);
+		if (!status)
 			executor(root, msh);
-		//printf("%p\n", root->right);
+		else 
+			msh->last_status = status;
 		//treeprint(root, 0);
-		/* t_list	*test = ft_calloc(sizeof(t_list), 1);
-		test->content = line;
-		test = expander(test, msh);
-		printf("%s\n", test->content); */
 		free(line);
 		if (msh->user)
 		{
 			free(msh->user);
 			free(prompt);
 		}
-		//clean_tree(root);
 	}
 	rl_clear_history();
 	destroy_environment(msh->env);
 	printf("exit\n");
 	return (msh->last_status);
 }
-
-/* void __attribute__ ((destructor)) sa()
-{
-	system("leaks minishell");
-} */

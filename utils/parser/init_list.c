@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_list.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/11 13:42:24 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/16 18:30:02 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	redir->type = REDIR;
 	redir->redir_type = get_redir(ts, te);
 	redir->fd = redir->redir_type % 2;
+	redir->old_fd = -1;
 	if (ft_isdigit(*ts))
 		redir->fd = ft_atoi(fd);
 	if (peek(ps, pe, TKN_NONE) == ARG)

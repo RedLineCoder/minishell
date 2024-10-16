@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 19:33:09 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 18:42:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	execute_command(char *command, char **args, t_list	*env)
 	path = get_cmd_path(command, env);
 	if (!path)
 		return (free_string_array(envarr),\
-		mini_panic(command, ERR_CMD_NOTFOUND, EXIT_CMD_NOTFOUND));
+		mini_panic(command, NULL, EXIT_CMD_NOTFOUND));
 	else if (stat(path, &file))
 		return (free_string_array(envarr), free(path),\
 		mini_panic(command, NULL, EXIT_FAILURE)); 
@@ -66,7 +66,7 @@ char	*get_cmd_path(char *command, t_list *env)
 		path = NULL;
 	}
 	free_string_array(paths);
-	if (!access(command, F_OK | X_OK))
+	if (!path && !access(command, F_OK | X_OK))
 		return (command);
 	return (path);
 }

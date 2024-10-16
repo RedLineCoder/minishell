@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 17:27:27 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 17:50:59 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,12 @@
 
 # define ERR_CMD_NOTFOUND "command not found\n"
 # define ERR_CMD_ISDIR "is a directory\n"
-
+# define ERR_CD_TOO_MANY_ARG "too many arguments\n"
+# define ERR_CD_HOME_NOT_SET "HOME not set\n"
 # define EXIT_CMD_NOTFOUND 127
 # define EXIT_CMD_NOTEXECUTABLE 126
+
+
 
 typedef struct stat t_stat;
 typedef struct sigaction t_action;

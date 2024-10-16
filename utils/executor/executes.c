@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 19:32:52 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 18:55:59 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,13 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 		fd = redir->pipe[0];
 	else
 		fd = open(file, flags, S_IRWXU);
-  redir->old_fd = dup(redir->fd);
-  if (redir->old_fd == -1 && errno != EBADF)
+	if (fd == -1)
+		return (mini_panic(file, NULL, false));
+    redir->old_fd = dup(redir->fd);
+    if (redir->old_fd == -1 && errno != EBADF)
       return (mini_panic(file, NULL, false));
-	if (fd == -1 || dup2(fd, redir->fd) == -1)
+	if (dup2(fd, redir->fd) == -1)
 		return (close(redir->old_fd), mini_panic(file, NULL, false));
-  
 	return (close(fd), true);
 }
 
@@ -51,7 +52,10 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 	char		**args;
 
 	if (!handle_redirects(exec->redirs, msh))
+	{
+		handle_back_redirects(exec->redirs);
 		return (EXIT_FAILURE);
+	}
 	status = EXIT_SUCCESS;
 	exec->args = expander(exec->args, msh);
 	args = get_args_arr(exec->args);
@@ -64,7 +68,12 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 		else
 			status = execute_command(args[0], args, msh->env);
 	}
-  handle_back_redirects(exec->redirs);
+	if (!handle_back_redirects(exec->redirs))
+	{
+		handle_back_redirects(exec->redirs);
+		return (free(args), mini_panic(NULL, NULL, EXIT_FAILURE));
+	}
+  	handle_back_redirects(exec->redirs);
 	free(args);
 	return (status);
 }

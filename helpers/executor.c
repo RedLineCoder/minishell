@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/16 16:00:26 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 18:58:45 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int handle_back_redirects(t_list *redirs)
   while (redirs)
   {
     redir = redirs->content;
-    if (dup2(redir->old_fd, redir->fd) == -1)
+    if (redir->old_fd != -1 && dup2(redir->old_fd, redir->fd) == -1)
       return (false);
     close(redir->old_fd);
     redirs = redirs->next;
@@ -137,6 +137,8 @@ void	executor(t_cmd *root, t_msh *msh)
 		if (pid == -1)
 			mini_panic(NULL, NULL, -1);
 		else if (pid != 0)
+		{
 			msh->last_status = wait_child_processes(pid);
+		}
 	}
 }

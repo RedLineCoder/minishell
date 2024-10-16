@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 09:20:13 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 14:29:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 17:57:22 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,17 @@
 
 void	init_environment(t_list **mshenv, char **env)
 {
-	char	**splitted;
+	char	*key;
+	char	*pair;
 	char	*shlvl;
 	
 	while (*env)
 	{
-		splitted = ft_split(*env, '=');
-		if (!splitted)
-			continue ;
-		set_env(mshenv, splitted[0], splitted[1]);
-		free_string_array(splitted);
+		key = *env;
+		pair = ft_strchr(key, '=');
+		if (pair)
+			*pair++ = '\0';
+		set_env(mshenv, key, pair);
 		env++;
 	}
 	shlvl = get_env(*mshenv, "SHLVL");
