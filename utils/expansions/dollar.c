@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/15 14:52:26 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/16 14:18:24 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	write_env(char *arg, char *exp, t_list **explst, t_msh *msh)
 	char *const		sts = ft_itoa(msh->last_status);
 	char			*env;
 
-	while (arg[wrt->a_i])
+	while (sts && arg[wrt->a_i])
 	{
 		if (arg[wrt->a_i] == '"' && !wrt->qs)
 			wrt->qd = !wrt->qd;
@@ -83,7 +83,7 @@ int	write_env(char *arg, char *exp, t_list **explst, t_msh *msh)
 		else
 			exp[wrt->e_i++] = arg[wrt->a_i++];
 	}
-	return (free(sts), 1);
+	return (free(sts), sts && 1);
 }
 
 char	*expand_dollar(char *arg, t_list **explst, t_msh *msh)
