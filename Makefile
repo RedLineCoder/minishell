@@ -1,30 +1,37 @@
 NAME = minishell
-HEADERS = minishell.h
-PARSER_PATH = utils/parser/
-PARSER = $(PARSER_PATH)init_list.c $(PARSER_PATH)tokenizer.c $(PARSER_PATH)lexer.c
-EXPANDER_PATH = utils/expansions/
-EXPANDER = $(EXPANDER_PATH)dollar.c $(EXPANDER_PATH)expander.c $(EXPANDER_PATH)wildcard.c
-EXECUTOR_PATH = utils/executor/
-EXECUTOR = $(EXECUTOR_PATH)utils.c $(EXECUTOR_PATH)executes.c 
-SOURCES = $(PARSER) $(EXECUTOR) $(EXPANDER) main.c utils/prompt.c utils/string_utils.c helpers/parser.c helpers/executor.c utils/environment.c helpers/environment.c utils/mem_utils.c utils/tree.c utils/processes.c
-BUILTINS = builtins/cd.c builtins/exit.c builtins/pwd.c builtins/echo.c builtins/export.c builtins/unset.c builtins/env.c helpers/builtins.c  builtins/status.c
 
 READLINE = lib/readline/lib/libreadline.a
-RL_FLAGS = -I${PWD}/lib/readline/include/ -lreadline -L${PWD}/lib/readline/lib -lncurses
-
+RL_FLAGS = -I${PWD}/lib/readline/include/ -lreadline -L${PWD}/lib/readline/lib 
+	
 LIBFT = lib/libft/libft.a
 LIBFT_PATH = lib/libft
 
 GNL = lib/gnl/gnl.a
 GNL_PATH = lib/gnl
 
+LIBRARIES = $(GNL) $(LIBFT) $(READLINE)
+
+UTILS_PATH = utils
+UTILS_PARSER_PATH = $(UTILS_PATH)/parser
+UTILS_EXECUTOR_PATH = $(UTILS_PATH)/executor
+UTILS_EXPANDER_PATH = $(UTILS_PATH)/expansions
+UTILS_PARSER_SOURCES = $(UTILS_PARSER_PATH)/init_list.c $(UTILS_PARSER_PATH)/tokenizer.c $(UTILS_PARSER_PATH)/lexer.c
+UTILS_EXPANDER_SOURCES = $(UTILS_EXPANDER_PATH)/dollar.c $(UTILS_EXPANDER_PATH)/expander.c $(UTILS_EXPANDER_PATH)/wildcard.c
+UTILS_EXECUTOR_SOURCES = $(UTILS_EXECUTOR_PATH)/utils.c $(UTILS_EXECUTOR_PATH)/executes.c
+UTILS_SOURCES = $(UTILS_PATH)/environment.c $(UTILS_PATH)/mem_utils.c $(UTILS_PATH)/processes.c $(UTILS_PATH)/prompt.c $(UTILS_PATH)/string_utils.c $(UTILS_PATH)/tree.c $(UTILS_EXECUTOR_SOURCES) $(UTILS_EXPANDER_SOURCES) $(UTILS_PARSER_SOURCES) 
+HELPERS_PATH = helpers
+HELPERS_SOURCES = $(HELPERS_PATH)/builtins.c $(HELPERS_PATH)/environment.c $(HELPERS_PATH)/executor.c $(HELPERS_PATH)/parser.c
+BUILTINS = builtins/cd.c builtins/exit.c builtins/pwd.c builtins/echo.c builtins/export.c builtins/unset.c builtins/env.c builtins/status.c
+SOURCES = main.c $(UTILS_SOURCES) $(HELPERS_SOURCES) $(BUILTINS)
+HEADERS = minishell.h
+
 CC = cc
-CFLAGS= -Wall -Wextra -Werror -D READLINE_LIBRARY=1
+CFLAGS= -Wall -Wextra -Werror -lncurses -D READLINE_LIBRARY=1
 
 all: $(NAME)
 
-$(NAME): $(READLINE) $(LIBFT) $(GNL) $(SOURCES) $(HEADERS) $(BUILTINS)
-		$(CC) $(SOURCES) $(LIBFT) $(READLINE) $(GNL) $(BUILTINS) ${RL_FLAGS} $(CFLAGS) -o ${NAME}
+$(NAME): $(LIBRARIES) $(SOURCES) $(HEADERS)
+		$(CC) $(SOURCES) $(LIBRARIES) ${RL_FLAGS} $(CFLAGS) -o ${NAME}
 
 $(READLINE):
 		curl -O https://ftp.gnu.org/gnu/readline/readline-8.2.tar.gz
@@ -39,15 +46,12 @@ $(GNL):
 		make -C $(GNL_PATH)
 
 clean:
-		$(RM) $(NAME)
 		make -C $(LIBFT_PATH) clean 
 		make -C $(GNL_PATH) clean
 
 fclean: clean
+		$(RM) $(NAME)
 		make -C $(LIBFT_PATH) fclean
 		make -C $(GNL_PATH) fclean
-
-test: all
-		bash test.bash
 
 re: fclean all
