@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 13:15:29 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/16 13:17:43 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 		ptrn->diff = 1;
 	if (ptrn->s_size && !ptrn->diff)
 		ptrn->diff = ft_patterncmp(explst, wrt, arg, file);
-	wrt->a_i += check_mid_pattern(explst, ptrn, arg + wrt->a_i, file + wrt->e_i);
+	wrt->a_i += check_mid_pattern(explst, ptrn,
+			arg + wrt->a_i, file + wrt->e_i);
 	if (!ptrn->diff && arg[wrt->a_i])
 	{
 		wrt->e_i = ft_strlen(file) - ptrn->e_size;
@@ -113,11 +114,11 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 
 int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 {
+	DIR *const		current_dir = opendir(".");
 	struct dirent	*dp;
 	char			*dirname;
 	int				count;
 
-	DIR *const current_dir = opendir(".");
 	if (!get_wld_size(explst, 0, arg, 1))
 		return (0);
 	count = 0;
