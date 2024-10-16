@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 13:17:43 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/16 16:58:36 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,42 +52,47 @@ int	ft_patterncmp(t_list *explst, t_write *wrt, char *arg, char *file)
 			wrt->a_i++;
 			continue ;
 		}
-		if ((!(wrt->qd || wrt->qs) && arg[wrt->a_i] == '*'))
+		if ((!wrt->qd && !wrt->qs && arg[wrt->a_i] == '*'))
 			break ;
 		if (arg[wrt->a_i] != file[wrt->e_i])
+		{
+			wrt->qd = 0;
+			wrt->qs = 0;
 			return (1);
+		}
 		wrt->a_i++;
 		wrt->e_i++;
 	}
 	return (0);
 }
 
-int	check_mid_pattern(t_list *explst, t_pattern *ptrn, char *arg, char *file)
+void	check_mid_pattern(t_list *explst, t_pattern *ptrn, t_write *wrt)
 {
-	t_write *const		wrt = &(t_write){0};
 	int					temparg;
 	int					tempfile;
 	int					size;
 
-	while (!ptrn->diff)
+	size = get_wld_size(explst, wrt->a_i, ptrn->arg, 1);
+	while (!ptrn->diff && ptrn->file[wrt->e_i + ptrn->e_size + size - 2])
 	{
-		while (arg[wrt->a_i] == '*')
+		while (ptrn->arg[wrt->a_i] == '*')
 			wrt->a_i++;
-		size = get_wld_size(explst, wrt->a_i, arg, 1);
+		size = get_wld_size(explst, wrt->a_i, ptrn->arg, 1);
 		if (!size)
 			break ;
-		while (file[wrt->e_i + ptrn->e_size + size - 2])
+		while (ptrn->file[wrt->e_i + ptrn->e_size + size - 2])
 		{
 			temparg = wrt->a_i;
 			tempfile = wrt->e_i;
-			ptrn->diff = ft_patterncmp(explst, wrt, arg, file);
+			ptrn->diff = ft_patterncmp(explst, wrt, ptrn->arg, ptrn->file);
 			if (!ptrn->diff)
 				break ;
-			wrt->e_i = tempfile + 1;
 			wrt->a_i = temparg;
+			wrt->e_i = tempfile + 1;
 		}
 	}
-	return (wrt->a_i);
+	while (ptrn->arg[wrt->a_i] == '*')
+		wrt->a_i++;
 }
 
 int	check_pattern(t_list *explst, char *arg, char *file)
@@ -95,19 +100,21 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 	t_pattern *const	ptrn = &(t_pattern){0};
 	t_write *const		wrt = &(t_write){0};
 
-	ptrn->e_size = get_wld_size(explst, ft_strlen(arg) - 1, arg, -1) - 1;
-	ptrn->s_size = get_wld_size(explst, 0, arg, 1) - 1;
-	if ((!ptrn->s_size && file[0] == '.')
-		|| (ptrn->e_size + ptrn->s_size) > (int)ft_strlen(file))
+	ptrn->arg = arg;
+	ptrn->file = file;
+	ptrn->e_size = get_wld_size(explst,
+			ft_strlen(ptrn->arg) - 1, ptrn->arg, -1) - 1;
+	ptrn->s_size = get_wld_size(explst, 0, ptrn->arg, 1) - 1;
+	if ((!ptrn->s_size && ptrn->file[0] == '.')
+		|| (ptrn->e_size + ptrn->s_size) > (int)ft_strlen(ptrn->file))
 		ptrn->diff = 1;
 	if (ptrn->s_size && !ptrn->diff)
-		ptrn->diff = ft_patterncmp(explst, wrt, arg, file);
-	wrt->a_i += check_mid_pattern(explst, ptrn,
-			arg + wrt->a_i, file + wrt->e_i);
-	if (!ptrn->diff && arg[wrt->a_i])
+		ptrn->diff = ft_patterncmp(explst, wrt, ptrn->arg, ptrn->file);
+	check_mid_pattern(explst, ptrn, wrt);
+	if (!ptrn->diff && ptrn->arg[wrt->a_i])
 	{
-		wrt->e_i = ft_strlen(file) - ptrn->e_size;
-		ptrn->diff = ft_patterncmp(explst, wrt, arg, file);
+		wrt->e_i = ft_strlen(ptrn->file) - ptrn->e_size;
+		ptrn->diff = ft_patterncmp(explst, wrt, ptrn->arg, ptrn->file);
 	}
 	return (ptrn->diff);
 }

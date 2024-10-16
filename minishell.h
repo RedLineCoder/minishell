@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/15 14:54:18 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/16 15:31:48 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,11 @@ typedef struct s_part
 
 typedef struct s_pattern
 {
-	int	diff;
-	int	e_size;
-	int	s_size;
+	int		diff;
+	int		e_size;
+	int		s_size;
+	char	*arg;
+	char	*file;
 }				t_pattern;
 
 typedef	struct s_write
