@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 15:59:20 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 17:27:27 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,11 @@ typedef struct s_part
 
 typedef struct s_pattern
 {
-	int	diff;
-	int	e_size;
-	int	s_size;
+	int		diff;
+	int		e_size;
+	int		s_size;
+	char	*arg;
+	char	*file;
 }				t_pattern;
 
 typedef	struct s_write
