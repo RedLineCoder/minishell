@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 18:57:37 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 16:00:26 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	run_heredoc(t_redircmd *redir, t_msh *msh)
 		}
 		temp = buffer;
 		if (expansion)
-			buffer = expand_dollar(buffer, ft_itoa(msh->last_status), NULL);
+			buffer = expand_dollar(buffer, NULL, msh);
 		write(redir->pipe[1], buffer, ft_strlen(buffer));
 		write(redir->pipe[1], "\n", 1);
 		if (expansion)

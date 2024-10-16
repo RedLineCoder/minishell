@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 15:49:56 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/16 15:59:20 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,17 @@ typedef struct s_part
 typedef struct s_pattern
 {
 	int	diff;
-	int	end_size;
-	int	start_size;
+	int	e_size;
+	int	s_size;
 }				t_pattern;
+
+typedef	struct s_write
+{
+	int		a_i;
+	int		e_i;
+	char	qs;
+	char	qd;
+}				t_write;
 
 typedef struct s_msh
 {
@@ -200,11 +208,10 @@ t_logicop		get_logicop(char *ts, char *te);
 t_tokens		get_token_type(char *ts, char *te);
 
 // Expander
-int				is_wildcard(t_list *explst, char *arg);
-int				is_expanded(t_list *explst, char *ptr);
-int				set_exptrack(t_list **explst, char *start, char *end);
+int				is_expanded(t_list *explst, int index);
+int				set_exptrack(t_list **explst, int start, int end);
 int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
-char			*expand_dollar(char *arg, char *status, t_list **explst);
+char			*expand_dollar(char *arg, t_list **explst, t_msh *msh);
 char			*unquote_arg(t_list *explst, char *arg);
 t_list			*expander(t_list *args, t_msh *msh);
 
