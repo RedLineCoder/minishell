@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/11 13:42:24 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/18 11:40:46 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int	syntax_panic(char *ps)
 int	parse_args(char *ps, char *pe, t_list **args)
 {
 	t_tokens	token;
-	t_list		*lst;
 	char		*ts;
 	char		*te;
 
@@ -42,10 +41,10 @@ int	parse_args(char *ps, char *pe, t_list **args)
 	if (token == ARG)
 	{
 		ts = ft_strndup(ts, te - ts);
-		lst = ft_lstnew(ts);
-		if (!ts || !lst)
-			return (free(ts), free(lst), 1);
-		ft_lstadd_back(args, lst);
+		if (!ts)
+			return (1);
+		if (!lst_add_back_content(args, ts))
+			return (free(ts), 1);
 		return (parse_args(ps, pe, args));
 	}
 	else if (token == REDIR_OP)
@@ -76,7 +75,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	if (peek(ps, pe, TKN_NONE) == ARG)
 	{
 		get_token(&ps, &pe, &ts, &te);
-		if (!lst_addback_content(&(redir->args), ft_strndup(ts, te - ts)))
+		if (!lst_add_back_content(&(redir->args), ft_strndup(ts, te - ts)))
 			return (1);
 	}
 	else
@@ -97,7 +96,8 @@ int	parse_redirs(char *ps, char *pe, int block, t_list **redirs)
 		status = parse_redir(ts, pe, &cmd);
 		if (status)
 			return (status);
-		ft_lstadd_back(redirs, ft_lstnew(cmd));
+		if (!lst_add_back_content(redirs, cmd))
+			return (free(cmd), 1);
 		get_token(&ps, &pe, &ts, NULL);
 	}
 	else if (!token)
@@ -113,7 +113,6 @@ int	init_pipes(char *ps, char *pe, t_list **pipelist)
 	t_cmd		*cmd;
 	int			status;
 
-	status = 0;
 	if (peek(ps, pe, PIPE_OP))
 	{
 		ln = ft_divide(ps, pe, PIPE_OP, 0);
@@ -124,13 +123,15 @@ int	init_pipes(char *ps, char *pe, t_list **pipelist)
 			return (status);
 		if (!peek(ln.rghts, ln.rghte, TKN_NONE))
 			return (syntax_panic(ln.rghts));
-		ft_lstadd_back(pipelist, ft_lstnew(cmd));
+		if (!lst_add_back_content(pipelist, cmd))
+			return (free(cmd), 1);
 		status = init_pipes(ln.rghts, ln.rghte, pipelist);
 	}
 	else
 	{
 		status = parser(ps, pe, &cmd);
-		ft_lstadd_back(pipelist, ft_lstnew(cmd));
+		if (!lst_add_back_content(pipelist, cmd))
+			return (free(cmd), 1);
 	}
 	return (status);
 }

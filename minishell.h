@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/18 10:19:12 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/18 11:41:53 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 # include <dirent.h>
 # include <fcntl.h>
 # include <limits.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <unistd.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
@@ -247,7 +247,7 @@ char						*get_cmd_path(char *command, t_list *env);
 char						*ft_strndup(char *src, int size);
 int							str_append(char **s1, char const *s2);
 int							str_arr_size(char **arr);
-int							lst_addback_content(t_list **lst, void *content);
+int							lst_add_back_content(t_list **lst, void *content);
 char						*str_include(const char *s, int c);
 void						free_string_array(char **arr);
 int							execute_command(char *command, char **args,

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 10:40:28 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/18 11:43:15 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	run_heredoc(t_redircmd *redir, t_msh *msh)
 		}
 		temp = buffer;
 		if (expansion)
-			buffer = expand_dollar(buffer, ft_itoa(msh->last_status), NULL);
+			buffer = expand_dollar(buffer, NULL, msh);
 		write(redir->pipe[1], buffer, ft_strlen(buffer));
 		write(redir->pipe[1], "\n", 1);
 		if (expansion)

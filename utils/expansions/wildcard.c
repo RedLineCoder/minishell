@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 16:58:36 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/18 11:27:26 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 			dirname = ft_strdup(dp->d_name);
 			if (!dirname)
 				return (-1);
-			if (!lst_addback_content(expanded, dirname))
+			if (!lst_add_back_content(expanded, dirname))
 				return (-1);
 			count++;
 		}

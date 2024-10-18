@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 20:02:08 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 11:15:14 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,17 +90,19 @@ int	parse_exec(char *ps, char *pe, t_cmd **cmd)
 
 int	parser(char *ps, char *pe, t_cmd **cmd)
 {
-	int	status;
+	t_tokens	token;
+	int			status;
 
-	if (!peek(ps, pe, TKN_NONE))
+	token = peek(ps, pe, TKN_NONE);
+	if (!token)
 		return (0);
-	if (peek(ps, pe, TKN_NONE) == BLK_CLS)
+	if (token == BLK_CLS)
 		return (258);
 	if (peek(ps, pe, LOGIC_OP))
 		status = parse_logic(ps, pe, cmd);
 	else if (peek(ps, pe, PIPE_OP))
 		status = parse_pipe(ps, pe, cmd);
-	else if (peek(ps, pe, TKN_NONE) == BLK_OP)
+	else if (token == BLK_OP)
 		status = parse_block(ps, pe, cmd);
 	else
 		status = parse_exec(ps, pe, cmd);
