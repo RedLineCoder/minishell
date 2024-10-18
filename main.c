@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 18:21:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 17:56:32 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,9 +182,15 @@ int	main(int argc, char **argv, char **env)
 			mini_panic(ERR_TAG, NULL, -1);
 			continue;
 		}
-		line = readline(prompt);
-		if (!line) 
-			exit(0);
+		if (isatty(fileno(stdin)))
+			line = readline(prompt);
+		else
+		{
+			line = get_next_line(fileno(stdin));
+			line = ft_strtrim(line, "\n");
+		} 
+		if (!line)
+			exit(msh->last_status);
 		if (ft_strlen(line) == 0)
 			continue;
 		add_history(line);
@@ -204,6 +210,6 @@ int	main(int argc, char **argv, char **env)
 	}
 	rl_clear_history();
 	destroy_environment(msh->env);
-	printf("exit\n");
+	//printf("exit\n");
 	return (msh->last_status);
 }

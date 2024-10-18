@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/16 18:55:59 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 18:42:49 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,13 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 		return (mini_panic(file, NULL, false));
     redir->old_fd = dup(redir->fd);
     if (redir->old_fd == -1 && errno != EBADF)
-      return (mini_panic(file, NULL, false));
+	{
+		return (mini_panic(file, NULL, false));
+	}
 	if (dup2(fd, redir->fd) == -1)
-		return (close(redir->old_fd), mini_panic(file, NULL, false));
+	{
+		return (mini_panic(file, NULL, false));
+	}
 	return (close(fd), true);
 }
 
@@ -69,11 +73,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 			status = execute_command(args[0], args, msh->env);
 	}
 	if (!handle_back_redirects(exec->redirs))
-	{
-		handle_back_redirects(exec->redirs);
 		return (free(args), mini_panic(NULL, NULL, EXIT_FAILURE));
-	}
-  	handle_back_redirects(exec->redirs);
 	free(args);
 	return (status);
 }
@@ -90,7 +90,7 @@ int	execute_block(t_blockcmd *block, t_msh *msh)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	if (pid)
 		status = wait_child_processes(pid);
-	return (wait_child_processes(pid));
+	return (status);
 }
 
 int	execute_pipe(t_list *pipelist, t_msh *msh)

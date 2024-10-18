@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/16 18:58:45 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 16:57:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,16 @@ int handle_back_redirects(t_list *redirs)
 {
   t_redircmd  *redir;
 
-  while (redirs)
-  {
-    redir = redirs->content;
-    if (redir->old_fd != -1 && dup2(redir->old_fd, redir->fd) == -1)
+	if (!redirs)
+		return (true);
+   handle_back_redirects(redirs->next);
+   redir = redirs->content;
+   if (redir->old_fd != -1)
+   {
+	if (dup2(redir->old_fd, redir->fd) == -1)
       return (false);
     close(redir->old_fd);
-    redirs = redirs->next;
-  }
+   }
   return (true);
 }
 
@@ -135,10 +137,10 @@ void	executor(t_cmd *root, t_msh *msh)
 	{
 		pid = execute_cmd(root, msh, &msh->last_status, NULL);
 		if (pid == -1)
-			mini_panic(NULL, NULL, -1);
+			msh->last_status = mini_panic(NULL, NULL, -1);
 		else if (pid != 0)
-		{
 			msh->last_status = wait_child_processes(pid);
-		}
 	}
+	else
+		msh->last_status = EXIT_FAILURE;
 }
