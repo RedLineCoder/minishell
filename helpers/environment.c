@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 09:20:13 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 14:29:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 10:39:02 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	init_environment(t_list **mshenv, char **env)
 {
 	char	**splitted;
 	char	*shlvl;
-	
+
 	while (*env)
 	{
 		splitted = ft_split(*env, '=');
@@ -47,7 +47,7 @@ void	destroy_environment(t_list	*mshenv)
 
 	lst = mshenv;
 	while (lst)
-	{	
+	{
 		next = lst->next;
 		destroy_env(lst);
 		lst = next;

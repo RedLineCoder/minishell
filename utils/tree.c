@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 13:57:43 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/12 15:31:12 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 10:41:19 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int	tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *))
 		&& (!tree_map(((t_logiccmd *)cmd)->left, payload, f)
 			|| !tree_map(((t_logiccmd *)cmd)->right, payload, f)))
 		return (false);
-	else if (token == SUBSHELL && !tree_map(((t_blockcmd *)cmd)->subshell, payload, f))
+	else if (token == SUBSHELL
+		&& !tree_map(((t_blockcmd *)cmd)->subshell, payload, f))
 		return (false);
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/18 10:14:58 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/18 10:18:54 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ char	*get_prompt(t_msh *msh)
 		return (free(prompt), NULL);
 	return (prompt);
 }
- 
+
 int	main(int argc, char **argv, char **env)
 {
 	t_msh *const	msh = &(t_msh){0};

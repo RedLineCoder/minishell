@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 19:33:09 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 10:42:49 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ int	execute_command(char *command, char **args, t_list	*env)
 	err = NULL;
 	path = get_cmd_path(command, env);
 	if (!path)
-		return (free_string_array(envarr),\
+		return (free_string_array(envarr), \
 		mini_panic(command, ERR_CMD_NOTFOUND, EXIT_CMD_NOTFOUND));
 	else if (stat(path, &file))
-		return (free_string_array(envarr), free(path),\
-		mini_panic(command, NULL, EXIT_FAILURE)); 
+		return (free_string_array(envarr), free(path), \
+		mini_panic(command, NULL, EXIT_FAILURE));
 	else if (S_ISDIR(file.st_mode))
-		return (free_string_array(envarr), free(path),\
+		return (free_string_array(envarr), free(path), \
 		mini_panic(command, ERR_CMD_ISDIR, EXIT_CMD_NOTEXECUTABLE));
 	execve(path, args, envarr);
 	free(path);
@@ -78,7 +78,7 @@ char	**get_args_arr(t_list *arglist)
 	int			i;
 	char		**args;
 	const int	len = ft_lstsize(arglist);
-	
+
 	args = ft_calloc(sizeof(char *), len + 1);
 	if (!args)
 		return (NULL);

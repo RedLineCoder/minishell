@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executes.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 19:32:52 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 10:41:53 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	execute_block(t_blockcmd *block, t_msh *msh)
 {
 	int		status;
 	pid_t	pid;
-	
+
 	if (!handle_redirects(block->redirs, msh))
 		return (mini_panic("block", "malloc error\n", EXIT_FAILURE));
 	pid = execute_cmd(block->subshell, msh, &status, NULL);
@@ -112,7 +112,7 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 	t_logicop const	op = logiccmd->op_type;
 	int				status;
 	pid_t			pid;
-	
+
 	pid = execute_cmd(logiccmd->left, msh, &status, NULL);
 	if (pid == -1)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));

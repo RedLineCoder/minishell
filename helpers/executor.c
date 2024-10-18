@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 18:57:37 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 10:40:28 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 	pid_t			pid;
 	t_tokens const	token = cmd->type;
 	int const		builtin = get_builtin((t_execcmd *)cmd);
-	int	const		should_fork = (!builtin || pipe) && token != LOGIC;
-	
+	int const		should_fork = (!builtin || pipe) && token != LOGIC;
+
 	if (should_fork)
 	{
 		pid = create_child(pipe, STDOUT_FILENO);
@@ -51,7 +51,7 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 		*status = execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
 	else if (token == SUBSHELL)
 		*status = execute_block((t_blockcmd *)cmd, msh);
-	else  if (token == EXEC)
+	else if (token == EXEC)
 		*status = execute_exec((t_execcmd *)cmd, msh, builtin);
 	else if (token == LOGIC)
 		*status = execute_logic((t_logiccmd *)cmd, msh);
@@ -65,9 +65,9 @@ int	run_heredoc(t_redircmd *redir, t_msh *msh)
 	char			*buffer;
 	char			*temp;
 	char			*eof;
-	char			*const eof_arg = redir->args->content;
+	char *const		eof_arg = redir->args->content;
 	const int		expansion = !ft_strchr(eof_arg, '\"') && 1;
-	
+
 	if (pipe(redir->pipe) == -1)
 		return (mini_panic("heredoc", "pipe error", false));
 	eof = unquote_arg(NULL, eof_arg);
@@ -98,9 +98,9 @@ int	loop_heredocs(t_cmd *ptr, void *payload)
 {
 	t_list			*lst;
 	t_redircmd		*redir;
-	t_msh			*const msh = payload;
+	t_msh *const	msh = payload;
 	t_tokens const	token = ((t_cmd *)ptr)->type;
-	
+
 	lst = NULL;
 	if (token == EXEC)
 		lst = ((t_execcmd *)ptr)->redirs;
@@ -119,6 +119,7 @@ int	loop_heredocs(t_cmd *ptr, void *payload)
 void	executor(t_cmd *root, t_msh *msh)
 {
 	pid_t	pid;
+
 	if (tree_map(root, msh, loop_heredocs))
 	{
 		pid = execute_cmd(root, msh, &msh->last_status, NULL);

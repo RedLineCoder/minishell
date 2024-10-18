@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   processes.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:25:30 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/13 18:58:05 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/18 10:41:05 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
