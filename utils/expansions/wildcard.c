@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 16:58:36 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/19 14:00:23 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	check_mid_pattern(t_list *explst, t_pattern *ptrn, t_write *wrt)
 	{
 		while (ptrn->arg[wrt->a_i] == '*')
 			wrt->a_i++;
-		size = get_wld_size(explst, wrt->a_i, ptrn->arg, 1);
 		if (!size)
 			break ;
 		while (ptrn->file[wrt->e_i + ptrn->e_size + size - 2])
@@ -90,9 +89,8 @@ void	check_mid_pattern(t_list *explst, t_pattern *ptrn, t_write *wrt)
 			wrt->a_i = temparg;
 			wrt->e_i = tempfile + 1;
 		}
+		size = get_wld_size(explst, wrt->a_i, ptrn->arg, 1);
 	}
-	while (ptrn->arg[wrt->a_i] == '*')
-		wrt->a_i++;
 }
 
 int	check_pattern(t_list *explst, char *arg, char *file)
@@ -111,6 +109,8 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 	if (ptrn->s_size && !ptrn->diff)
 		ptrn->diff = ft_patterncmp(explst, wrt, ptrn->arg, ptrn->file);
 	check_mid_pattern(explst, ptrn, wrt);
+	if (ptrn->arg[wrt->a_i] && !ptrn->file[wrt->e_i])
+		ptrn->diff = 1;
 	if (!ptrn->diff && ptrn->arg[wrt->a_i])
 	{
 		wrt->e_i = ft_strlen(ptrn->file) - ptrn->e_size;
