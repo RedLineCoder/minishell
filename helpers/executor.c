@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 16:57:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 03:58:18 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,28 +78,29 @@ int	run_heredoc(t_redircmd *redir, t_msh *msh)
 {
 	char			*buffer;
 	char			*temp;
-	char			*eof;
+	//char			*eof;
 	char			*const eof_arg = redir->args->content;
 	const int		expansion = !ft_strchr(eof_arg, '\"') && 1;
 	
+	(void)msh;
 	if (pipe(redir->pipe) == -1)
 		return (mini_panic("heredoc", "pipe error", false));
-	eof = unquote_arg(NULL, eof_arg);
+	//eof = unquote_arg(NULL, eof_arg);
 	while (1)
 	{
 		buffer = readline("> ");
-		if (!buffer || !ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
+		if (!buffer || !ft_strncmp(buffer, eof_arg, ft_strlen(eof_arg) + 1))
 		{
 			free(buffer);
 			close(redir->pipe[1]);
-			free(eof);
+			//free(eof);
 			if (!buffer)
 				return (mini_panic("heredoc", "readline error.", false));
 			return (true);
 		}
 		temp = buffer;
-		if (expansion)
-			buffer = expand_dollar(buffer, NULL, msh);
+		/* if (expansion)
+			buffer = expand_dollar(buffer, NULL, msh); */
 		write(redir->pipe[1], buffer, ft_strlen(buffer));
 		write(redir->pipe[1], "\n", 1);
 		if (expansion)

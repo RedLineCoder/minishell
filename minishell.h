@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 17:50:59 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 01:43:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@
 # define ERR_CD_HOME_NOT_SET "HOME not set\n"
 # define EXIT_CMD_NOTFOUND 127
 # define EXIT_CMD_NOTEXECUTABLE 126
+
+# define WILDCARD -1
+# define DOLLAR -2
+# define QUOTE -3
 
 
 
