@@ -6,32 +6,32 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 09:15:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/06 20:03:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:15:26 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	print_env(t_list *lst, int quotes, int hide_null)
+void	print_env(t_list *lst, int quotes_flags, int null_flag)
 {
 	t_env	*env;
 
 	while (lst)
 	{
 		env = lst->content;
-		if (env->key && (!hide_null || env->pair))
+		if (env->key && (!null_flag || env->pair))
 		{
-			printf("%s", env->key);
+			ft_putstr_fd(env->key, STDOUT_FILENO);
 			if (env->pair)
 			{
-				printf("=");
-				if (quotes)
-					printf("\"");
-				printf("%s", env->pair);
-				if (quotes)
-					printf("\"");
+				ft_putstr_fd("=", STDOUT_FILENO);
+				if (quotes_flags)
+					ft_putstr_fd("\"", STDOUT_FILENO);
+				ft_putstr_fd(env->pair, STDOUT_FILENO);
+				if (quotes_flags)
+					ft_putstr_fd("\"", STDOUT_FILENO);
 			}
-			printf("\n");
+			ft_putstr_fd("\n", STDOUT_FILENO);
 		}
 		lst = lst->next;
 	}

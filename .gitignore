@@ -7,3 +7,4 @@ lib/gnl/gnl.a
 *.DSYM
 .vscode
 minishell
+minishell_tester

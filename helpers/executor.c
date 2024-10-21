@@ -6,38 +6,51 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 16:57:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:11:07 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	handle_redirects(t_list *redirs, t_msh *msh)
+int	execute_builtin(int builtin, char **args, t_msh *msh)
 {
-	while (redirs)
-	{
-		if (!execute_redir(redirs->content, msh))
-			return (false);
-		redirs = redirs->next;
-	}
-	return (true);
+	int const	args_size = str_arr_size(args);
+	int			(*f[9])(int, char **, t_msh *);
+
+	f[BUILTIN_NONE] = NULL;
+	f[BUILTIN_ECHO] = builtin_echo;
+	f[BUILTIN_CD] = builtin_cd;
+	f[BUILTIN_PWD] = builtin_pwd;
+	f[BUILTIN_EXPORT] = builtin_export;
+	f[BUILTIN_UNSET] = builtin_unset;
+	f[BUILTIN_ENV] = builtin_env;
+	f[BUILTIN_EXIT] = builtin_exit;
+	f[BUILTIN_STATUS] = builtin_status;
+	return (f[builtin](args_size, args, msh));
 }
 
-int handle_back_redirects(t_list *redirs)
+int	get_builtin(t_execcmd *exec)
 {
-  t_redircmd  *redir;
+	int			i;
+	char		*cmd;
+	char		*cmds[9];
 
-	if (!redirs)
-		return (true);
-   handle_back_redirects(redirs->next);
-   redir = redirs->content;
-   if (redir->old_fd != -1)
-   {
-	if (dup2(redir->old_fd, redir->fd) == -1)
-      return (false);
-    close(redir->old_fd);
-   }
-  return (true);
+	if (exec->type != EXEC || !(exec->args && exec->args->content))
+		return (false);
+	cmd = exec->args->content;
+	cmds[BUILTIN_ECHO] = "echo";
+	cmds[BUILTIN_CD] = "cd";
+	cmds[BUILTIN_PWD] = "pwd";
+	cmds[BUILTIN_EXPORT] = "export";
+	cmds[BUILTIN_UNSET] = "unset";
+	cmds[BUILTIN_ENV] = "env";
+	cmds[BUILTIN_EXIT] = "exit";
+	cmds[BUILTIN_STATUS] = "status";
+	i = 0;
+	while (++i < 9)
+		if (!ft_strncmp(cmds[i], cmd, ft_strlen(cmd) + 1))
+			return (i);
+	return (BUILTIN_NONE);
 }
 
 /*
@@ -50,11 +63,11 @@ int handle_back_redirects(t_list *redirs)
 */
 pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 {
-	pid_t			pid;
+	pid_t		pid;
 	int const	token = cmd->type;
-	int const		builtin = get_builtin((t_execcmd *)cmd);
-	int	const		should_fork = (!builtin || pipe) && token != LOGIC;
-	
+	int const	builtin = get_builtin((t_execcmd *)cmd);
+	int const	should_fork = (!builtin || pipe) && token != LOGIC;
+
 	if (should_fork)
 	{
 		pid = create_child(pipe, STDOUT_FILENO);
@@ -65,7 +78,7 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 		*status = execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
 	else if (token == SUBSHELL)
 		*status = execute_block((t_blockcmd *)cmd, msh);
-	else  if (token == EXEC)
+	else if (token == EXEC)
 		*status = execute_exec((t_execcmd *)cmd, msh, builtin);
 	else if (token == LOGIC)
 		*status = execute_logic((t_logiccmd *)cmd, msh);
@@ -74,47 +87,13 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 	return (0);
 }
 
-int	run_heredoc(t_redircmd *redir, t_msh *msh)
-{
-	char			*buffer;
-	char			*temp;
-	char			*eof;
-	char			*const eof_arg = redir->args->content;
-	const int		expansion = !ft_strchr(eof_arg, '\"') && 1;
-	
-	if (pipe(redir->pipe) == -1)
-		return (mini_panic("heredoc", "pipe error", false));
-	eof = unquote_arg(NULL, eof_arg);
-	while (1)
-	{
-		buffer = readline("> ");
-		if (!buffer || !ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
-		{
-			free(buffer);
-			close(redir->pipe[1]);
-			free(eof);
-			if (!buffer)
-				return (mini_panic("heredoc", "readline error.", false));
-			return (true);
-		}
-		temp = buffer;
-		if (expansion)
-			buffer = expand_dollar(buffer, NULL, msh);
-		write(redir->pipe[1], buffer, ft_strlen(buffer));
-		write(redir->pipe[1], "\n", 1);
-		if (expansion)
-			free(temp);
-		free(buffer);
-	}
-}
-
 int	loop_heredocs(t_cmd *ptr, void *payload)
 {
 	t_list			*lst;
 	t_redircmd		*redir;
-	t_msh			*const msh = payload;
-	int const	token = ((t_cmd *)ptr)->type;
-	
+	t_msh *const	msh = payload;
+	int const		token = ((t_cmd *)ptr)->type;
+
 	lst = NULL;
 	if (token == EXEC)
 		lst = ((t_execcmd *)ptr)->redirs;
@@ -133,6 +112,7 @@ int	loop_heredocs(t_cmd *ptr, void *payload)
 void	executor(t_cmd *root, t_msh *msh)
 {
 	pid_t	pid;
+
 	if (tree_map(root, msh, loop_heredocs))
 	{
 		pid = execute_cmd(root, msh, &msh->last_status, NULL);

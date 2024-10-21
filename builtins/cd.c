@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 02:41:44 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/16 17:51:25 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:11:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	builtin_cd(int args_size, char **args, t_msh *msh)
 {
 	char	*path;
 	char	*err;
-	
+
 	err = NULL;
 	path = NULL;
 	if (args_size == 1 && !path)
@@ -27,8 +27,8 @@ int	builtin_cd(int args_size, char **args, t_msh *msh)
 	}
 	else if (args_size == 2)
 		path = args[1];
-	else 
-		err = ERR_CD_TOO_MANY_ARG;
+	else
+		err = ERR_TOO_MANY_ARG;
 	if (err || chdir(path) == -1)
 		return (mini_panic("cd", err, EXIT_FAILURE));
 	return (EXIT_SUCCESS);

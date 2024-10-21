@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 07:03:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 17:44:07 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:33:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ int	builtin_echo(int args_size, char **args, t_msh *msh)
 			j = 0;
 			while (args[1][++j] == 'n')
 				;
-			if (!args[1][j])
-				newline_flag = false;
-			continue ;
-		}	
-		ft_putstr_fd(args[i], STDOUT_FILENO);	
+			newline_flag = args[1][j];
+			if (!newline_flag)
+				continue ;
+		}
+		ft_putstr_fd(args[i], STDOUT_FILENO);
 		if (i != args_size - 1)
 			ft_putstr_fd(" ", STDOUT_FILENO);
 	}

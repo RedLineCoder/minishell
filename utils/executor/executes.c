@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 18:42:49 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:06:11 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,38 +15,24 @@
 int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
 	int				fd;
-	char			*file;
-	int				flags;
+	char			*spec;
 	t_redir const	type = redir->redir_type;
 
-	flags = 0;
-	if (type == REDIR_INPUT)
-		flags |= O_RDONLY;
-	if (type == REDIR_OUTPUT || type == REDIR_APPEND)
-		flags |= O_WRONLY;
-	if (type == REDIR_APPEND)
-		flags |= O_APPEND;
-	if (type != REDIR_INPUT)
-		flags |= O_CREAT;
 	redir->args = expander(redir->args, msh);
 	if (ft_lstsize(redir->args) > 1)
 		return (mini_panic("*", "ambiguous redirect\n", false));
-	file = redir->args->content;
+	spec = redir->args->content;
 	if (type == REDIR_HDOC)
 		fd = redir->pipe[0];
 	else
-		fd = open(file, flags, S_IRWXU);
+		fd = open(spec, get_redir_flags(type), S_IRWXU);
 	if (fd == -1)
-		return (mini_panic(file, NULL, false));
-    redir->old_fd = dup(redir->fd);
-    if (redir->old_fd == -1 && errno != EBADF)
-	{
-		return (mini_panic(file, NULL, false));
-	}
+		return (mini_panic(spec, NULL, false));
+	redir->old_fd = dup(redir->fd);
+	if (redir->old_fd == -1 && errno != EBADF)
+		return (mini_panic(spec, NULL, false));
 	if (dup2(fd, redir->fd) == -1)
-	{
-		return (mini_panic(file, NULL, false));
-	}
+		return (mini_panic(spec, NULL, false));
 	return (close(fd), true);
 }
 
@@ -65,12 +51,12 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 	args = get_args_arr(exec->args);
 	if (!args)
 		return (mini_panic(NULL, "malloc error\n", EXIT_FAILURE));
-	else if (*args && **args)
+	else if (*args)
 	{
 		if (builtin)
 			status = execute_builtin(builtin, args, msh);
 		else
-			status = execute_command(args[0], args, msh->env);
+			status = run_command(args[0], args, msh->env);
 	}
 	if (!handle_back_redirects(exec->redirs))
 		return (free(args), mini_panic(NULL, NULL, EXIT_FAILURE));
@@ -82,7 +68,7 @@ int	execute_block(t_blockcmd *block, t_msh *msh)
 {
 	int		status;
 	pid_t	pid;
-	
+
 	if (!handle_redirects(block->redirs, msh))
 		return (mini_panic("block", "malloc error\n", EXIT_FAILURE));
 	pid = execute_cmd(block->subshell, msh, &status, NULL);
@@ -115,7 +101,7 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 		close_pipe(p);
 		pipelist = pipelist->next;
 	}
-  close(STDIN_FILENO);
+	close(STDIN_FILENO);
 	if (!pid)
 		return (status);
 	return (wait_child_processes(pid));
@@ -126,7 +112,7 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 	t_logicop const	op = logiccmd->op_type;
 	int				status;
 	pid_t			pid;
-	
+
 	pid = execute_cmd(logiccmd->left, msh, &status, NULL);
 	if (pid == -1)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 13:57:43 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/12 15:31:12 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/21 22:59:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,20 @@ int	tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *))
 	else if (token == SUBSHELL && !tree_map(((t_blockcmd *)cmd)->subshell, payload, f))
 		return (false);
 	return (true);
+}
+
+int		free_node(t_cmd *cmd, void *payload)
+{
+	t_cmdtype const	token = cmd->type;
+	
+	(void)payload;
+	if (token == EXEC)
+		ft_lstclear(&((t_execcmd *)cmd)->args, free);
+	free(cmd);
+	return (true);
+}
+
+void	clean_tree(void *cmd)
+{
+	tree_map(cmd, NULL, free_node);
 }
