@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 15:31:48 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/23 16:42:06 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,6 +203,7 @@ int				set_exptrack(t_list **explst, int start, int end);
 int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
 char			*expand_dollar(char *arg, t_list **explst, t_msh *msh);
 char			*unquote_arg(t_list *explst, char *arg);
+int				split_words(t_list *newargs, t_list *explst, char *arg);
 t_list			*expander(t_list *args, t_msh *msh);
 
 // Executor
