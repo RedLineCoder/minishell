@@ -65,8 +65,8 @@ int	lst_addback_content(t_list **lst, void *content)
 	t_list	*item;
 
 	item = ft_lstnew(content);
-	if (!item || !lst)
-		return (0);
+	if (!item || !lst || !content)
+		return (free(item), free(content), 0);
 	ft_lstadd_back(lst, item);
 	return (1);
 }

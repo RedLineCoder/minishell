@@ -135,8 +135,6 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 		if (!check_pattern(explst, arg, dp->d_name))
 		{
 			dirname = ft_strdup(dp->d_name);
-			if (!dirname)
-				return (-1);
 			if (!lst_addback_content(expanded, dirname))
 				return (-1);
 			count++;

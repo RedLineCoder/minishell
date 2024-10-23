@@ -93,20 +93,18 @@ t_list	*expander(t_list *args, t_msh *msh)
 	t_list	*explst;
 	t_list	*newargs;
 	char	*expanded;
-	int		status;
 
 	newargs = NULL;
-	status = 0;
 	while (args)
 	{
 		explst = NULL;
 		expanded = expand_dollar(args->content, &explst, msh);
-		status = expand_wildcard(&newargs, explst, expanded);
+		/* status = expand_wildcard(&newargs, explst, expanded);
 		if (!status && !lst_addback_content(&newargs,
 				unquote_arg(explst, expanded)))
 			return (ft_lstclear(&newargs, free), NULL);
 		else if (status == -1)
-			return (ft_lstclear(&newargs, free), NULL);
+			return (ft_lstclear(&newargs, free), NULL); */
 		ft_lstclear(&explst, free);
 		args = args->next;
 	}
