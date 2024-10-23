@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/21 23:04:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/23 17:12:09 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,6 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 		if (!check_pattern(explst, arg, dp->d_name))
 		{
 			dirname = ft_strdup(dp->d_name);
-			if (!dirname)
-				return (-1);
 			if (!lst_addback_content(expanded, dirname))
 				return (free(dirname), -1);
 			free(dirname);

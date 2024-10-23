@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 13:16:59 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/23 16:43:03 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,20 +93,14 @@ t_list	*expander(t_list *args, t_msh *msh)
 	t_list	*explst;
 	t_list	*newargs;
 	char	*expanded;
-	int		status;
 
 	newargs = NULL;
-	status = 0;
 	while (args)
 	{
 		explst = NULL;
 		expanded = expand_dollar(args->content, &explst, msh);
-		status = expand_wildcard(&newargs, explst, expanded);
-		if (!status && !lst_addback_content(&newargs,
-				unquote_arg(explst, expanded)))
-			return (ft_lstclear(&newargs, free), NULL);
-		else if (status == -1)
-			return (ft_lstclear(&newargs, free), NULL);
+		if (!split_words(newargs, explst, expanded))
+			return (NULL);
 		ft_lstclear(&explst, free);
 		args = args->next;
 	}
