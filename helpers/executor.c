@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/21 22:11:07 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/23 10:35:58 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,10 @@ void	executor(t_cmd *root, t_msh *msh)
 {
 	pid_t	pid;
 
+	job = EXECUTING_HDOC;
 	if (tree_map(root, msh, loop_heredocs))
 	{
+		job = WAITING_CMD;
 		pid = execute_cmd(root, msh, &msh->last_status, NULL);
 		if (pid == -1)
 			msh->last_status = mini_panic(NULL, NULL, -1);

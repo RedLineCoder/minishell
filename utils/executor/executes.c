@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/21 22:06:11 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/23 09:38:36 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 	int		p[2];
 	int		status;
 	pid_t	pid;
-
+	
+	job = EXECUTING_PIPE;
 	while (pipelist)
 	{
 		last = ft_lstlast(pipelist) == pipelist;

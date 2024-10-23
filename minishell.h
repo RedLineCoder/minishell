@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/21 22:50:11 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/23 10:53:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <errno.h>
+# include <termios.h>
+# include <sys/ioctl.h>
 # include "lib/gnl/get_next_line.h"
 # include "lib/libft/libft.h"
 # include "lib/readline/include/readline/readline.h"
@@ -101,7 +103,17 @@ typedef enum e_builtins
 	BUILTIN_ENV,
 	BUILTIN_EXIT,
 	BUILTIN_STATUS
-}		t_builtins;
+}	t_builtins;
+
+typedef	enum e_job
+{
+	NOTHING,
+	WAITING_INPUT,
+	WAITING_CMD,
+	EXECUTING_CMD,
+	EXECUTING_PIPE,
+	EXECUTING_HDOC,
+}	t_job;
 
 // Structs
 typedef struct s_part
@@ -187,6 +199,7 @@ typedef struct s_msh
 {
 	int		last_status;
 	int		exit_flag;
+	t_job	current_job;
 	char	*user;
 	t_cmd	*tree_root;
 	t_list	*env;
@@ -245,6 +258,8 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2]);
 int		tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *));
 char	*get_prompt(t_msh *msh);
 
+//Signals
+void    handle_signals();
 
 //Process Utils
 pid_t	create_child(int pipe[2], int fd);
@@ -276,5 +291,7 @@ void	destroy_environment(t_list	*mshenv);
 void	init_environment(t_list **msh, char **env);
 char	*get_env(t_list *root, char *key);
 t_list	*get_env_node(t_list *lst, char *key);
+
+extern t_job	job;
 
 #endif

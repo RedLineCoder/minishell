@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/16 13:16:59 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/22 11:08:51 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ char	*unquote_arg(t_list *explst, char *arg)
 
 t_list	*expander(t_list *args, t_msh *msh)
 {
+	t_list	*lst;
 	t_list	*explst;
 	t_list	*newargs;
 	char	*expanded;
@@ -97,10 +98,11 @@ t_list	*expander(t_list *args, t_msh *msh)
 
 	newargs = NULL;
 	status = 0;
-	while (args)
+	lst = args;
+	while (lst)
 	{
 		explst = NULL;
-		expanded = expand_dollar(args->content, &explst, msh);
+		expanded = expand_dollar(lst->content, &explst, msh);
 		status = expand_wildcard(&newargs, explst, expanded);
 		if (!status && !lst_addback_content(&newargs,
 				unquote_arg(explst, expanded)))
@@ -108,7 +110,7 @@ t_list	*expander(t_list *args, t_msh *msh)
 		else if (status == -1)
 			return (ft_lstclear(&newargs, free), NULL);
 		ft_lstclear(&explst, free);
-		args = args->next;
+		lst = lst->next;
 	}
-	return (newargs);
+	return (ft_lstclear(&args, free), newargs);
 }
