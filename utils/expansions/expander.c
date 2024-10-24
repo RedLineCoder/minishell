@@ -99,7 +99,7 @@ t_list	*expander(t_list *args, t_msh *msh)
 	{
 		explst = NULL;
 		expanded = expand_dollar(args->content, &explst, msh);
-		if (!split_words(newargs, explst, expanded))
+		if (!split_words(&newargs, explst, expanded))
 			return (NULL);
 		ft_lstclear(&explst, free);
 		args = args->next;
