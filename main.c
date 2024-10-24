@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/23 09:20:55 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:49:10 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	readline_loop(t_msh *msh)
 			else
 				msh->last_status = status;
 			free(line);
-			clean_tree(msh->tree_root);
+			//clean_tree(msh->tree_root);
 		}
 		job = NOTHING;
 	}

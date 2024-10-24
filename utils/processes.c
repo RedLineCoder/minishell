@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:25:30 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/23 09:09:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:44:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,7 @@ int	wait_child_processes(int pid)
 		waitpid(pid, &status, 0);
 	while (wait(NULL) != -1)
 		;
-	return (status >> 8);
+	if (!WIFEXITED(status))
+		return (130);
+	return (WEXITSTATUS(status));
 }

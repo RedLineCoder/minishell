@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/23 09:38:36 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:48:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,8 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	if (pid)
 		status = wait_child_processes(pid);
+	if (!WIFEXITED(status))
+		return (status);
 	if ((status && op == OP_OR) || (!status && op == OP_AND))
 	{
 		pid = execute_cmd(logiccmd->right, msh, &status, NULL);

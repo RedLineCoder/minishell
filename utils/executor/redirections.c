@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:58:48 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/23 10:40:56 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:13:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,8 @@ int	run_heredoc(t_redircmd *redir, t_msh *msh)
 	const int	expansion = !ft_strchr(redir->args->content, '\"') && 1;
 	char *const	eof = unquote_arg(NULL, redir->args->content);
 
-	if (pipe(redir->pipe) == -1)
-		return (mini_panic("heredoc", "pipe error", false));
 	buffer = readline("> ");
-	printf("merhaba\n");
-	while (buffer && job == EXECUTING_HDOC && ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
+	while (buffer && ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
 	{
 		temp = buffer;
 		if (expansion)
@@ -83,5 +80,5 @@ int	run_heredoc(t_redircmd *redir, t_msh *msh)
 	close(redir->pipe[1]);
 	if (!buffer)
 		return (mini_panic("heredoc", "readline error.", false));
-	return (job == EXECUTING_HDOC);
+	return (true);
 }

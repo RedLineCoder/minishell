@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/23 10:53:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:06:44 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,6 +247,7 @@ int     handle_back_redirects(t_list *redirs);
 int		mini_panic(char *title, char *content, int exit_flag);
 int		get_builtin(t_execcmd *exec);
 int		get_redir_flags(t_redir type);
+int		handle_heredocs(t_cmd *root, t_msh *msh);
 char	*get_executable_path(char *command, t_list *env);
 char	**get_args_arr(t_list	*arglist);
 char	**get_env_arr(t_list *mshenv);
@@ -257,6 +258,7 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2]);
 
 int		tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *));
 char	*get_prompt(t_msh *msh);
+void	free_list(t_list *lst);
 
 //Signals
 void    handle_signals();
