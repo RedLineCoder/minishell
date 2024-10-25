@@ -137,7 +137,6 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 			dirname = ft_strdup(dp->d_name);
 			if (!lst_addback_content(expanded, dirname))
 				return (free(dirname), -1);
-			free(dirname);
 			count++;
 		}
 		dp = readdir(current_dir);
