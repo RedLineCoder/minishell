@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/21 22:52:17 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/23 18:03:42 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	readline_loop(t_msh *msh)
 			else
 				msh->last_status = status;
 			free(line);
-			clean_tree(msh->tree_root);
+			//clean_tree(msh->tree_root);
 		}
 	}
 	return (true);
