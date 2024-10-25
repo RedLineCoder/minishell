@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/25 19:20:42 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 00:46:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,12 @@
 # define ERR_CMD_NOTFOUND "command not found\n"
 # define ERR_CMD_ISDIR "Is a directory\n"
 # define ERR_CD_HOME_NOT_SET "HOME not set\n"
+# define ERR_UNSET_INVALID_OPT "invalid option\n"
+# define EXIT_NUM_REQUIRED 2
 # define EXIT_CMD_NOTFOUND 127
 # define EXIT_CMD_NOTEXECUTABLE 126
 # define EXIT_SIGINT 130
+# define EXIT_UNSET_INVALID_OPT 127
 
 typedef struct stat t_stat;
 typedef struct sigaction t_action;
@@ -247,6 +250,7 @@ int		handle_redirects(t_list *redirs, t_msh *msh);
 int     handle_back_redirects(t_list *redirs);
 int		mini_panic(char *title, char *content, int exit_flag);
 int		get_builtin(t_execcmd *exec);
+int		is_valid_identifier(char *str);
 int		get_redir_flags(t_redir type);
 int		handle_heredocs(t_cmd *root, t_msh *msh);
 char	*get_executable_path(char *command, t_list *env);

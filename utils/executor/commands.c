@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/25 14:42:36 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 00:56:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ char	*get_executable_path(char *command, t_list *env)
 	paths = ft_split(pathenv, ':');
 	if (!paths)
 		return (NULL);
+	path = NULL;
 	i = -1;
 	while (paths[++i])
 	{

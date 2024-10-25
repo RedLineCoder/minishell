@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/16 18:30:02 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 19:49:55 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,11 @@ int	syntax_panic(char *ps)
 	ft_putstr_fd("-msh: syntax error near unexpected token ", 2);
 	ft_putstr_fd("'", 2);
 	if (!token || token == ERR_QUOTE)
-		write(2, "newline", 7);
+	{
+		ft_putstr_fd("newline", 2);
+		ft_putendl_fd("'", 2);
+		return (2);
+	}
 	else
 		write(2, ts, te - ts);
 	ft_putendl_fd("'", 2);
