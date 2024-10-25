@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/21 22:11:07 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 19:24:50 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 		pid = create_child(pipe, STDOUT_FILENO);
 		if (pid)
 			return (pid);
+		job = EXECUTING_CMD;
 	}
 	if (token == PIPE)
 		*status = execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
@@ -87,40 +88,19 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 	return (0);
 }
 
-int	loop_heredocs(t_cmd *ptr, void *payload)
-{
-	t_list			*lst;
-	t_redircmd		*redir;
-	t_msh *const	msh = payload;
-	int const		token = ((t_cmd *)ptr)->type;
-
-	lst = NULL;
-	if (token == EXEC)
-		lst = ((t_execcmd *)ptr)->redirs;
-	else if (token == SUBSHELL)
-		lst = ((t_blockcmd *)ptr)->redirs;
-	while (lst)
-	{
-		redir = lst->content;
-		if (redir->redir_type == REDIR_HDOC && !run_heredoc(redir, msh))
-			return (false);
-		lst = lst->next;
-	}
-	return (true);
-}
-
 void	executor(t_cmd *root, t_msh *msh)
 {
 	pid_t	pid;
-
-	if (tree_map(root, msh, loop_heredocs))
+	int		status;
+	
+	status = handle_heredocs(root, msh);
+	if (status == EXIT_SUCCESS)
 	{
-		pid = execute_cmd(root, msh, &msh->last_status, NULL);
+		pid = execute_cmd(root, msh, &status, NULL);
 		if (pid == -1)
-			msh->last_status = mini_panic(NULL, NULL, -1);
+			status = mini_panic(NULL, NULL, -1);
 		else if (pid != 0)
-			msh->last_status = wait_child_processes(pid);
+			status = wait_child_processes(pid);
 	}
-	else
-		msh->last_status = EXIT_FAILURE;
+	msh->last_status = status;
 }

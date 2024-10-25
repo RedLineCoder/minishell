@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/23 17:12:09 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/25 19:20:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 	int				count;
 
 	if (!get_wld_size(explst, 0, arg, 1))
-		return (0);
+		return (closedir(current_dir), 0);
 	count = 0;
 	dp = readdir(current_dir);
 	while (dp)

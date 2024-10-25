@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/23 17:27:11 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/25 19:20:42 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <errno.h>
+# include <termios.h>
+# include <sys/ioctl.h>
 # include "lib/gnl/get_next_line.h"
 # include "lib/libft/libft.h"
 # include "lib/readline/include/readline/readline.h"
@@ -47,6 +49,7 @@
 # define ERR_CD_HOME_NOT_SET "HOME not set\n"
 # define EXIT_CMD_NOTFOUND 127
 # define EXIT_CMD_NOTEXECUTABLE 126
+# define EXIT_SIGINT 130
 
 typedef struct stat t_stat;
 typedef struct sigaction t_action;
@@ -101,7 +104,16 @@ typedef enum e_builtins
 	BUILTIN_ENV,
 	BUILTIN_EXIT,
 	BUILTIN_STATUS
-}		t_builtins;
+}	t_builtins;
+
+typedef	enum e_job
+{
+	NOTHING,
+	WAITING_INPUT,
+	EXECUTING_CMD,
+	WAITING_HDOC,
+	EXECUTING_HDOC,
+}	t_job;
 
 // Structs
 typedef struct s_part
@@ -187,6 +199,7 @@ typedef struct s_msh
 {
 	int		last_status;
 	int		exit_flag;
+	t_job	current_job;
 	char	*user;
 	t_cmd	*tree_root;
 	t_list	*env;
@@ -235,6 +248,7 @@ int     handle_back_redirects(t_list *redirs);
 int		mini_panic(char *title, char *content, int exit_flag);
 int		get_builtin(t_execcmd *exec);
 int		get_redir_flags(t_redir type);
+int		handle_heredocs(t_cmd *root, t_msh *msh);
 char	*get_executable_path(char *command, t_list *env);
 char	**get_args_arr(t_list	*arglist);
 char	**get_env_arr(t_list *mshenv);
@@ -245,7 +259,10 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2]);
 
 int		tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *));
 char	*get_prompt(t_msh *msh);
+void	free_list(t_list *lst);
 
+//Signals
+void    handle_signals();
 
 //Process Utils
 pid_t	create_child(int pipe[2], int fd);
@@ -277,5 +294,7 @@ void	destroy_environment(t_list	*mshenv);
 void	init_environment(t_list **msh, char **env);
 char	*get_env(t_list *root, char *key);
 t_list	*get_env_node(t_list *lst, char *key);
+
+extern t_job	job;
 
 #endif

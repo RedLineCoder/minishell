@@ -1,43 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   processes.c                                        :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/13 12:25:30 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/25 14:46:52 by emyildir         ###   ########.fr       */
+/*   Created: 2024/10/22 11:16:17 by emyildir          #+#    #+#             */
+/*   Updated: 2024/10/25 14:55:36 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-pid_t	create_child(int pipe[2], int fd)
+void handle_interrupt(int signal)
 {
-	pid_t const	pid = fork();
-
-	if (pid)
-		return (pid);
-	if (pipe)
-	{
-		dup2(pipe[fd], fd);
-		close_pipe(pipe);
-	}
-	return (0);
+    (void)signal;
+    if (job == WAITING_HDOC)
+        ft_putstr_fd("\n", STDOUT_FILENO);
+    else if (job == WAITING_INPUT)
+    {
+        rl_on_new_line();
+        rl_replace_line("", 0);
+        ft_putstr_fd("\n", STDOUT_FILENO);
+        rl_redisplay();
+    }
+    else 
+        exit(EXIT_SIGINT);
 }
 
-int	wait_child_processes(int pid)
+void    handle_signals()
 {
-	int		status;
-
-	status = 0;
-	if (pid)
-		waitpid(pid, &status, 0);
-	while (wait(NULL) != -1)
-		;
-	if (!pid)
-		return (0);
-	if (!WIFEXITED(status))
-		return (130);
-	return (WEXITSTATUS(status));
+    signal(SIGINT, handle_interrupt);
 }

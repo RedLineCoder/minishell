@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 12:35:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/21 22:29:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/24 21:00:13 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,15 @@ t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
 	}
 	ln.rghte = e;
 	return (ln);
+}
+
+void	free_list(t_list *lst)
+{
+	while (lst)
+	{
+		free(lst);
+		lst = lst->next;
+	}
 }
 
 int	lst_addback_content(t_list **lst, void *content)

@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/23 18:03:42 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/25 19:23:23 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_job	job = NOTHING;
 
 int	mini_panic(char *title, char *content, int status)
 {
@@ -36,6 +38,7 @@ int	readline_loop(t_msh *msh)
 
 	while (!msh->exit_flag)
 	{
+		job = WAITING_INPUT;
 		prompt = get_prompt(msh);
 		if (!prompt)
 			return (false);
@@ -54,6 +57,7 @@ int	readline_loop(t_msh *msh)
 			free(line);
 			//clean_tree(msh->tree_root);
 		}
+		job = NOTHING;
 	}
 	return (true);
 }
@@ -64,6 +68,7 @@ int	main(int argc, char **argv, char **env)
 
 	(void)argv, (void)argc;
 	init_environment(&msh->env, env);
+	handle_signals();
 	if (!readline_loop(msh))
 		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
 	rl_clear_history();

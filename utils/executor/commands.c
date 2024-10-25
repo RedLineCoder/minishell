@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/21 22:09:21 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:42:36 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ char	*get_executable_path(char *command, t_list *env)
 
 	if (relative_path && !access(command, F_OK))
 		return (command);
-	if (!pathenv)
+	if (!pathenv || relative_path)
 		return (NULL);
 	paths = ft_split(pathenv, ':');
 	if (!paths)
