@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:25:30 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/24 21:44:54 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:46:52 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ pid_t	create_child(int pipe[2], int fd)
 
 	if (pid)
 		return (pid);
-	job = EXECUTING_CMD;
 	if (pipe)
 	{
 		dup2(pipe[fd], fd);
@@ -36,6 +35,8 @@ int	wait_child_processes(int pid)
 		waitpid(pid, &status, 0);
 	while (wait(NULL) != -1)
 		;
+	if (!pid)
+		return (0);
 	if (!WIFEXITED(status))
 		return (130);
 	return (WEXITSTATUS(status));

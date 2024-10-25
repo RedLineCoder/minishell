@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/24 21:06:44 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:54:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@
 # define ERR_CD_HOME_NOT_SET "HOME not set\n"
 # define EXIT_CMD_NOTFOUND 127
 # define EXIT_CMD_NOTEXECUTABLE 126
+# define EXIT_SIGINT 130
 
 typedef struct stat t_stat;
 typedef struct sigaction t_action;
@@ -109,9 +110,8 @@ typedef	enum e_job
 {
 	NOTHING,
 	WAITING_INPUT,
-	WAITING_CMD,
 	EXECUTING_CMD,
-	EXECUTING_PIPE,
+	WAITING_HDOC,
 	EXECUTING_HDOC,
 }	t_job;
 

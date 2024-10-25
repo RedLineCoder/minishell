@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/24 21:48:37 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:54:40 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 	int		status;
 	pid_t	pid;
 	
-	job = EXECUTING_PIPE;
 	while (pipelist)
 	{
 		last = ft_lstlast(pipelist) == pipelist;
@@ -119,7 +118,7 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	if (pid)
 		status = wait_child_processes(pid);
-	if (!WIFEXITED(status))
+	if (!WIFEXITED(status << 8))
 		return (status);
 	if ((status && op == OP_OR) || (!status && op == OP_AND))
 	{

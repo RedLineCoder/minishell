@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/22 11:12:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:33:56 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 				return (-1);
 			if (!lst_addback_content(expanded, dirname))
 				return (free(dirname), -1);
-			free(dirname);
 			count++;
 		}
 		dp = readdir(current_dir);

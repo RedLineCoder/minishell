@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/24 21:49:10 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:33:34 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,15 @@ int	readline_loop(t_msh *msh)
 		prompt = get_prompt(msh);
 		if (!prompt)
 			return (false);
-		line = readline(prompt);
+		if (isatty(fileno(stdin)))
+			line = readline(prompt);
+		else
+		{
+			line = get_next_line(fileno(stdin));
+			line = ft_strtrim(line, "\n");
+		}
+		if (!line)
+			exit(msh->last_status);
 		free(prompt);
 		if (!line)
 			return (true);

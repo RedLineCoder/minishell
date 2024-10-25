@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/24 21:53:00 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/25 14:54:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 		pid = create_child(pipe, STDOUT_FILENO);
 		if (pid)
 			return (pid);
+		job = EXECUTING_CMD;
 	}
 	if (token == PIPE)
 		*status = execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
@@ -95,7 +96,6 @@ void	executor(t_cmd *root, t_msh *msh)
 	status = handle_heredocs(root, msh);
 	if (status == EXIT_SUCCESS)
 	{
-		job = WAITING_CMD;
 		pid = execute_cmd(root, msh, &status, NULL);
 		if (pid == -1)
 			status = mini_panic(NULL, NULL, -1);
