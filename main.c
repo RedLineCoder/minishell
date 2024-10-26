@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/26 00:28:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 15:40:13 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,21 @@ int	mini_panic(char *title, char *content, int status)
 	return (status);
 }
 
+void	clean_all(t_msh *msh, int exit)
+{
+	free(msh->line);
+	clean_tree(msh->tree_root);
+	if (!exit)
+		return ;
+	rl_clear_history();
+	destroy_environment(msh->env);
+	//msh->user;
+}
+
 int	readline_loop(t_msh *msh)
 {
 	int		status;
 	char	*prompt;
-	char	*line;
 
 	while (!msh->exit_flag)
 	{
@@ -43,27 +53,26 @@ int	readline_loop(t_msh *msh)
 		if (!prompt)
 			return (false);
 		if (isatty(fileno(stdin)))
-			line = readline(prompt);
+			msh->line = readline(prompt);
 		else
 		{
-			line = get_next_line(fileno(stdin));
-			line = ft_strtrim(line, "\n");
+			msh->line = get_next_line(fileno(stdin));
+			msh->line = ft_strtrim(msh->line, "\n");
 		}
-		if (!line)
+		if (!msh->line)
 			exit(msh->last_status);
 		free(prompt);
-		if (!line)
+		if (!msh->line)
 			return (true);
-		if (line && ft_strlen(line) > 0)
+		if (msh->line && ft_strlen(msh->line) > 0)
 		{
-			add_history(line);
-			status = parser(line, line + ft_strlen(line), &msh->tree_root);
+			add_history(msh->line);
+			status = parser(msh->line, msh->line + ft_strlen(msh->line), &msh->tree_root);
 			if (!status)
 				executor(msh->tree_root, msh);
 			else
 				msh->last_status = status;
-			free(line);
-			//clean_tree(msh->tree_root);
+			clean_all(msh, 0);
 		}
 		job = NOTHING;
 	}

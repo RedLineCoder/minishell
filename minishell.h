@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/26 00:46:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 15:21:42 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct sigaction t_action;
 
 typedef enum e_cmdtype
 {
-	ROOT,
+	NONE,
 	SUBSHELL,
 	LOGIC,
 	PIPE,
@@ -178,7 +178,7 @@ typedef struct s_redircmd
 	int			type;
 	int			redir_type;
 	int			fd;
-  int     old_fd;
+  	int     	old_fd;
 	int			pipe[2];
 	t_list		*args;
 }				t_redircmd;
@@ -200,12 +200,13 @@ typedef struct s_logiccmd
 
 typedef struct s_msh
 {
-	int		last_status;
-	int		exit_flag;
 	t_job	current_job;
-	char	*user;
 	t_cmd	*tree_root;
 	t_list	*env;
+	char	*line;
+	char	*user;
+	int		last_status;
+	int		exit_flag;
 }			t_msh;
 
 // Parser
