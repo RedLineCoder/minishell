@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/26 00:56:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 14:52:59 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ char	*get_executable_path(char *command, t_list *env)
 	const int	relative_path = *command == '.' || *command == '/';
 	char *const	pathenv = get_env(env, "PATH");
 
-	if (relative_path && !access(command, F_OK))
+	if ((relative_path || !pathenv) && !access(command, F_OK))
 		return (command);
 	if (!pathenv || relative_path)
 		return (NULL);

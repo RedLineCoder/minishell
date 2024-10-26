@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/26 00:46:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 16:51:03 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,10 @@
 # define ERR_CMD_NOTFOUND "command not found\n"
 # define ERR_CMD_ISDIR "Is a directory\n"
 # define ERR_CD_HOME_NOT_SET "HOME not set\n"
-# define ERR_UNSET_INVALID_OPT "invalid option\n"
+# define ERR_CD_CANT_SET_OLDPWD "couldn't set oldpwd\n"
+# define ERR_CD_OLDPWD_NULL "coudln't retrieve oldpwd\n"
+# define ERR_INVALID_IDENTIFIER "not a valid identifier\n"
+# define EXIT_INVALID_IDENTIFIER 1
 # define EXIT_NUM_REQUIRED 2
 # define EXIT_CMD_NOTFOUND 127
 # define EXIT_CMD_NOTEXECUTABLE 126
@@ -202,8 +205,9 @@ typedef struct s_msh
 {
 	int		last_status;
 	int		exit_flag;
-	t_job	current_job;
 	char	*user;
+	char	*oldpwd;
+	t_job	current_job;
 	t_cmd	*tree_root;
 	t_list	*env;
 }			t_msh;

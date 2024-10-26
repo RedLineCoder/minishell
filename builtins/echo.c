@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 07:03:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/26 00:43:08 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 16:15:58 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 int	is_nonewline_flag(char *arg)
 {
-	if (!*arg)
+	int		i;
+
+	i = 0;
+	if (!arg[i] || arg[i++] != '-') 
 		return (false);
-	if (!ft_strncmp(arg, "-", 1))
-		while (*++arg == 'n')
-			;
-	return (!*arg);
+	while (arg[i] == 'n')
+		i++;
+	return (i > 1 && !arg[i]);
 }
 
 int	builtin_echo(int args_size, char **args, t_msh *msh)
