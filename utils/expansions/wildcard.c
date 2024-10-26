@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/25 19:20:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/26 18:11:04 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,12 @@ int	get_wld_size(t_list *explst, int index, char *arg, int increment)
 	wrt->a_i = index;
 	while (arg[wrt->a_i])
 	{
-		if (arg[wrt->a_i] == '\'' && !wrt->qd && !is_expanded(explst, wrt->a_i))
-			wrt->qs = !wrt->qs;
-		if (arg[wrt->a_i] == '"' && !wrt->qs && !is_expanded(explst, wrt->a_i))
-			wrt->qd = !wrt->qd;
-		if (((!wrt->qd && arg[wrt->a_i] == '\'') || (!wrt->qs
-					&& arg[wrt->a_i] == '"')) && !is_expanded(explst, wrt->a_i))
+		if (track_quotes(wrt, explst, arg))
 		{
 			wrt->a_i += increment;
 			continue ;
 		}
-		if (!(wrt->qd || wrt->qs) && arg[wrt->a_i] == '*')
+		if (!wrt->qc && arg[wrt->a_i] == '*')
 			break ;
 		wrt->a_i += increment;
 		wrt->e_i++;
@@ -42,22 +37,16 @@ int	ft_patterncmp(t_list *explst, t_write *wrt, char *arg, char *file)
 {
 	while (arg[wrt->a_i] || file[wrt->e_i])
 	{
-		if (arg[wrt->a_i] == '\'' && !wrt->qd && !is_expanded(explst, wrt->a_i))
-			wrt->qs = !wrt->qs;
-		if (arg[wrt->a_i] == '"' && !wrt->qs && !is_expanded(explst, wrt->a_i))
-			wrt->qd = !wrt->qd;
-		if (((!wrt->qd && arg[wrt->a_i] == '\'') || (!wrt->qs
-					&& arg[wrt->a_i] == '"')) && !is_expanded(explst, wrt->a_i))
+		if (track_quotes(wrt, explst, arg))
 		{
 			wrt->a_i++;
 			continue ;
 		}
-		if ((!wrt->qd && !wrt->qs && arg[wrt->a_i] == '*'))
+		if (!wrt->qc && arg[wrt->a_i] == '*')
 			break ;
 		if (arg[wrt->a_i] != file[wrt->e_i])
 		{
-			wrt->qd = 0;
-			wrt->qs = 0;
+			wrt->qc = 0;
 			return (1);
 		}
 		wrt->a_i++;

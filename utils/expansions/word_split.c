@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 16:46:35 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/25 11:59:08 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/26 18:09:16 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,8 @@ char	*get_nextarg(t_write *wrt, t_list *explst, char *arg)
 	wrt->e_i = wrt->a_i;
 	while (arg[wrt->a_i])
 	{
-		if (arg[wrt->a_i] == '\'' && !wrt->qd && !is_expanded(explst, wrt->a_i))
-			wrt->qs = !wrt->qs;
-		if (arg[wrt->a_i] == '"' && !wrt->qs && !is_expanded(explst, wrt->a_i))
-			wrt->qd = !wrt->qd;
-		if (str_include(SPACES, arg[wrt->a_i]) && !wrt->qd && !wrt->qs)
+		track_quotes(wrt, explst, arg);
+		if (str_include(SPACES, arg[wrt->a_i]) && !wrt->qc)
 			break ;
 		wrt->a_i++;
 	}

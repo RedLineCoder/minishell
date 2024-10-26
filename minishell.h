@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/26 15:21:42 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/26 18:10:23 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,10 +140,8 @@ typedef	struct s_write
 {
 	int		a_i;
 	int		e_i;
-	char	qs;
-	char	qd;
+	char	qc;
 }				t_write;
-
 
 typedef struct s_env{
 	char	*key;
@@ -234,6 +232,7 @@ int				is_expanded(t_list *explst, int index);
 int				set_exptrack(t_list **explst, int start, int end);
 int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
 char			*expand_dollar(char *arg, t_list **explst, t_msh *msh);
+char			track_quotes(t_write *wrt, t_list *explst, char *arg);
 char			*unquote_arg(t_list *explst, char *arg);
 int				split_words(t_list **newargs, t_list *explst, char *arg);
 t_list			*expander(t_list *args, t_msh *msh);

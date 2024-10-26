@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 13:57:43 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/26 15:35:14 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/26 19:59:15 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,11 @@ int	tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *))
 
 void	clean_tree(void *cmd)
 {
-	t_cmdtype const	token = ((t_cmd *)cmd)->type;
+	t_cmdtype	token;
 
+	if (!cmd)
+		return ;
+	token = ((t_cmd *)cmd)->type;
 	if (token == EXEC)
 	{
 		ft_lstclear(&((t_execcmd *)cmd)->args, free);
