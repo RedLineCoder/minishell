@@ -212,7 +212,7 @@ int			parser(char *ps, char *pe, t_cmd **cmd);
 int			parse_redirs(char *ps, char *pe, int block, t_list **redirs);
 int			parse_args(char *ps, char *pe, t_list **args);
 int			init_pipes(char *ps, char *pe, t_list **pipelist);
-int			syntax_panic(char *ps);
+void		syntax_panic(char *ps);
 void		clean_tree(void *cmd);
 t_part		ft_divide(char *s, char *e, t_tokens tkn, int rev);
 

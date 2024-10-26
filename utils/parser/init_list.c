@@ -12,7 +12,7 @@
 
 #include "../../minishell.h"
 
-int	syntax_panic(char *ps)
+void	syntax_panic(char *ps)
 {
 	t_tokens	token;
 	char		*pe;
@@ -24,15 +24,10 @@ int	syntax_panic(char *ps)
 	ft_putstr_fd("-msh: syntax error near unexpected token ", 2);
 	ft_putstr_fd("'", 2);
 	if (!token || token == ERR_QUOTE)
-	{
 		ft_putstr_fd("newline", 2);
-		ft_putendl_fd("'", 2);
-		return (2);
-	}
 	else
 		write(2, ts, te - ts);
 	ft_putendl_fd("'", 2);
-	return (258);
 }
 
 int	parse_args(char *ps, char *pe, t_list **args)
@@ -85,7 +80,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 			return (1);
 	}
 	else
-		return (free(fd), syntax_panic(te));
+		return (free(fd), syntax_panic(te), 2);
 	return (free(fd), 0);
 }
 
@@ -108,7 +103,7 @@ int	parse_redirs(char *ps, char *pe, int block, t_list **redirs)
 	else if (!token)
 		return (0);
 	else if (token != ARG || block)
-		return (syntax_panic(ts));
+		return (syntax_panic(ts), 2);
 	return (parse_redirs(ps, pe, block, redirs));
 }
 
@@ -123,12 +118,12 @@ int	init_pipes(char *ps, char *pe, t_list **pipelist)
 	{
 		ln = ft_divide(ps, pe, PIPE_OP, 0);
 		if (!peek(ln.lfts, ln.lfte, TKN_NONE))
-			return (syntax_panic(ln.lfte));
+			return (syntax_panic(ln.lfte), 2);
 		status = parser(ln.lfts, ln.lfte, &cmd);
 		if (status)
 			return (status);
 		if (!peek(ln.rghts, ln.rghte, TKN_NONE))
-			return (syntax_panic(ln.rghts));
+			return (syntax_panic(ln.rghts), 2);
 		ft_lstadd_back(pipelist, ft_lstnew(cmd));
 		status = init_pipes(ln.rghts, ln.rghte, pipelist);
 	}

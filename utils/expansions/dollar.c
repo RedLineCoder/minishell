@@ -32,6 +32,8 @@ int	get_env_var(t_write *wrt, t_msh *msh, char *arg, char *exp)
 		wrt->a_i++;
 	key = ft_strndup(&arg[start], wrt->a_i - start);
 	envvar = get_env(msh->env, key);
+	if (!envvar)
+		envvar = "";
 	expsize = ft_strlen(envvar);
 	if (exp)
 		ft_strlcpy(&exp[wrt->e_i], envvar, expsize + 1);
