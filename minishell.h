@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 12:46:08 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 13:31:05 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct sigaction t_action;
 
 typedef enum e_cmdtype
 {
-	ROOT,
+	NONE,
 	SUBSHELL,
 	LOGIC,
 	PIPE,
@@ -142,10 +142,8 @@ typedef	struct s_write
 {
 	int		a_i;
 	int		e_i;
-	char	qs;
-	char	qd;
+	char	qc;
 }				t_write;
-
 
 typedef struct s_env{
 	char	*key;
@@ -177,12 +175,12 @@ typedef struct s_execcmd
 
 typedef struct s_redircmd
 {
-	int		type;
-	int		redir_type;
-	int		fd;
-  	int		old_fd;
-	int		pipe[2];
-	t_list	*args;
+	int			type;
+	int			redir_type;
+	int			fd;
+  	int     	old_fd;
+	int			pipe[2];
+	t_list		*args;
 }				t_redircmd;
 
 typedef struct s_pipecmd
@@ -202,13 +200,13 @@ typedef struct s_logiccmd
 
 typedef struct s_msh
 {
-	int		last_status;
 	int		exit_flag;
+	int		last_status;
+	char	*line;
 	char	*user;
-	char	*oldpwd;
 	t_job	current_job;
-	t_cmd	*tree_root;
 	t_list	*env;
+	t_cmd	*tree_root;
 }			t_msh;
 
 // Parser
@@ -216,7 +214,7 @@ int			parser(char *ps, char *pe, t_cmd **cmd);
 int			parse_redirs(char *ps, char *pe, int block, t_list **redirs);
 int			parse_args(char *ps, char *pe, t_list **args);
 int			init_pipes(char *ps, char *pe, t_list **pipelist);
-int			syntax_panic(char *ps);
+void		syntax_panic(char *ps);
 void		clean_tree(void *cmd);
 t_part		ft_divide(char *s, char *e, t_tokens tkn, int rev);
 
@@ -236,6 +234,7 @@ int				is_expanded(t_list *explst, int index);
 int				set_exptrack(t_list **explst, int start, int end);
 int				expand_wildcard(t_list **expanded, t_list *explst, char *arg);
 char			*expand_dollar(char *arg, t_list **explst, t_msh *msh);
+char			track_quotes(t_write *wrt, t_list *explst, char *arg);
 char			*unquote_arg(t_list *explst, char *arg);
 int				split_words(t_list **newargs, t_list *explst, char *arg);
 t_list			*expander(t_list *args, t_msh *msh);

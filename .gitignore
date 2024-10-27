@@ -8,3 +8,4 @@ lib/gnl/gnl.a
 .vscode
 minishell
 minishell_tester
+readline.supp
