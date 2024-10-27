@@ -1,0 +1,452 @@
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:_rl_init_locale
+   fun:_rl_init_eightbit
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:readline_internal_teardown
+   fun:readline_internal
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:alloc_history_entry
+   fun:add_history
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:_nc_setupterm
+   fun:tgetent_sp
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xrealloc
+   fun:expand_prompt
+   fun:rl_expand_prompt
+   fun:rl_set_prompt
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:_rl_read_init_file
+   fun:rl_read_init_file
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:hist_inittime
+   fun:add_history
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:sh_get_home_dir
+   fun:tilde_expand_word
+   fun:tilde_expand_word
+   fun:tilde_expand
+   fun:_rl_read_init_file
+   fun:rl_read_init_file
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:parser_if
+   fun:handle_parser_directive
+   fun:rl_parse_and_bind
+   fun:_rl_read_init_file
+   fun:parser_include
+   fun:parser_include
+   fun:handle_parser_directive
+   fun:rl_parse_and_bind
+   fun:_rl_read_init_file
+   fun:rl_read_init_file
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_set_prompt
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:expand_prompt
+   fun:rl_expand_prompt
+   fun:rl_set_prompt
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_nc_read_termtype
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_read_entry2
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_setupterm
+   fun:tgetent_sp
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_nc_first_db
+   fun:_nc_read_entry2
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_setupterm
+   fun:tgetent_sp
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_nc_read_termtype
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_read_entry2
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_setupterm
+   fun:tgetent_sp
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_setupterm
+   fun:tgetent_sp
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_nc_first_db
+   fun:_nc_read_entry2
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_setupterm
+   fun:tgetent_sp
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_nc_setupterm
+   fun:tgetent_sp
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xrealloc
+   fun:realloc_line
+   fun:init_line_structures
+   fun:rl_redisplay
+   fun:readline_internal_setup
+   fun:readline_internal
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:init_line_structures
+   fun:rl_redisplay
+   fun:readline_internal_setup
+   fun:readline_internal
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:xrealloc
+   fun:rl_add_funmap_entry
+   fun:rl_initialize_funmap
+   fun:rl_initialize_funmap
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_add_funmap_entry
+   fun:rl_initialize_funmap
+   fun:rl_initialize_funmap
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:add_history
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_make_bare_keymap
+   fun:rl_generic_bind
+   fun:bind_arrow_keys_internal
+   fun:bind_arrow_keys
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.6.3
+   fun:_nc_find_type_entry
+   fun:tgetstr_sp
+   fun:get_term_capabilities
+   fun:_rl_init_terminal_io
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_make_bare_keymap
+   fun:rl_generic_bind
+   fun:bind_bracketed_paste_prefix
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_make_bare_keymap
+   fun:rl_generic_bind
+   fun:rl_bind_keyseq
+   fun:rl_parse_and_bind
+   fun:_rl_read_init_file
+   fun:parser_include
+   fun:parser_include
+   fun:handle_parser_directive
+   fun:rl_parse_and_bind
+   fun:_rl_read_init_file
+   fun:rl_read_init_file
+   fun:readline_initialize_everything
+   fun:rl_initialize
+   fun:readline
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:_rl_init_locale
+   fun:_rl_reset_locale
+   fun:rl_initialize
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+{
+   <Readline Leaks>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:xrealloc
+   fun:expand_prompt
+   fun:rl_expand_prompt
+   fun:rl_set_prompt
+   fun:readline
+   fun:readline_loop
+   fun:main
+}
+
