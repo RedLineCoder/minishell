@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/26 14:52:59 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 13:23:20 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,32 +40,37 @@ char	**get_env_arr(t_list *mshenv)
 	return (env);
 }
 
-char	**get_args_arr(t_list *arglist)
+char	**get_args_arr(t_list *arglist, t_msh *msh)
 {
 	int			i;
 	int			len;
+	char		*unquoted;
 	char		**args;
 	t_list		*temp;
-
-	len = 0;
-	temp = arglist;
-	while (temp)
-	{
-		if (ft_strlen(temp->content))
-			len++;
-		temp = temp->next;
-	}
-	args = ft_calloc(sizeof(char *), len + 1);
-	if (!args)
-		return (NULL);
-	i = 0;
+	
 	while (arglist)
 	{
-		if (ft_strlen(arglist->content))
-			args[i++] = (char *)arglist->content;
+		unquoted = expand_dollar(arglist->content, NULL, msh);
+		if (ft_strlen(unquoted))
+		{
+			free(unquoted);
+			break;
+		}
+		free(unquoted);
 		arglist = arglist->next;
 	}
-	return (args);
+	temp = expander(arglist, msh);
+	len = ft_lstsize(temp);
+	args = ft_calloc(sizeof(char *), len + 1);
+	if (!args)
+		return (free(temp), NULL);
+	i = 0;
+	while (temp)
+	{
+		args[i++] = (char *)temp->content;
+		temp = temp->next;
+	}
+	return (free(temp), args);
 }
 
 int	check_executable(char *command, char *path)

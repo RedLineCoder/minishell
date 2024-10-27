@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/26 16:51:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 12:46:08 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ typedef enum e_builtins
 	BUILTIN_UNSET,
 	BUILTIN_ENV,
 	BUILTIN_EXIT,
-	BUILTIN_STATUS
 }	t_builtins;
 
 typedef	enum e_job
@@ -178,12 +177,12 @@ typedef struct s_execcmd
 
 typedef struct s_redircmd
 {
-	int			type;
-	int			redir_type;
-	int			fd;
-  int     old_fd;
-	int			pipe[2];
-	t_list		*args;
+	int		type;
+	int		redir_type;
+	int		fd;
+  	int		old_fd;
+	int		pipe[2];
+	t_list	*args;
 }				t_redircmd;
 
 typedef struct s_pipecmd
@@ -253,12 +252,11 @@ int		run_heredoc(t_redircmd *redir, t_msh *msh);
 int		handle_redirects(t_list *redirs, t_msh *msh);
 int     handle_back_redirects(t_list *redirs);
 int		mini_panic(char *title, char *content, int exit_flag);
-int		get_builtin(t_execcmd *exec);
 int		is_valid_identifier(char *str);
 int		get_redir_flags(t_redir type);
 int		handle_heredocs(t_cmd *root, t_msh *msh);
 char	*get_executable_path(char *command, t_list *env);
-char	**get_args_arr(t_list	*arglist);
+char	**get_args_arr(t_list	*arglist, t_msh *msh);
 char	**get_env_arr(t_list *mshenv);
 void	executor(t_cmd *block, t_msh *msh);
 void	close_pipe(int	fd[2]);

@@ -1,16 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   processes.c                                        :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/13 12:25:30 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/25 14:46:52 by emyildir         ###   ########.fr       */
+/*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
+/*   Updated: 2024/10/27 12:11:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../minishell.h"
+
+void	close_pipe(int fd[2])
+{
+	close(fd[0]);
+	close(fd[1]);
+}
 
 pid_t	create_child(int pipe[2], int fd)
 {

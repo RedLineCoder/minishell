@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/25 19:28:05 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 12:42:42 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
 	int				fd;
 	char			*spec;
+	char			**const args = get_args_arr(redir->args, msh);
 	t_redir const	type = redir->redir_type;
 
-	redir->args = expander(redir->args, msh);
-	if (ft_lstsize(redir->args) > 1)
+	
+	if (!*args || ft_lstsize(redir->args) > 1)
 		return (mini_panic("*", "ambiguous redirect\n", false));
-	spec = redir->args->content;
+	spec = args[0];
+	free(args);
 	if (type == REDIR_HDOC)
 		fd = redir->pipe[0];
 	else
@@ -39,7 +41,7 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 {
 	int			status;
-	char		**args;
+	char		**const args = get_args_arr(exec->args, msh);
 
 	if (!handle_redirects(exec->redirs, msh))
 	{
@@ -47,8 +49,6 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 		return (EXIT_FAILURE);
 	}
 	status = EXIT_SUCCESS;
-	exec->args = expander(exec->args, msh);
-	args = get_args_arr(exec->args);
 	if (!args)
 		return (mini_panic(NULL, "malloc error\n", EXIT_FAILURE));
 	else if (*args)

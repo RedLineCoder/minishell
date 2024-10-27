@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/26 16:50:56 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 13:24:43 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,5 +106,5 @@ t_list	*expander(t_list *args, t_msh *msh)
 		ft_lstclear(&explst, free);
 		lst = lst->next;
 	}
-	return (ft_lstclear(&args, free), newargs);
+	return (newargs);
 }
