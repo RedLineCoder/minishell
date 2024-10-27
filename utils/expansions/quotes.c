@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 16:52:45 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 15:54:34 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 16:39:41 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,5 @@ char	*unquote_arg(t_list *explst, char *arg)
 			continue ;
 		exp[wrt->e_i++] = arg[wrt->a_i++];
 	}
-	return (free(arg), exp);
+	return (exp);
 }

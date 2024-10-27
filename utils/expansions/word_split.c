@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 16:46:35 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 16:20:35 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 16:41:01 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	split_words(t_list **newargs, t_list *explst, char *arg)
 		status = expand_wildcard(newargs, explstword, expanded);
 		if (!status && !lst_addback_content(newargs,
 				unquote_arg(explstword, expanded)))
-			return (ft_lstclear(newargs, free), 0);
+			return (free(expanded), ft_lstclear(newargs, free), 0);
 		else if (status == -1)
 			return (ft_lstclear(newargs, free), 0);
 		else
