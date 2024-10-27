@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 13:31:05 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:29:06 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,7 +263,7 @@ void	print_env(t_list *lst, int quotes, int hide_null);
 pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2]);
 
 int		tree_map(t_cmd *cmd, void *payload, int (*f)(t_cmd *, void *));
-char	*get_prompt(t_msh *msh);
+char	*get_prompt();
 void	free_list(t_list *lst);
 
 //Signals
@@ -299,6 +299,8 @@ void	destroy_environment(t_list	*mshenv);
 void	init_environment(t_list **msh, char **env);
 char	*get_env(t_list *root, char *key);
 t_list	*get_env_node(t_list *lst, char *key);
+
+void	clean_all(t_msh *msh, int exit);
 
 extern t_job	job;
 

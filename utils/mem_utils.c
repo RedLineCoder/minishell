@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 12:35:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/24 21:00:13 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:48:45 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,13 @@ t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
 
 void	free_list(t_list *lst)
 {
+	t_list	*temp;
+	
 	while (lst)
 	{
-		free(lst);
+		temp = lst;
 		lst = lst->next;
+		free(temp);
 	}
 }
 

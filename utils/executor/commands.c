@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 13:51:32 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:47:51 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,33 +44,34 @@ char	**get_args_arr(t_list *arglist, t_msh *msh)
 {
 	int			i;
 	int			len;
-	char		*unquoted;
+	char		*expanded;
 	char		**args;
 	t_list		*temp;
 	
 	while (arglist)
 	{
-		unquoted = expand_dollar(arglist->content, NULL, msh);
-		if (ft_strlen(unquoted))
+		expanded = expand_dollar(arglist->content, NULL, msh);
+		if (ft_strlen(expanded))
 		{
-			free(unquoted);
+			free(expanded);
 			break;
 		}
-		free(unquoted);
+		free(expanded);
 		arglist = arglist->next;
 	}
 	temp = expander(arglist, msh);
 	len = ft_lstsize(temp);
 	args = ft_calloc(sizeof(char *), len + 1);
 	if (!args)
-		return (free(temp), NULL);
+		return (ft_lstclear(&temp, free), NULL);
 	i = 0;
+	arglist = temp;
 	while (temp)
 	{
 		args[i++] = (char *)temp->content;
 		temp = temp->next;
 	}
-	return (ft_lstclear(&temp, free), args);
+	return (free_list(arglist), args);
 }
 
 int	check_executable(char *command, char *path)

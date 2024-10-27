@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 20:47:31 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/25 14:53:39 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 16:02:41 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,14 @@ int		handle_heredocs(t_cmd *root, t_msh *msh)
 	{
 		job = WAITING_HDOC;
 		close_pipes_output_end(heredocs);
-		return (wait_child_processes(pid));
+		return (free_list(heredocs), wait_child_processes(pid));
 	}
 	job = EXECUTING_HDOC;
 	if (!run_heredocs(heredocs, msh))
+	{
+		free_list(heredocs);
 		exit(EXIT_FAILURE);
+	}
+	free_list(heredocs);
 	exit(EXIT_SUCCESS);
 }

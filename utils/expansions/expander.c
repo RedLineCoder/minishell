@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 13:26:12 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:32:37 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ t_list	*expander(t_list *args, t_msh *msh)
 		explst = NULL;
 		expanded = expand_dollar(lst->content, &explst, msh);
 		if (!split_words(&newargs, explst, expanded))
-			return (NULL);
+			return (free(expanded), NULL);
+		free(expanded);
 		ft_lstclear(&explst, free);
 		lst = lst->next;
 	}

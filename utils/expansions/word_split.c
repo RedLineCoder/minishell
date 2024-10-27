@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   word_split.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 16:46:35 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/26 18:09:16 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/27 16:20:35 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ int	split_words(t_list **newargs, t_list *explst, char *arg)
 			return (ft_lstclear(newargs, free), 0);
 		else if (status == -1)
 			return (ft_lstclear(newargs, free), 0);
+		else
+			free(expanded);
 		ft_lstclear(&explstword, free);
 	}
 	return (1);

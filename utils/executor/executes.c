@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 13:58:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:56:59 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 	}
 	if (!handle_back_redirects(exec->redirs))
 		return (free(args), mini_panic(NULL, NULL, EXIT_FAILURE));
-	free(args);
+	free_string_array(args);
 	return (status);
 }
 

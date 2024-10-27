@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 13:52:08 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 16:06:35 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	readline_loop(t_msh *msh)
 	while (!msh->exit_flag)
 	{
 		job = WAITING_INPUT;
-		prompt = get_prompt(msh);
+		prompt = get_prompt();
 		if (!prompt)
 			return (false);
 		//msh->line = readline(prompt);
