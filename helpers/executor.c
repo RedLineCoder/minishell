@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 12:50:04 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 13:54:30 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,11 @@ int	get_builtin(t_execcmd *exec, t_msh *msh)
 {
 	int			i;
 	char		*cmds[8];
-	char		**args = get_args_arr(exec->args, msh);
-	if (exec->type != EXEC || !(exec->args && exec->args->content) || !args[0])
+	char		**args;
+	if (exec->type != EXEC)
+		return (false);
+	args = get_args_arr(exec->args, msh);
+	if (!args || !args[0])
 		return (false);
 	cmds[BUILTIN_ECHO] = "echo";
 	cmds[BUILTIN_CD] = "cd";

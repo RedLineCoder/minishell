@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 13:23:20 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 13:51:32 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ char	**get_args_arr(t_list *arglist, t_msh *msh)
 		args[i++] = (char *)temp->content;
 		temp = temp->next;
 	}
-	return (free(temp), args);
+	return (ft_lstclear(&temp, free), args);
 }
 
 int	check_executable(char *command, char *path)

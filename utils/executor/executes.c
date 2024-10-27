@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 13:29:06 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/27 13:58:24 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
 	int				fd;
 	char			*spec;
-	char			**const args = get_args_arr(redir->args, msh);
 	t_redir const	type = redir->redir_type;
+	char			**const args = get_args_arr(redir->args, msh);
 
-	
-	if (!*args || ft_lstsize(redir->args) > 1)
+	if (!args)
+		return (mini_panic(NULL, NULL, false));
+	if (!*args || str_arr_size(args) > 1)
 		return (mini_panic("*", "ambiguous redirect\n", false));
 	spec = args[0];
 	free(args);
@@ -42,7 +43,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 {
 	int			status;
 	char		**const args = get_args_arr(exec->args, msh);
-
+	
 	if (!handle_redirects(exec->redirs, msh))
 	{
 		handle_back_redirects(exec->redirs);
