@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 15:29:06 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/28 20:16:49 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,8 @@ char	*get_prompt();
 void	free_list(t_list *lst);
 
 //Signals
-void    handle_signals();
+void    handle_signals(t_job job);
+void	ignore_signals();
 
 //Process Utils
 pid_t	create_child(int pipe[2], int fd);
@@ -302,6 +303,5 @@ t_list	*get_env_node(t_list *lst, char *key);
 
 void	clean_all(t_msh *msh, int exit);
 
-extern t_job	job;
 
 #endif

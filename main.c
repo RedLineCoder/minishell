@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 16:36:46 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/28 20:53:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	readline_loop(t_msh *msh)
 
 	while (!msh->exit_flag)
 	{
-		job = WAITING_INPUT;
+		handle_signals(WAITING_INPUT);
 		prompt = get_prompt();
 		if (!prompt)
 			return (false);
@@ -56,6 +56,7 @@ int	readline_loop(t_msh *msh)
 		free(prompt);
 		if (!msh->line)
 			return (false);
+		handle_signals(NOTHING);
 		if (msh->line && ft_strlen(msh->line) > 0)
 		{
 			add_history(msh->line);
@@ -66,7 +67,6 @@ int	readline_loop(t_msh *msh)
 				msh->last_status = status;
 			clean_all(msh, 0);
 		}
-		job = NOTHING;
 	}
 	return (true);
 }
@@ -77,7 +77,6 @@ int	main(int argc, char **argv, char **env)
 
 	(void)argv, (void)argc;
 	init_environment(&msh->env, env);
-	handle_signals();
 	if (!readline_loop(msh))
 		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
 	rl_clear_history();

@@ -6,29 +6,44 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 11:16:17 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/25 14:55:36 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/28 23:46:22 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void handle_interrupt(int signal)
+void handle_interrupt_main(int signal)
 {
-    (void)signal;
-    if (job == WAITING_HDOC)
-        ft_putstr_fd("\n", STDOUT_FILENO);
-    else if (job == WAITING_INPUT)
-    {
-        rl_on_new_line();
-        rl_replace_line("", 0);
-        ft_putstr_fd("\n", STDOUT_FILENO);
-        rl_redisplay();
-    }
-    else 
-        exit(EXIT_SIGINT);
+	(void)signal;
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
 }
 
-void    handle_signals()
+void handle_interrupt_heredocs(int signal)
 {
-    signal(SIGINT, handle_interrupt);
+	(void)signal;
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	exit(130);
+}
+
+void handle_interrupt_child(int signal)
+{
+	(void)signal;
+	exit(130);
+}
+
+void    handle_signals(t_job job)
+{
+    signal(SIGQUIT, SIG_IGN);
+	signal(SIGTSTP, SIG_IGN);
+	if (job == WAITING_INPUT)
+		signal(SIGINT, handle_interrupt_main);
+	else if(job == EXECUTING_HDOC)
+		signal(SIGINT, handle_interrupt_heredocs);
+	else if (job == EXECUTING_CMD)
+		signal(SIGINT, handle_interrupt_child);
+	else 
+		signal(SIGINT, SIG_IGN);
 }
