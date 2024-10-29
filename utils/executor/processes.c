@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   processes.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 12:11:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 19:28:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,23 @@ pid_t	create_child(int pipe[2], int fd)
 int	wait_child_processes(int pid)
 {
 	int		status;
+	int		requested_status;
+	int		newline_flag;
 
-	status = 0;
+	newline_flag = false;
 	if (pid)
-		waitpid(pid, &status, 0);
-	while (wait(NULL) != -1)
-		;
+		waitpid(pid, &requested_status, 0);
+	while (wait(&status) != -1)
+	{
+		if (WIFSIGNALED(status))
+			newline_flag = true;
+	}
+	if (isatty(STDOUT_FILENO) && (newline_flag 
+		|| (!pid || WIFSIGNALED(requested_status))))
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	if (!pid)
 		return (0);
-	if (!WIFEXITED(status))
-		return (130);
-	return (WEXITSTATUS(status));
+	if (WIFSIGNALED(requested_status))
+		return (EXIT_SIGINT);
+	return (WEXITSTATUS(requested_status));
 }

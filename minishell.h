@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/29 10:51:41 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 17:41:20 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@
 # define ERR_CD_CANT_SET_OLDPWD "couldn't set oldpwd\n"
 # define ERR_CD_OLDPWD_NULL "coudln't retrieve oldpwd\n"
 # define ERR_INVALID_IDENTIFIER "not a valid identifier\n"
+# define ERR_HDOC_EOF "here-document delimited by end-of-file\n"
 # define EXIT_INVALID_IDENTIFIER 1
 # define EXIT_NUM_REQUIRED 2
 # define EXIT_CMD_NOTFOUND 127
@@ -58,7 +59,7 @@
 # define EXIT_UNSET_INVALID_OPT 127
 
 typedef struct stat			t_stat;
-typedef struct sigaction	t_action;
+typedef struct termios		t_termios;
 
 typedef enum e_cmdtype
 {
@@ -115,8 +116,8 @@ typedef enum e_job
 {
 	NOTHING,
 	WAITING_INPUT,
+	WAITING_EXEC,
 	EXECUTING_CMD,
-	WAITING_HDOC,
 	EXECUTING_HDOC,
 }							t_job;
 
@@ -281,7 +282,7 @@ void						free_list(t_list *lst);
 
 // Signals
 void						handle_signals(t_job job);
-void						ignore_signals(void);
+void    					set_termflags();
 
 // Process Utils
 pid_t						create_child(int pipe[2], int fd);
@@ -319,5 +320,7 @@ char						*get_env(t_list *root, char *key);
 t_list						*get_env_node(t_list *lst, char *key);
 
 void						clean_all(t_msh *msh, int exit);
+
+extern int					last_signal;
 
 #endif
