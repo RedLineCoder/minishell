@@ -6,22 +6,32 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 23:01:32 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/04 17:46:10 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 10:51:59 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*ft_strndup(char *src, int size)
+t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
 {
-	char *const	str = malloc(sizeof(char) * (size + 1));
+	t_part	ln;
+	char	*ts;
+	char	*te;
 
-	if (!str)
-		return (NULL);
-	str[size] = '\0';
-	while (--size >= 0)
-		str[size] = src[size];
-	return (str);
+	ln.lfts = s;
+	while (s && s != e)
+	{
+		pass_block(s, &s, e);
+		if (get_token(&s, &e, &ts, &te) == tkn)
+		{
+			ln.lfte = ts;
+			ln.rghts = te;
+			if (!rev)
+				break ;
+		}
+	}
+	ln.rghte = e;
+	return (ln);
 }
 
 int	str_arr_size(char **arr)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dollar.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:04:50 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 13:26:22 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:50:31 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	get_env_var(t_write *wrt, t_msh *msh, char *arg, char *exp)
 	start = wrt->a_i;
 	while ((ft_isalnum(arg[wrt->a_i]) || arg[wrt->a_i] == '_'))
 		wrt->a_i++;
-	key = ft_strndup(&arg[start], wrt->a_i - start);
+	key = ft_substr(&arg[start], 0, wrt->a_i - start);
 	envvar = get_env(msh->env, key);
 	if (!envvar)
 		envvar = "";

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/29 10:09:37 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 10:51:41 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,7 +291,6 @@ int							wait_child_processes(int pid);
 int							str_arr_size(char **arr);
 int							str_append(char **s1, char const *s2);
 int							lst_addback_content(t_list **lst, void *content);
-char						*ft_strndup(char *src, int size);
 char						*str_include(const char *s, int c);
 void						free_string_array(char **arr);
 

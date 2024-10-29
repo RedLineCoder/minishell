@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 13:57:43 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:06:32 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 10:52:27 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,27 @@ void	clean_tree(void *cmd)
 		clean_tree(((t_logiccmd *)cmd)->right);
 	}
 	free(cmd);
+}
+
+void	free_list(t_list *lst)
+{
+	t_list	*temp;
+
+	while (lst)
+	{
+		temp = lst;
+		lst = lst->next;
+		free(temp);
+	}
+}
+
+int	lst_addback_content(t_list **lst, void *content)
+{
+	t_list	*item;
+
+	item = ft_lstnew(content);
+	if (!item || !lst || !content)
+		return (free(item), free(content), 0);
+	ft_lstadd_back(lst, item);
+	return (1);
 }

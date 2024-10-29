@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_list.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/25 19:49:55 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:51:24 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	parse_args(char *ps, char *pe, t_list **args)
 	token = get_token(&ps, &pe, &ts, &te);
 	if (token == ARG)
 	{
-		ts = ft_strndup(ts, te - ts);
+		ts = ft_substr(ts, 0, te - ts);
 		lst = ft_lstnew(ts);
 		if (!ts || !lst)
 			return (free(ts), free(lst), 1);
@@ -64,7 +64,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 
 	*cmd = redir;
 	get_token(&ps, &pe, &ts, &te);
-	fd = ft_strndup(ts, te - ts);
+	fd = ft_substr(ts, 0, te - ts);
 	if (!fd || !redir)
 		return (free(fd), 1);
 	redir->type = REDIR;
@@ -76,7 +76,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	if (peek(ps, pe, TKN_NONE) == ARG)
 	{
 		get_token(&ps, &pe, &ts, &te);
-		if (!lst_addback_content(&(redir->args), ft_strndup(ts, te - ts)))
+		if (!lst_addback_content(&(redir->args), ft_substr(ts, 0, te - ts)))
 			return (1);
 	}
 	else
