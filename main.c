@@ -6,13 +6,11 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/29 10:55:21 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 10:58:36 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-t_job	job = NOTHING;
 
 int	mini_panic(char *title, char *content, int status)
 {
