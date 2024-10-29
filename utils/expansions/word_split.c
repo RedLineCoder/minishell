@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   word_split.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 16:46:35 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 16:41:01 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:01:54 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	get_explst_word(t_write *wrt, t_list *explst, t_list **explstword, char *arg)
+int	get_explst_word(t_write *wrt, t_list *explst,
+	t_list **explstword, char *arg)
 {
 	int	start;
 	int	index;
@@ -61,9 +62,9 @@ char	*get_nextarg(t_write *wrt, t_list *explst, char *arg)
 int	split_words(t_list **newargs, t_list *explst, char *arg)
 {
 	t_write *const	wrt = &(t_write){0};
-	t_list	*explstword;
-	char	*expanded;
-	int		status;
+	t_list			*explstword;
+	char			*expanded;
+	int				status;
 
 	while (arg[wrt->a_i])
 	{

@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   heredocs.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 20:47:31 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/28 20:13:41 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:04:10 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	close_pipes_output_end(t_list	*hdocs)
+int	close_pipes_output_end(t_list *hdocs)
 {
 	t_redircmd	*redir;
-	
+
 	while (hdocs)
 	{
 		redir = hdocs->content;
@@ -28,43 +28,43 @@ int	close_pipes_output_end(t_list	*hdocs)
 int	open_pipes(t_list *hdocs)
 {
 	t_redircmd	*redir;
-	
+
 	while (hdocs)
 	{
 		redir = hdocs->content;
-		if(pipe(redir->pipe))
+		if (pipe(redir->pipe))
 			return (false);
 		hdocs = hdocs->next;
 	}
 	return (true);
 }
 
-int     set_all_heredocs(t_cmd *ptr, void *payload)
+int	set_all_heredocs(t_cmd *ptr, void *payload)
 {
-    t_redircmd      *redir;
-    t_list          *lst;
-    t_list          **const hdoc_list = payload;
-    int const		token = ((t_cmd *)ptr)->type;
+	t_list **const	hdoc_list = payload;
+	t_redircmd		*redir;
+	t_list			*lst;
+	int const		token = ptr->type;
 
-    lst = NULL;
-    if (token == EXEC)
+	lst = NULL;
+	if (token == EXEC)
 		lst = ((t_execcmd *)ptr)->redirs;
 	else if (token == SUBSHELL)
 		lst = ((t_blockcmd *)ptr)->redirs;
 	while (lst)
 	{
 		redir = lst->content;
-		if (redir->redir_type == REDIR_HDOC 
-            && !lst_addback_content(hdoc_list, redir))
+		if (redir->redir_type == REDIR_HDOC && !lst_addback_content(hdoc_list,
+				redir))
 			return (false);
 		lst = lst->next;
 	}
-    return (true);
+	return (true);
 }
 
-int	run_heredocs(t_list	*hdocs, t_msh *msh)
+int	run_heredocs(t_list *hdocs, t_msh *msh)
 {
-	t_redircmd		*redir;
+	t_redircmd	*redir;
 
 	while (hdocs)
 	{
@@ -76,13 +76,13 @@ int	run_heredocs(t_list	*hdocs, t_msh *msh)
 	return (true);
 }
 
-int		handle_heredocs(t_cmd *root, t_msh *msh)
+int	handle_heredocs(t_cmd *root, t_msh *msh)
 {
+	t_list	*heredocs;
 	pid_t	pid;
-	t_list  *heredocs;
-    
+
 	heredocs = NULL;
-    if (!tree_map(root, &heredocs, set_all_heredocs))
+	if (!tree_map(root, &heredocs, set_all_heredocs))
 		return (free_list(heredocs), EXIT_FAILURE);
 	open_pipes(heredocs);
 	pid = create_child(NULL, -1);

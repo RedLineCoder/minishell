@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/28 20:12:40 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:08:36 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	get_builtin(t_execcmd *exec, t_msh *msh)
 	int			i;
 	char		*cmds[8];
 	char		**args;
+
 	if (exec->type != EXEC)
 		return (false);
 	args = get_args_arr(exec->args, msh);
@@ -94,7 +95,7 @@ void	executor(t_cmd *root, t_msh *msh)
 {
 	pid_t	pid;
 	int		status;
-	
+
 	status = handle_heredocs(root, msh);
 	if (status == EXIT_SUCCESS)
 	{

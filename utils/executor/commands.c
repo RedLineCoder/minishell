@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 15:47:51 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:05:53 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,14 @@ char	**get_args_arr(t_list *arglist, t_msh *msh)
 	char		*expanded;
 	char		**args;
 	t_list		*temp;
-	
+
 	while (arglist)
 	{
 		expanded = expand_dollar(arglist->content, NULL, msh);
 		if (ft_strlen(expanded))
 		{
 			free(expanded);
-			break;
+			break ;
 		}
 		free(expanded);
 		arglist = arglist->next;

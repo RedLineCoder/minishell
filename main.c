@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/28 20:53:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:11:01 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	clean_all(t_msh *msh, int exit)
 		return ;
 	rl_clear_history();
 	destroy_environment(msh->env);
-	//msh->user;
 }
 
 int	readline_loop(t_msh *msh)
@@ -52,7 +51,16 @@ int	readline_loop(t_msh *msh)
 		prompt = get_prompt();
 		if (!prompt)
 			return (false);
-		msh->line = readline(prompt);
+		//msh->line = readline(prompt);
+		if (isatty(fileno(stdin)))
+			msh->line = readline(prompt);
+		else
+		{
+			msh->line = get_next_line(fileno(stdin));
+			msh->line = ft_strtrim(msh->line, "\n");
+		} 
+		if (!msh->line)
+			exit(msh->last_status);
 		free(prompt);
 		if (!msh->line)
 			return (false);

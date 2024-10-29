@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executes.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/28 20:56:29 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:05:36 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
+	t_redir const	type = redir->redir_type;
+	char **const	args = get_args_arr(redir->args, msh);
 	int				fd;
 	char			*spec;
-	t_redir const	type = redir->redir_type;
-	char			**const args = get_args_arr(redir->args, msh);
 
 	if (!args)
 		return (mini_panic(NULL, NULL, false));
@@ -41,9 +41,9 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 
 int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 {
-	int			status;
-	char		**const args = get_args_arr(exec->args, msh);
-	
+	char **const	args = get_args_arr(exec->args, msh);
+	int				status;
+
 	if (!handle_redirects(exec->redirs, msh))
 	{
 		handle_back_redirects(exec->redirs);
@@ -86,7 +86,7 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 	int		p[2];
 	int		status;
 	pid_t	pid;
-	
+
 	handle_signals(NOTHING);
 	while (pipelist)
 	{

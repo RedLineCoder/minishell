@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 07:03:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/26 16:15:58 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:09:09 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 int	is_nonewline_flag(char *arg)
 {
-	int		i;
+	int	i;
 
 	i = 0;
-	if (!arg[i] || arg[i++] != '-') 
+	if (!arg[i] || arg[i++] != '-')
 		return (false);
 	while (arg[i] == 'n')
 		i++;
@@ -26,9 +26,9 @@ int	is_nonewline_flag(char *arg)
 
 int	builtin_echo(int args_size, char **args, t_msh *msh)
 {
-	int		i;
-	int		newline_flag;
-	int		track_nl_flag;
+	int	i;
+	int	newline_flag;
+	int	track_nl_flag;
 
 	(void)msh;
 	newline_flag = true;
@@ -36,13 +36,12 @@ int	builtin_echo(int args_size, char **args, t_msh *msh)
 	track_nl_flag = 1;
 	while (++i < args_size)
 	{
-		if (i == track_nl_flag 
-			&& is_nonewline_flag(args[track_nl_flag]))
+		if (i == track_nl_flag && is_nonewline_flag(args[track_nl_flag]))
 		{
 			newline_flag = false;
 			track_nl_flag++;
 		}
-		else 
+		else
 		{
 			ft_putstr_fd(args[i], STDOUT_FILENO);
 			if (i != args_size - 1)

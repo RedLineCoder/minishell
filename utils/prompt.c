@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 22:20:28 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/27 15:28:42 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:06:56 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*get_prompt()
+char	*get_prompt(void)
 {
 	int		size;
 	char	path[PATH_MAX];

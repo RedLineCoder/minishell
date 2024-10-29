@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mem_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 12:35:08 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/27 15:48:45 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:07:05 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ t_part	ft_divide(char *s, char *e, t_tokens tkn, int rev)
 void	free_list(t_list *lst)
 {
 	t_list	*temp;
-	
+
 	while (lst)
 	{
 		temp = lst;
