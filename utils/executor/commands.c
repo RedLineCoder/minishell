@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:05:53 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 10:36:49 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ char	**get_env_arr(t_list *mshenv)
 char	**get_args_arr(t_list *arglist, t_msh *msh)
 {
 	int			i;
-	int			len;
 	char		*expanded;
 	char		**args;
 	t_list		*temp;
@@ -51,17 +50,13 @@ char	**get_args_arr(t_list *arglist, t_msh *msh)
 	while (arglist)
 	{
 		expanded = expand_dollar(arglist->content, NULL, msh);
-		if (ft_strlen(expanded))
-		{
-			free(expanded);
+		if (ft_strlen(expanded) && (free(expanded), 1))
 			break ;
-		}
 		free(expanded);
 		arglist = arglist->next;
 	}
 	temp = expander(arglist, msh);
-	len = ft_lstsize(temp);
-	args = ft_calloc(sizeof(char *), len + 1);
+	args = ft_calloc(sizeof(char *), ft_lstsize(temp) + 1);
 	if (!args)
 		return (ft_lstclear(&temp, free), NULL);
 	i = 0;

@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/29 10:11:01 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 10:43:48 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,29 +51,19 @@ int	readline_loop(t_msh *msh)
 		prompt = get_prompt();
 		if (!prompt)
 			return (false);
-		//msh->line = readline(prompt);
-		if (isatty(fileno(stdin)))
-			msh->line = readline(prompt);
-		else
-		{
-			msh->line = get_next_line(fileno(stdin));
-			msh->line = ft_strtrim(msh->line, "\n");
-		} 
-		if (!msh->line)
-			exit(msh->last_status);
-		free(prompt);
-		if (!msh->line)
+		msh->line = readline(prompt);
+		if ((free(prompt), 1) && !msh->line)
 			return (false);
 		handle_signals(NOTHING);
 		if (msh->line && ft_strlen(msh->line) > 0)
 		{
 			add_history(msh->line);
-			status = parser(msh->line, msh->line + ft_strlen(msh->line), &msh->tree_root);
+			status = parser(msh->line, msh->line
+					+ ft_strlen(msh->line), &msh->tree_root);
 			if (!status)
 				executor(msh->tree_root, msh);
-			else
+			else if ((clean_all(msh, 0), 1))
 				msh->last_status = status;
-			clean_all(msh, 0);
 		}
 	}
 	return (true);
@@ -89,6 +79,6 @@ int	main(int argc, char **argv, char **env)
 		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
 	rl_clear_history();
 	destroy_environment(msh->env);
-	//printf("exit\n");
+	ft_putendl_fd("exit", 1);
 	return (msh->last_status);
 }

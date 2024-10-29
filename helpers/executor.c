@@ -6,7 +6,7 @@
 /*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:08:36 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/29 10:37:26 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,8 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 		*status = execute_exec((t_execcmd *)cmd, msh, builtin);
 	else if (token == LOGIC)
 		*status = execute_logic((t_logiccmd *)cmd, msh);
-	if (should_fork)
-	{
-		clean_all(msh, true);
+	if (should_fork && (clean_all(msh, true), 1))
 		exit(*status);
-	}
 	return (0);
 }
 
