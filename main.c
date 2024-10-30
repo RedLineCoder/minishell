@@ -3,186 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/18 10:18:54 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 21:08:40 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* void treeprint(t_cmd *root, int level)
+void	clean_all(t_msh *msh, int exit)
 {
-        if (root == NULL)
-			return;
-        for (int i = 0; i < level; i++)
-                printf(i == level - 1 ? "|-" : "  ");
-		if (root->type == LOGIC)
-		{
-			t_logicop type = ((t_logiccmd *)root)->op_type;
-			switch (type)
-			{
-				case 1:	
-					printf("AND\n");
-					break;
-				case 2:
-					printf("OR\n");
-					break;
-				default:
-					printf("NONE\n");
-					break;
-			}
-			treeprint(((t_logiccmd *)root)->left, level + 1);
-			treeprint(((t_logiccmd *)root)->right, level + 1);
-		}
-		if (root->type == SUBSHELL)
-		{
-			printf("SUBSHELL - ");
-			printf("REDIRS: ");
-			if (!((t_blockcmd *)root)->redirs)
-				printf("NONE");
-			while (((t_blockcmd *)root)->redirs)
-			{
-				while (((t_redircmd *)root)->args)
-				{
-					printf("%s ", (char *)((t_redircmd *)root)->args->content);
-					((t_redircmd *)root)->args = ((t_redircmd *)root)->args->next;
-				}
-				t_redir rtype = ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->redir_type;
-				switch (rtype)
-				{
-					case REDIR_INPUT:	
-						printf("INPUT - ");
-						break;
-					case REDIR_OUTPUT:
-						printf("OUTPUT - ");
-						break;
-					case REDIR_APPEND:
-						printf("APPEND - ");
-						break;
-					case REDIR_HDOC:
-						printf("HEREDOC - ");
-						break;
-					default:
-						printf("NONE - ");
-						break;
-				}
-				printf("FD:%i", ((t_redircmd *)((t_blockcmd *)root)->redirs->content)->fd);
-				((t_blockcmd *)root)->redirs = ((t_blockcmd *)root)->redirs->next;
-			}
-			printf("\n");
-			treeprint(((t_blockcmd *)root)->subshell, level + 1);
-		}
-        if (root->type == PIPE)
-		{
-			printf("PIPELIST\n");
-			while (((t_pipecmd *)root)->pipelist)
-			{
-				treeprint((((t_pipecmd *)root)->pipelist)->content, level + 1);
-				((t_pipecmd *)root)->pipelist = ((t_pipecmd *)root)->pipelist->next;
-			}
-		}
-		if (root->type == EXEC)
-		{
-			printf("EXEC = ");
-			printf("CMD: ");
-			if (!((t_execcmd *)root)->args)
-				printf("NONE, ");
-			else
-			{
-				printf("%s ", (char *)(((t_execcmd *)root)->args->content));
-				((t_execcmd *)root)->args = ((t_execcmd *)root)->args->next;
-			}
-			printf("ARGS: ");
-			if (!((t_execcmd *)root)->args)
-				printf("NONE, ");
-			while (((t_execcmd *)root)->args)
-			{
-				printf("%s ", (char *)((t_execcmd *)root)->args->content);
-				((t_execcmd *)root)->args = ((t_execcmd *)root)->args->next;
-			}
-			printf("REDIRS: ");
-			if (!((t_execcmd *)root)->redirs)
-				printf("NONE");
-			while (((t_execcmd *)root)->redirs)
-			{
-				while (((t_execcmd *)root)->redirs)
-				{
-					printf("%s ", (char *)((t_execcmd *)root)->redirs->content);
-					((t_execcmd *)root)->redirs = ((t_execcmd *)root)->redirs->next;
-				}
-				t_redir rtype = ((t_redircmd *)((t_execcmd *)root)->redirs->content)->redir_type;
-				switch (rtype)
-				{
-					case REDIR_INPUT:	
-						printf("INPUT ");
-						break;
-					case REDIR_OUTPUT:
-						printf("OUTPUT ");
-						break;
-					case REDIR_APPEND:
-						printf("APPEND ");
-						break;
-					case REDIR_HDOC:
-						printf("HEREDOC ");
-						break;
-					default:
-						printf("NONE ");
-						break;
-				}
-				printf("FD:%i ", ((t_redircmd *)((t_execcmd *)root)->redirs->content)->fd);
-				((t_execcmd *)root)->redirs = ((t_execcmd *)root)->redirs->next;
-			}
-			printf("\n");
-		}
-} */
-
-int	mini_panic(char *title, char *content, int status)
-{
-	char	*tag;
-
-	tag = ft_strdup(ERR_TAG);
-	if (!tag)
-		perror(ERR_TAG);
-	if (title)
+	if (msh->line)
 	{
-		str_append(&tag, ": ");
-		str_append(&tag, title);
+		free(msh->line);
+		msh->line = NULL;
 	}
-	if (content)
+	if (msh->tree_root)
 	{
-		ft_putstr_fd(tag, STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-		ft_putstr_fd(content, STDERR_FILENO);
+		clean_tree(msh->tree_root);
+		msh->tree_root = NULL;
 	}
-	else
-		perror(tag);
-	free(tag);
-	return (status);
+	if (!exit)
+		return ;
+	if (msh->env)
+	{
+		destroy_environment(msh->env);
+		msh->env = NULL;
+	}
+	rl_clear_history();
 }
 
-char	*get_prompt(t_msh *msh)
+char	*get_prompt(void)
 {
-	bool	is_tilde;
 	int		size;
 	char	path[PATH_MAX];
 	char	*prompt;
 	char	**path_splitted;
 
+	prompt = ft_strjoin(MSH_TAG, " ");
 	getcwd(path, PATH_MAX);
-	prompt = ft_strjoin(msh->user, " ");
 	path_splitted = ft_split(path, '/');
 	if (!prompt || !path_splitted)
 		return (free(prompt), free_string_array(path_splitted), NULL);
 	size = str_arr_size(path_splitted);
-	is_tilde = (size == 2) && !ft_strncmp(path_splitted[0], "Users", 6)
-		&& !ft_strncmp(path_splitted[1], msh->user, ft_strlen(msh->user));
-	if (size <= 1 && (!str_append(&prompt, "/")))
+	if (size <= 1 && !str_append(&prompt, "/"))
 		return (free_string_array(path_splitted), free(prompt), NULL);
-	else if (is_tilde && !str_append(&prompt, "~"))
-		return (free_string_array(path_splitted), free(prompt), NULL);
-	else if (size >= 1 && !is_tilde && !str_append(&prompt, path_splitted[size - 1]))
+	else if (size >= 1 && !str_append(&prompt, path_splitted[size - 1]))
 		return (free_string_array(path_splitted), free(prompt), NULL);
 	free_string_array(path_splitted);
 	if (!str_append(&prompt, " $ "))
@@ -190,56 +57,44 @@ char	*get_prompt(t_msh *msh)
 	return (prompt);
 }
 
+int	readline_loop(t_msh *msh)
+{
+	int		status;
+	char	*prompt;
+
+	while ((clean_all(msh, false), true) && !msh->exit_flag)
+	{
+		handle_signals(WAITING_INPUT);
+		prompt = get_prompt();
+		if (!prompt)
+			return (false);
+		msh->line = readline(prompt);
+		if ((free(prompt), 1) && !msh->line)
+			return (handle_sigint_output(), true);
+		handle_signals(NOTHING);
+		if (ft_strlen(msh->line) > 0)
+		{
+			add_history(msh->line);
+			status = parser(msh->line, msh->line
+					+ ft_strlen(msh->line), &msh->tree_root);
+			if (!status)
+				executor(msh->tree_root, msh);
+			else
+				msh->last_status = status;
+		}
+	}
+	return (true);
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_msh *const	msh = &(t_msh){0};
-	char			*prompt;
-	char			*line;
 
 	(void)argv, (void)argc;
 	init_environment(&msh->env, env);
-	while (!msh->exit_flag)
-	{
-		prompt = MSH_TAG;
-		msh->user = get_user(msh->env);
-		if (msh->user)
-			prompt = get_prompt(msh);
-		if (!prompt)
-		{
-			free(msh->user);
-			mini_panic(NULL, "An error occured.", -1);
-		}
-		line = readline(prompt);
-		if (!line) 
-			exit(0);
-		if (ft_strlen(line) == 0)
-			continue;
-		add_history(line);
-		t_cmd *root;
-		msh->last_status = parser(line, line + ft_strlen(line), &root);
-		if (!msh->last_status)
-			executor(root, msh);
-		//printf("%p\n", root->right);
-		//treeprint(root, 0);
-		/* t_list	*test = ft_calloc(sizeof(t_list), 1);
-		test->content = line;
-		test = expander(test, msh);
-		printf("%s\n", test->content); */
-		free(line);
-		if (msh->user)
-		{
-			free(msh->user);
-			free(prompt);
-		}
-		//clean_tree(root);
-	}
-	rl_clear_history();
-	destroy_environment(msh->env);
-	printf("exit\n");
+	if (!readline_loop(msh))
+		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
+	clean_all(msh, true);
+	ft_putendl_fd("exit", 1);
 	return (msh->last_status);
 }
-
-/* void __attribute__ ((destructor)) sa()
-{
-	system("leaks minishell");
-} */

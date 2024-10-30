@@ -3,27 +3,70 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 11:43:15 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 21:09:55 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	handle_redirects(t_list *redirs, t_msh *msh)
+int	mini_panic(char *title, char *content, int status)
 {
-	t_redircmd	*redir;
-
-	while (redirs)
+	ft_putstr_fd(ERR_TAG, STDERR_FILENO);
+	if (title)
 	{
-		redir = redirs->content;
-		if (!execute_redir(redirs->content, msh))
-			return (false);
-		redirs = redirs->next;
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(title, STDERR_FILENO);
 	}
-	return (true);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	if (content)
+		ft_putstr_fd(content, STDERR_FILENO);
+	else
+		perror("");
+	return (status);
+}
+
+int	execute_builtin(int builtin, char **args, t_msh *msh)
+{
+	int const	args_size = str_arr_size(args);
+	int			(*f[8])(int, char **, t_msh *);
+
+	f[BUILTIN_NONE] = NULL;
+	f[BUILTIN_ECHO] = builtin_echo;
+	f[BUILTIN_CD] = builtin_cd;
+	f[BUILTIN_PWD] = builtin_pwd;
+	f[BUILTIN_EXPORT] = builtin_export;
+	f[BUILTIN_UNSET] = builtin_unset;
+	f[BUILTIN_ENV] = builtin_env;
+	f[BUILTIN_EXIT] = builtin_exit;
+	return (f[builtin](args_size, args, msh));
+}
+
+int	get_builtin(t_execcmd *exec, t_msh *msh)
+{
+	int			i;
+	char		*cmds[8];
+	char		**args;
+
+	if (exec->type != EXEC)
+		return (false);
+	args = get_args_arr(exec->args, msh);
+	if (!args || !args[0])
+		return (free_string_array(args), false);
+	cmds[BUILTIN_ECHO] = "echo";
+	cmds[BUILTIN_CD] = "cd";
+	cmds[BUILTIN_PWD] = "pwd";
+	cmds[BUILTIN_EXPORT] = "export";
+	cmds[BUILTIN_UNSET] = "unset";
+	cmds[BUILTIN_ENV] = "env";
+	cmds[BUILTIN_EXIT] = "exit";
+	i = 0;
+	while (++i < 8)
+		if (!ft_strncmp(cmds[i], args[0], ft_strlen(args[0]) + 1))
+			return (free_string_array(args), i);
+	return (free_string_array(args), BUILTIN_NONE);
 }
 
 /*
@@ -36,16 +79,17 @@ int	handle_redirects(t_list *redirs, t_msh *msh)
 */
 pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 {
-	pid_t			pid;
-	t_tokens const	token = cmd->type;
-	int const		builtin = get_builtin((t_execcmd *)cmd);
-	int const		should_fork = (!builtin || pipe) && token != LOGIC;
+	pid_t		pid;
+	int const	token = cmd->type;
+	int const	builtin = get_builtin((t_execcmd *)cmd, msh);
+	int const	should_fork = (!builtin || pipe) && token != LOGIC;
 
 	if (should_fork)
 	{
 		pid = create_child(pipe, STDOUT_FILENO);
 		if (pid)
 			return (pid);
+		handle_signals(EXECUTING_CMD);
 	}
 	if (token == PIPE)
 		*status = execute_pipe(((t_pipecmd *)cmd)->pipelist, msh);
@@ -55,77 +99,24 @@ pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 		*status = execute_exec((t_execcmd *)cmd, msh, builtin);
 	else if (token == LOGIC)
 		*status = execute_logic((t_logiccmd *)cmd, msh);
-	if (should_fork)
+	if (should_fork && (clean_all(msh, true), 1))
 		exit(*status);
 	return (0);
-}
-
-int	run_heredoc(t_redircmd *redir, t_msh *msh)
-{
-	char			*buffer;
-	char			*temp;
-	char			*eof;
-	char *const		eof_arg = redir->args->content;
-	const int		expansion = !ft_strchr(eof_arg, '\"') && 1;
-
-	if (pipe(redir->pipe) == -1)
-		return (mini_panic("heredoc", "pipe error", false));
-	eof = unquote_arg(NULL, eof_arg);
-	while (1)
-	{
-		buffer = readline("> ");
-		if (!buffer || !ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
-		{
-			free(buffer);
-			close(redir->pipe[1]);
-			free(eof);
-			if (!buffer)
-				return (mini_panic("heredoc", "readline error.", false));
-			return (true);
-		}
-		temp = buffer;
-		if (expansion)
-			buffer = expand_dollar(buffer, NULL, msh);
-		write(redir->pipe[1], buffer, ft_strlen(buffer));
-		write(redir->pipe[1], "\n", 1);
-		if (expansion)
-			free(temp);
-		free(buffer);
-	}
-}
-
-int	loop_heredocs(t_cmd *ptr, void *payload)
-{
-	t_list			*lst;
-	t_redircmd		*redir;
-	t_msh *const	msh = payload;
-	t_tokens const	token = ((t_cmd *)ptr)->type;
-
-	lst = NULL;
-	if (token == EXEC)
-		lst = ((t_execcmd *)ptr)->redirs;
-	else if (token == SUBSHELL)
-		lst = ((t_blockcmd *)ptr)->redirs;
-	while (lst)
-	{
-		redir = lst->content;
-		if (redir->redir_type == REDIR_HDOC && !run_heredoc(redir, msh))
-			return (false);
-		lst = lst->next;
-	}
-	return (true);
 }
 
 void	executor(t_cmd *root, t_msh *msh)
 {
 	pid_t	pid;
+	int		status;
 
-	if (tree_map(root, msh, loop_heredocs))
+	status = handle_heredocs(root, msh);
+	if (status == EXIT_SUCCESS)
 	{
-		pid = execute_cmd(root, msh, &msh->last_status, NULL);
+		pid = execute_cmd(root, msh, &status, NULL);
 		if (pid == -1)
-			mini_panic(NULL, NULL, -1);
+			status = mini_panic(NULL, NULL, -1);
 		else if (pid != 0)
-			msh->last_status = wait_child_processes(pid);
+			status = wait_child_processes(pid);
 	}
+	msh->last_status = status;
 }

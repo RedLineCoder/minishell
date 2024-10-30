@@ -3,64 +3,67 @@
 /*                                                        :::      ::::::::   */
 /*   executes.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 10:41:53 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 21:08:36 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
+
 int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
-	int				fd;
-	char			*file;
-	int				flags;
 	t_redir const	type = redir->redir_type;
+	char **const	args = get_args_arr(redir->args, msh);
+	int				fd;
+	char			*spec;
 
-	flags = 0;
-	if (type == REDIR_INPUT)
-		flags |= O_RDONLY;
-	if (type == REDIR_OUTPUT || type == REDIR_APPEND)
-		flags |= O_WRONLY;
-	if (type == REDIR_APPEND)
-		flags |= O_APPEND;
-	if (type != REDIR_INPUT)
-		flags |= O_CREAT;
-	redir->args = expander(redir->args, msh);
-	if (ft_lstsize(redir->args) > 1)
-		return (mini_panic("*", "ambiguous redirect\n", false));
-	file = redir->args->content;
+	if (!args)
+		return (mini_panic(NULL, NULL, false));
+	if (!*args || str_arr_size(args) > 1)
+		return (mini_panic("*", "ambiguous redirect\n", -1), \
+		free_string_array(args), false);
+	spec = args[0];
 	if (type == REDIR_HDOC)
 		fd = redir->pipe[0];
 	else
-		fd = open(file, flags, S_IRWXU);
-	if (fd == -1 || dup2(fd, redir->fd) == -1)
-		return (mini_panic(file, NULL, false));
-	return (close(fd), true);
+		fd = open(spec, get_redir_flags(type), S_IRWXU);
+	if (fd == -1)
+		return (mini_panic(spec, NULL, -1), \
+		free_string_array(args), false);
+	redir->old_fd = dup(redir->fd);
+	if ((redir->old_fd == -1 && errno != EBADF) 
+		|| (dup2(fd, redir->fd) == -1))
+		return (mini_panic(spec, NULL, -1), \
+		free_string_array(args), false);
+	return (close(fd), free_string_array(args), true);
 }
 
 int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 {
-	int			status;
-	char		**args;
+	char **const	args = get_args_arr(exec->args, msh);
+	int				status;
 
 	if (!handle_redirects(exec->redirs, msh))
+	{
+		handle_back_redirects(exec->redirs);
 		return (EXIT_FAILURE);
+	}
 	status = EXIT_SUCCESS;
-	exec->args = expander(exec->args, msh);
-	args = get_args_arr(exec->args);
 	if (!args)
 		return (mini_panic(NULL, "malloc error\n", EXIT_FAILURE));
-	else if (*args && **args)
+	else if (*args)
 	{
 		if (builtin)
 			status = execute_builtin(builtin, args, msh);
 		else
-			status = execute_command(args[0], args, msh->env);
+			status = run_command(args[0], args, msh->env);
 	}
-	free(args);
+	if (!handle_back_redirects(exec->redirs))
+		return (free(args), mini_panic(NULL, NULL, EXIT_FAILURE));
+	free_string_array(args);
 	return (status);
 }
 
@@ -76,7 +79,7 @@ int	execute_block(t_blockcmd *block, t_msh *msh)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	if (pid)
 		status = wait_child_processes(pid);
-	return (wait_child_processes(pid));
+	return (status);
 }
 
 int	execute_pipe(t_list *pipelist, t_msh *msh)
@@ -86,6 +89,7 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 	int		status;
 	pid_t	pid;
 
+	handle_signals(NOTHING);
 	while (pipelist)
 	{
 		last = ft_lstlast(pipelist) == pipelist;
@@ -111,6 +115,7 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 {
 	t_logicop const	op = logiccmd->op_type;
 	int				status;
+	int				code;
 	pid_t			pid;
 
 	pid = execute_cmd(logiccmd->left, msh, &status, NULL);
@@ -118,6 +123,9 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	if (pid)
 		status = wait_child_processes(pid);
+	code = status << 8;
+	if (!WIFEXITED(code))
+		return (status);
 	if ((status && op == OP_OR) || (!status && op == OP_AND))
 	{
 		pid = execute_cmd(logiccmd->right, msh, &status, NULL);

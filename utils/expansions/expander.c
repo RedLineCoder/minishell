@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/18 11:27:25 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 21:09:32 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,74 +41,24 @@ int	is_expanded(t_list *explst, int index)
 	return (0);
 }
 
-int	unquoted_size(t_list *explst, char *arg)
-{
-	t_write *const	wrt = &(t_write){0};
-
-	while (arg[wrt->a_i])
-	{
-		if (arg[wrt->a_i] == '\'' && !wrt->qd && !is_expanded(explst, wrt->a_i))
-			wrt->qs = !wrt->qs;
-		if (arg[wrt->a_i] == '"' && !wrt->qs && !is_expanded(explst, wrt->a_i))
-			wrt->qd = !wrt->qd;
-		if (((!wrt->qd && arg[wrt->a_i] == '\'') || (!wrt->qs
-					&& arg[wrt->a_i] == '"')) && !is_expanded(explst, wrt->a_i))
-		{
-			wrt->a_i++;
-			continue ;
-		}
-		wrt->e_i++;
-		wrt->a_i++;
-	}
-	return (wrt->e_i);
-}
-
-char	*unquote_arg(t_list *explst, char *arg)
-{
-	t_write *const	wrt = &(t_write){0};
-	char			*exp;
-
-	exp = ft_calloc(sizeof(char), unquoted_size(explst, arg) + 1);
-	if (!exp || !arg)
-		return (free(exp), free(arg), NULL);
-	while (arg[wrt->a_i])
-	{
-		if (arg[wrt->a_i] == '\'' && !wrt->qd && !is_expanded(explst, wrt->a_i))
-			wrt->qs = !wrt->qs;
-		if (arg[wrt->a_i] == '"' && !wrt->qs && !is_expanded(explst, wrt->a_i))
-			wrt->qd = !wrt->qd;
-		if (((!wrt->qd && arg[wrt->a_i] == '\'') || (!wrt->qs
-					&& arg[wrt->a_i] == '"')) && !is_expanded(explst, wrt->a_i))
-		{
-			wrt->a_i++;
-			continue ;
-		}
-		exp[wrt->e_i++] = arg[wrt->a_i++];
-	}
-	return (free(arg), exp);
-}
-
 t_list	*expander(t_list *args, t_msh *msh)
 {
+	t_list	*lst;
 	t_list	*explst;
 	t_list	*newargs;
 	char	*expanded;
-	int		status;
 
 	newargs = NULL;
-	status = 0;
-	while (args)
+	lst = args;
+	while (lst)
 	{
 		explst = NULL;
-		expanded = expand_dollar(args->content, &explst, msh);
-		status = expand_wildcard(&newargs, explst, expanded);
-		if (!status && !lst_add_back_content(&newargs,
-				unquote_arg(explst, expanded)))
-			return (ft_lstclear(&newargs, free), NULL);
-		else if (status == -1)
-			return (ft_lstclear(&newargs, free), NULL);
+		expanded = expand_dollar(lst->content, &explst, msh);
+		if (!split_words(&newargs, explst, expanded))
+			return (free(expanded), NULL);
+		free(expanded);
 		ft_lstclear(&explst, free);
-		args = args->next;
+		lst = lst->next;
 	}
 	return (newargs);
 }

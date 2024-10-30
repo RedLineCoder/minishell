@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 06:43:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 11:15:14 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 21:09:45 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	parse_logic(char *ps, char *pe, t_cmd **cmd)
 	op->type = LOGIC;
 	op->op_type = get_logicop(ln.lfte, ln.rghts);
 	if (!peek(ln.lfts, ln.lfte, TKN_NONE))
-		return (syntax_panic(ln.lfte));
+		return (syntax_panic(ln.lfte), 2);
 	status = parser(ln.lfts, ln.lfte, &op->left);
 	if (status)
 		return (status);
@@ -33,7 +33,7 @@ int	parse_logic(char *ps, char *pe, t_cmd **cmd)
 	if (status)
 		return (status);
 	if (!peek(ln.rghts, ln.rghte, TKN_NONE))
-		return (syntax_panic(ln.rghts));
+		return (syntax_panic(ln.rghts), 2);
 	return (status);
 }
 
@@ -61,9 +61,9 @@ int	parse_block(char *ps, char *pe, t_cmd **cmd)
 	block->type = SUBSHELL;
 	get_token(&ps, &pe, &ts, &te);
 	if (!pass_block(ts, &te, pe))
-		return (syntax_panic(te));
+		return (syntax_panic(te), 2);
 	if (!peek(ts + 1, te, TKN_NONE))
-		return (syntax_panic(ts + 1));
+		return (syntax_panic(ts + 1), 2);
 	status = parser(ts + 1, te, &block->subshell);
 	if (status)
 		return (status);
@@ -96,8 +96,8 @@ int	parser(char *ps, char *pe, t_cmd **cmd)
 	token = peek(ps, pe, TKN_NONE);
 	if (!token)
 		return (0);
-	if (token == BLK_CLS)
-		return (258);
+	if (peek(ps, pe, TKN_NONE) == BLK_CLS)
+		return (2);
 	if (peek(ps, pe, LOGIC_OP))
 		status = parse_logic(ps, pe, cmd);
 	else if (peek(ps, pe, PIPE_OP))

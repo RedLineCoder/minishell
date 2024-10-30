@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:29 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/18 11:27:26 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 21:10:51 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,12 @@ int	get_wld_size(t_list *explst, int index, char *arg, int increment)
 	wrt->a_i = index;
 	while (arg[wrt->a_i])
 	{
-		if (arg[wrt->a_i] == '\'' && !wrt->qd && !is_expanded(explst, wrt->a_i))
-			wrt->qs = !wrt->qs;
-		if (arg[wrt->a_i] == '"' && !wrt->qs && !is_expanded(explst, wrt->a_i))
-			wrt->qd = !wrt->qd;
-		if (((!wrt->qd && arg[wrt->a_i] == '\'') || (!wrt->qs
-					&& arg[wrt->a_i] == '"')) && !is_expanded(explst, wrt->a_i))
+		if (track_quotes(wrt, explst, arg))
 		{
 			wrt->a_i += increment;
 			continue ;
 		}
-		if (!(wrt->qd || wrt->qs) && arg[wrt->a_i] == '*')
+		if (!wrt->qc && arg[wrt->a_i] == '*')
 			break ;
 		wrt->a_i += increment;
 		wrt->e_i++;
@@ -42,22 +37,16 @@ int	ft_patterncmp(t_list *explst, t_write *wrt, char *arg, char *file)
 {
 	while (arg[wrt->a_i] || file[wrt->e_i])
 	{
-		if (arg[wrt->a_i] == '\'' && !wrt->qd && !is_expanded(explst, wrt->a_i))
-			wrt->qs = !wrt->qs;
-		if (arg[wrt->a_i] == '"' && !wrt->qs && !is_expanded(explst, wrt->a_i))
-			wrt->qd = !wrt->qd;
-		if (((!wrt->qd && arg[wrt->a_i] == '\'') || (!wrt->qs
-					&& arg[wrt->a_i] == '"')) && !is_expanded(explst, wrt->a_i))
+		if (track_quotes(wrt, explst, arg))
 		{
 			wrt->a_i++;
 			continue ;
 		}
-		if ((!wrt->qd && !wrt->qs && arg[wrt->a_i] == '*'))
+		if (!wrt->qc && arg[wrt->a_i] == '*')
 			break ;
 		if (arg[wrt->a_i] != file[wrt->e_i])
 		{
-			wrt->qd = 0;
-			wrt->qs = 0;
+			wrt->qc = 0;
 			return (1);
 		}
 		wrt->a_i++;
@@ -77,7 +66,6 @@ void	check_mid_pattern(t_list *explst, t_pattern *ptrn, t_write *wrt)
 	{
 		while (ptrn->arg[wrt->a_i] == '*')
 			wrt->a_i++;
-		size = get_wld_size(explst, wrt->a_i, ptrn->arg, 1);
 		if (!size)
 			break ;
 		while (ptrn->file[wrt->e_i + ptrn->e_size + size - 2])
@@ -90,9 +78,8 @@ void	check_mid_pattern(t_list *explst, t_pattern *ptrn, t_write *wrt)
 			wrt->a_i = temparg;
 			wrt->e_i = tempfile + 1;
 		}
+		size = get_wld_size(explst, wrt->a_i, ptrn->arg, 1);
 	}
-	while (ptrn->arg[wrt->a_i] == '*')
-		wrt->a_i++;
 }
 
 int	check_pattern(t_list *explst, char *arg, char *file)
@@ -111,6 +98,8 @@ int	check_pattern(t_list *explst, char *arg, char *file)
 	if (ptrn->s_size && !ptrn->diff)
 		ptrn->diff = ft_patterncmp(explst, wrt, ptrn->arg, ptrn->file);
 	check_mid_pattern(explst, ptrn, wrt);
+	if (ptrn->arg[wrt->a_i] && !ptrn->file[wrt->e_i])
+		ptrn->diff = 1;
 	if (!ptrn->diff && ptrn->arg[wrt->a_i])
 	{
 		wrt->e_i = ft_strlen(ptrn->file) - ptrn->e_size;
@@ -127,7 +116,7 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 	int				count;
 
 	if (!get_wld_size(explst, 0, arg, 1))
-		return (0);
+		return (closedir(current_dir), 0);
 	count = 0;
 	dp = readdir(current_dir);
 	while (dp)
@@ -135,10 +124,8 @@ int	expand_wildcard(t_list **expanded, t_list *explst, char *arg)
 		if (!check_pattern(explst, arg, dp->d_name))
 		{
 			dirname = ft_strdup(dp->d_name);
-			if (!dirname)
-				return (-1);
-			if (!lst_add_back_content(expanded, dirname))
-				return (-1);
+			if (!lst_addback_content(expanded, dirname))
+				return (free(dirname), -1);
 			count++;
 		}
 		dp = readdir(current_dir);

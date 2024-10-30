@@ -3,42 +3,52 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 07:03:27 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/18 10:20:21 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 21:10:06 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+int	is_nonewline_flag(char *arg)
+{
+	int	i;
+
+	i = 0;
+	if (!arg[i] || arg[i++] != '-')
+		return (false);
+	while (arg[i] == 'n')
+		i++;
+	return (i > 1 && !arg[i]);
+}
+
 int	builtin_echo(int args_size, char **args, t_msh *msh)
 {
-	int		newline_flag;
-	int		i;
-	int		j;
+	int	i;
+	int	newline_flag;
+	int	track_nl_flag;
 
 	(void)msh;
 	newline_flag = true;
 	i = 0;
+	track_nl_flag = 1;
 	while (++i < args_size)
 	{
-		if (i == 1 && !ft_strncmp(args[1], "-", 1))
+		if (i == track_nl_flag && is_nonewline_flag(args[track_nl_flag]))
 		{
-			j = 0;
-			while (args[1][++j] == 'n')
-				;
-			if (!args[1][j])
-				newline_flag = false;
+			newline_flag = false;
+			track_nl_flag++;
 		}
 		else
 		{
-			printf("%s", args[i]);
+			ft_putstr_fd(args[i], STDOUT_FILENO);
 			if (i != args_size - 1)
-				printf(" ");
+				ft_putstr_fd(" ", STDOUT_FILENO);
 		}
 	}
 	if (newline_flag)
-		printf("\n");
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (EXIT_SUCCESS);
 }
