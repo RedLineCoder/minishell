@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/29 19:22:08 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/30 14:20:20 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,7 @@ int	readline_loop(t_msh *msh)
 		prompt = get_prompt();
 		if (!prompt)
 			return (false);
-		if (isatty(fileno(stdin)))
-			msh->line = readline(prompt);
-		else
-		{
-			char	*line ;
-			line = get_next_line(fileno(stdin));
-			msh->line = ft_strtrim(line, "\n");
-			free(line);
-		}
-		if (!msh->line)
-			return (ft_putchar_fd('\n', STDOUT_FILENO), true);
+		msh->line = readline(prompt);
 		if ((free(prompt), 1) && !msh->line)
 			return (ft_putchar_fd('\n', STDOUT_FILENO), true);
 		handle_signals(NOTHING);
@@ -105,8 +95,6 @@ int	main(int argc, char **argv, char **env)
 	t_msh *const	msh = &(t_msh){0};
 
 	(void)argv, (void)argc;
-	set_termflags();
-	handle_signals(NOTHING);
 	init_environment(&msh->env, env);
 	if (!readline_loop(msh))
 		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);

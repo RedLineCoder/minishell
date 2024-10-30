@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 17:50:21 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/29 10:37:26 by moztop           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include "limits.h"
+
 int	execute_builtin(int builtin, char **args, t_msh *msh)
 {
 	int const	args_size = str_arr_size(args);

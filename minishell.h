@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/29 17:41:20 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/30 14:23:02 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@
 # define EXIT_UNSET_INVALID_OPT 127
 
 typedef struct stat			t_stat;
-typedef struct termios		t_termios;
+typedef struct sigaction	t_action;
 
 typedef enum e_cmdtype
 {
@@ -116,8 +116,8 @@ typedef enum e_job
 {
 	NOTHING,
 	WAITING_INPUT,
-	WAITING_EXEC,
 	EXECUTING_CMD,
+	WAITING_HDOC,
 	EXECUTING_HDOC,
 }							t_job;
 
@@ -282,7 +282,7 @@ void						free_list(t_list *lst);
 
 // Signals
 void						handle_signals(t_job job);
-void    					set_termflags();
+void						ignore_signals(void);
 
 // Process Utils
 pid_t						create_child(int pipe[2], int fd);
@@ -320,7 +320,5 @@ char						*get_env(t_list *root, char *key);
 t_list						*get_env_node(t_list *lst, char *key);
 
 void						clean_all(t_msh *msh, int exit);
-
-extern int					last_signal;
 
 #endif

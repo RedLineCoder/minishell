@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:58:48 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 12:50:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/30 14:25:24 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,5 +81,6 @@ int	run_heredoc(t_redircmd *redir, t_msh *msh)
 	if (!buffer)
 		return (ft_putchar_fd('\n', STDOUT_FILENO), \
 		mini_panic("warning", ERR_HDOC_EOF, true));
-	return (free(buffer), true);
+	free(buffer);
+	return (true);
 }
