@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:36:49 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 14:38:53 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char	**get_args_arr(t_list *arglist, t_msh *msh)
 	return (free_list(arglist), args);
 }
 
-int	check_executable(char *command, char *path)
+int	handle_executable(char *command, char *path)
 {
 	t_stat			file;
 
@@ -97,7 +97,7 @@ char	*get_executable_path(char *command, t_list *env)
 	char *const	pathenv = get_env(env, "PATH");
 
 	if ((relative_path || !pathenv) && !access(command, F_OK))
-		return (command);
+		return (ft_strdup(command));
 	if (!pathenv || relative_path)
 		return (NULL);
 	paths = ft_split(pathenv, ':');
@@ -126,7 +126,7 @@ int	run_command(char *command, char **args, t_list	*env)
 	if (!envarr)
 		return (mini_panic(command, NULL, EXIT_FAILURE));
 	path = get_executable_path(command, env);
-	status = check_executable(command, path);
+	status = handle_executable(command, path);
 	if (status == EXIT_SUCCESS)
 	{
 		execve(path, args, envarr);

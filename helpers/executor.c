@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:37:26 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 19:18:00 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	mini_panic(char *title, char *content, int status)
+{
+	ft_putstr_fd(ERR_TAG, STDERR_FILENO);
+	if (title)
+	{
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(title, STDERR_FILENO);
+	}
+	ft_putstr_fd(": ", STDERR_FILENO);
+	if (content)
+		ft_putstr_fd(content, STDERR_FILENO);
+	else
+		perror("");
+	return (status);
+}
 
 int	execute_builtin(int builtin, char **args, t_msh *msh)
 {

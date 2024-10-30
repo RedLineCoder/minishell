@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:58:48 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 14:25:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/30 14:44:16 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,34 +53,5 @@ int	handle_back_redirects(t_list *redirs)
 			return (false);
 		close(redir->old_fd);
 	}
-	return (true);
-}
-
-int	run_heredoc(t_redircmd *redir, t_msh *msh)
-{
-	char		*buffer;
-	char		*temp;
-	const int	expansion = !ft_strchr(redir->args->content, '\"') && 1;
-	char *const	eof = unquote_arg(NULL, redir->args->content);
-
-	buffer = readline("> ");
-	while (buffer && ft_strncmp(buffer, eof, ft_strlen(eof) + 1))
-	{
-		temp = buffer;
-		if (expansion)
-			buffer = expand_dollar(buffer, NULL, msh);
-		write(redir->pipe[1], buffer, ft_strlen(buffer));
-		write(redir->pipe[1], "\n", 1);
-		if (expansion)
-			free(temp);
-		free(buffer);
-		buffer = readline("> ");
-	}
-	free(eof);
-	close(redir->pipe[1]);
-	if (!buffer)
-		return (ft_putchar_fd('\n', STDOUT_FILENO), \
-		mini_panic("warning", ERR_HDOC_EOF, true));
-	free(buffer);
 	return (true);
 }

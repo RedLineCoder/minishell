@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 11:16:17 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:07:27 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 19:24:01 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	handle_interrupt_main(int signal)
 {
 	(void)signal;
-	ft_putstr_fd("\n", STDOUT_FILENO);
+	handle_sigint_output();
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
@@ -24,7 +24,7 @@ void	handle_interrupt_main(int signal)
 void	handle_interrupt_heredocs(int signal)
 {
 	(void)signal;
-	ft_putstr_fd("\n", STDOUT_FILENO);
+	handle_sigint_output();
 	exit(130);
 }
 

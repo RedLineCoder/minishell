@@ -6,36 +6,32 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/30 14:20:20 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/30 20:49:02 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	mini_panic(char *title, char *content, int status)
-{
-	ft_putstr_fd(ERR_TAG, STDERR_FILENO);
-	if (title)
-	{
-		ft_putstr_fd(": ", STDERR_FILENO);
-		ft_putstr_fd(title, STDERR_FILENO);
-	}
-	ft_putstr_fd(": ", STDERR_FILENO);
-	if (content)
-		ft_putstr_fd(content, STDERR_FILENO);
-	else
-		perror("");
-	return (status);
-}
-
 void	clean_all(t_msh *msh, int exit)
 {
-	free(msh->line);
-	clean_tree(msh->tree_root);
+	if (msh->line)
+	{
+		free(msh->line);
+		msh->line = NULL;
+	}
+	if (msh->tree_root)
+	{
+		clean_tree(msh->tree_root);
+		msh->tree_root = NULL;
+	}
 	if (!exit)
 		return ;
+	if (msh->env)
+	{
+		destroy_environment(msh->env);
+		msh->env = NULL;
+	}
 	rl_clear_history();
-	destroy_environment(msh->env);
 }
 
 char	*get_prompt(void)
@@ -51,7 +47,7 @@ char	*get_prompt(void)
 	if (!prompt || !path_splitted)
 		return (free(prompt), free_string_array(path_splitted), NULL);
 	size = str_arr_size(path_splitted);
-	if (size <= 1 && (!str_append(&prompt, "/")))
+	if (size <= 1 && !str_append(&prompt, "/"))
 		return (free_string_array(path_splitted), free(prompt), NULL);
 	else if (size >= 1 && !str_append(&prompt, path_splitted[size - 1]))
 		return (free_string_array(path_splitted), free(prompt), NULL);
@@ -66,7 +62,7 @@ int	readline_loop(t_msh *msh)
 	int		status;
 	char	*prompt;
 
-	while (!msh->exit_flag)
+	while ((clean_all(msh, false), true) && !msh->exit_flag)
 	{
 		handle_signals(WAITING_INPUT);
 		prompt = get_prompt();
@@ -74,16 +70,16 @@ int	readline_loop(t_msh *msh)
 			return (false);
 		msh->line = readline(prompt);
 		if ((free(prompt), 1) && !msh->line)
-			return (ft_putchar_fd('\n', STDOUT_FILENO), true);
+			return (handle_sigint_output(), true);
 		handle_signals(NOTHING);
-		if (msh->line && ft_strlen(msh->line) > 0)
+		if (ft_strlen(msh->line) > 0)
 		{
 			add_history(msh->line);
 			status = parser(msh->line, msh->line
 					+ ft_strlen(msh->line), &msh->tree_root);
 			if (!status)
 				executor(msh->tree_root, msh);
-			else if ((clean_all(msh, 0), 1))
+			else
 				msh->last_status = status;
 		}
 	}
@@ -98,8 +94,7 @@ int	main(int argc, char **argv, char **env)
 	init_environment(&msh->env, env);
 	if (!readline_loop(msh))
 		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
-	rl_clear_history();
-	destroy_environment(msh->env);
+	clean_all(msh, true);
 	ft_putendl_fd("exit", 1);
 	return (msh->last_status);
 }

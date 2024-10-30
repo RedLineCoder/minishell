@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   executes.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:05:36 by moztop           ###   ########.fr       */
+/*   Updated: 2024/10/30 20:59:39 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
+
 
 int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
@@ -22,21 +23,22 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 	if (!args)
 		return (mini_panic(NULL, NULL, false));
 	if (!*args || str_arr_size(args) > 1)
-		return (mini_panic("*", "ambiguous redirect\n", false));
+		return (mini_panic("*", "ambiguous redirect\n", -1), \
+		free_string_array(args), false);
 	spec = args[0];
-	free(args);
 	if (type == REDIR_HDOC)
 		fd = redir->pipe[0];
 	else
 		fd = open(spec, get_redir_flags(type), S_IRWXU);
 	if (fd == -1)
-		return (mini_panic(spec, NULL, false));
+		return (mini_panic(spec, NULL, -1), \
+		free_string_array(args), false);
 	redir->old_fd = dup(redir->fd);
-	if (redir->old_fd == -1 && errno != EBADF)
-		return (mini_panic(spec, NULL, false));
-	if (dup2(fd, redir->fd) == -1)
-		return (mini_panic(spec, NULL, false));
-	return (close(fd), true);
+	if ((redir->old_fd == -1 && errno != EBADF) 
+		|| (dup2(fd, redir->fd) == -1))
+		return (mini_panic(spec, NULL, -1), \
+		free_string_array(args), false);
+	return (close(fd), free_string_array(args), true);
 }
 
 int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)

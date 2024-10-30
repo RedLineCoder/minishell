@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 14:21:36 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/30 19:42:23 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,26 +32,35 @@ pid_t	create_child(int pipe[2], int fd)
 	return (0);
 }
 
+void	handle_sigint_output(void)
+{
+	if (isatty(STDOUT_FILENO))
+		ft_putchar_fd('\n', STDOUT_FILENO);
+}
+
+int	get_status(int status)
+{
+	if (WIFSIGNALED(status))
+		return (EXIT_SIGINT);
+	return (WEXITSTATUS(status));
+}
+
 int	wait_child_processes(int pid)
 {
 	int		status;
 	int		requested_status;
-	int		newline_flag;
+	int		any_interrupted;
 
-	newline_flag = false;
+	any_interrupted = false;
 	if (pid)
 		waitpid(pid, &requested_status, 0);
+	any_interrupted = WIFSIGNALED(requested_status);
 	while (wait(&status) != -1)
-	{
-		if (WIFSIGNALED(status))
-			newline_flag = true;
-	}
-	if (isatty(STDOUT_FILENO) && (newline_flag 
-		|| (!pid || WIFSIGNALED(requested_status))))
-		ft_putchar_fd('\n', STDOUT_FILENO);
+		if (!any_interrupted && WIFSIGNALED(status))
+			any_interrupted = true;
+	if (any_interrupted)
+		handle_sigint_output();
 	if (!pid)
 		return (0);
-	if (WIFSIGNALED(requested_status))
-		return (EXIT_SIGINT);
-	return (WEXITSTATUS(requested_status));
+	return (get_status(requested_status));
 }
