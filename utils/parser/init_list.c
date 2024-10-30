@@ -66,7 +66,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	get_token(&ps, &pe, &ts, &te);
 	fd = ft_substr(ts, 0, te - ts);
 	if (!fd || !redir)
-		return (free(fd), 1);
+		return (free(fd), free(redir), 1);
 	redir->type = REDIR;
 	redir->redir_type = get_redir(ts, te);
 	redir->fd = redir->redir_type % 2;
@@ -77,11 +77,11 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	{
 		get_token(&ps, &pe, &ts, &te);
 		if (!lst_addback_content(&(redir->args), ft_substr(ts, 0, te - ts)))
-			return (free(fd), 1);
+			return (free(fd), free(redir), 1);
 	}
 	else
-		return (free(fd), syntax_panic(te), 2);
-	return (free(fd), 0);
+		return (free(fd), free(redir), syntax_panic(te), 2);
+	return (free(fd), free(redir), 0);
 }
 
 int	parse_redirs(char *ps, char *pe, int block, t_list **redirs)
