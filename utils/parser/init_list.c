@@ -77,7 +77,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	{
 		get_token(&ps, &pe, &ts, &te);
 		if (!lst_addback_content(&(redir->args), ft_substr(ts, 0, te - ts)))
-			return (1);
+			return (free(fd), 1);
 	}
 	else
 		return (free(fd), syntax_panic(te), 2);
