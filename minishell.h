@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/30 21:14:15 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 12:31:19 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ typedef enum e_hdoc_action
 {
 	OPEN_PIPES,
 	RUN,
+	CLOSE_PIPES,
 	CLOSE_PIPES_OUTPUT,
 }							t_hdoc_action;
 
@@ -178,6 +179,7 @@ typedef struct s_redircmd
 	int						redir_type;
 	int						fd;
 	int						old_fd;
+	int						piped;
 	int						pipe[2];
 	t_list					*args;
 }							t_redircmd;

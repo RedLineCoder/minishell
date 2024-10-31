@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 20:47:31 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 19:57:10 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 12:32:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,24 @@ int	map_heredocs(t_msh *msh, t_list *hdocs, t_hdoc_action action)
 	while (hdocs)
 	{
 		redir = hdocs->content;
-		if ((action == RUN && !run_heredoc(redir, msh))
-			|| (action == OPEN_PIPES && pipe(redir->pipe))
-			|| (action == CLOSE_PIPES_OUTPUT && close(redir->pipe[1])))
-			return (false);
+		if (action == RUN)
+			run_heredoc(redir, msh);
+		else if (action == OPEN_PIPES)
+		{
+			if (pipe(redir->pipe))
+				return (false);
+			redir->piped = true;
+		}
+		else if (action == CLOSE_PIPES_OUTPUT)
+			close(redir->pipe[1]);
+		else if (action == CLOSE_PIPES && redir->piped)
+			close_pipe(redir->pipe);
 		hdocs = hdocs->next;
 	}
 	return (true);
 }
 
-int	set_all_heredocs(t_cmd *ptr, void *payload)
+int	get_all_heredocs(t_cmd *ptr, void *payload)
 {
 	t_list **const	hdoc_list = payload;
 	t_redircmd		*redir;
@@ -85,9 +93,10 @@ int	handle_heredocs(t_cmd *root, t_msh *msh)
 	pid_t	pid;
 
 	heredocs = NULL;
-	if (!tree_map(root, &heredocs, set_all_heredocs))
+	if (!tree_map(root, &heredocs, get_all_heredocs))
 		return (free_list(heredocs), EXIT_FAILURE);
-	map_heredocs(msh, heredocs, OPEN_PIPES);
+	if (!map_heredocs(msh, heredocs, OPEN_PIPES))
+		map_heredocs(msh, heredocs, CLOSE_PIPES);
 	pid = create_child(NULL, -1);
 	if (pid == -1)
 		return (EXIT_FAILURE);
@@ -97,11 +106,7 @@ int	handle_heredocs(t_cmd *root, t_msh *msh)
 		return (free_list(heredocs), wait_child_processes(pid));
 	}
 	handle_signals(EXECUTING_HDOC);
-	if (!map_heredocs(msh, heredocs, RUN))
-	{
-		free_list(heredocs);
-		exit(EXIT_FAILURE);
-	}
+	map_heredocs(msh, heredocs, RUN);
 	free_list(heredocs);
 	exit(EXIT_SUCCESS);
 }
