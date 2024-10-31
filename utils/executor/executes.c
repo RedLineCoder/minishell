@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executes_bonus.c                                   :+:      :+:    :+:   */
+/*   executes.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/31 15:58:12 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 19:01:40 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell_bonus.h"
-
+#include "../../minishell.h"
 
 int	execute_redir(t_redircmd *redir, t_msh *msh)
 {
@@ -34,7 +33,7 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 		return (mini_panic(spec, NULL, -1), \
 		free_string_array(args), false);
 	redir->old_fd = dup(redir->fd);
-	if ((redir->old_fd == -1 && errno != EBADF) 
+	if ((redir->old_fd == -1 && errno != EBADF)
 		|| (dup2(fd, redir->fd) == -1))
 		return (mini_panic(spec, NULL, -1), \
 		free_string_array(args), false);

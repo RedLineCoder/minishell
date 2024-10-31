@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/31 15:34:31 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 19:01:53 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-# include "../lib/gnl/get_next_line.h"
-# include "../lib/libft/libft.h"
-# include "../lib/readline/include/readline/history.h"
-# include "../lib/readline/include/readline/readline.h"
+# include "lib/gnl/get_next_line.h"
+# include "lib/libft/libft.h"
+# include "lib/readline/include/readline/history.h"
+# include "lib/readline/include/readline/readline.h"
 
 /** Macros **/
 # define SEP "|&()<> \t\n"
@@ -289,7 +289,7 @@ pid_t						execute_cmd(t_cmd *cmd, t_msh *msh, int *status,
 
 /* Signals */
 void						handle_signals(t_job job);
-void						set_termflags();
+void						set_termflags(void);
 
 /* Builtins */
 int							builtin_cd(int args_size, char **args, t_msh *msh);
