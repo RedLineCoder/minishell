@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/30 21:08:40 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 15:57:12 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "minishell_bonus.h"
 
 void	clean_all(t_msh *msh, int exit)
 {
@@ -91,6 +91,7 @@ int	main(int argc, char **argv, char **env)
 	t_msh *const	msh = &(t_msh){0};
 
 	(void)argv, (void)argc;
+	set_termflags();
 	init_environment(&msh->env, env);
 	if (!readline_loop(msh))
 		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
