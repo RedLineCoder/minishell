@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 11:16:17 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/31 19:01:16 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 19:26:19 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	set_termflags(void)
 void	handle_signals(t_job job)
 {
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
 	if (job == WAITING_INPUT)
 		signal(SIGINT, handle_interrupt_main);
 	else if (job == EXECUTING_HDOC)
