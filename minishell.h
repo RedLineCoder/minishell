@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/31 19:01:53 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 19:19:24 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@
 /** Typdefinitions **/
 typedef struct s_cmd		t_cmd;
 typedef struct stat			t_stat;
-typedef struct sigaction	t_action;
 typedef struct termios		t_termios;
 
 /** Enums **/
