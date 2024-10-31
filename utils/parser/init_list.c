@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 21:14:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/10/31 11:25:24 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	parse_redir(char *ps, char *pe, t_redircmd **cmd)
 	}
 	else
 		return (free(fd), free(redir), syntax_panic(te), 2);
-	return (free(fd), free(redir), 0);
+	return (free(fd), 0);
 }
 
 int	parse_redirs(char *ps, char *pe, int block, t_list **redirs)
