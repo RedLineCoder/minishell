@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 21:09:55 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/03 15:17:12 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,6 @@ int	get_builtin(t_execcmd *exec, t_msh *msh)
 	return (free_string_array(args), BUILTIN_NONE);
 }
 
-/*
-	STATUS:
-	if no child created to execute cmd status set.
-	RETURN VALUES:
-	0  -> That means there is no child process to wait for.
-	>0 -> A child process created. You should wait for it.
-	-1 -> Error creating child process
-*/
 pid_t	execute_cmd(t_cmd *cmd, t_msh *msh, int *status, int pipe[2])
 {
 	pid_t		pid;

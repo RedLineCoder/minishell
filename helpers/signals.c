@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 11:16:17 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/31 19:26:19 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/03 15:13:27 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,23 @@ void	handle_interrupt_child(int signal)
 	exit(130);
 }
 
-void	set_termflags(void)
+int	set_termflags(t_msh *msh, t_term_action action)
 {
 	t_termios	termios;
 
-	if (tcgetattr(STDIN_FILENO, &termios) && mini_panic(NULL, NULL, -1))
-		return ;
-	termios.c_lflag |= ECHOCTL;
-	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios))
-		mini_panic(NULL, NULL, -1);
+	if (action == ADD_ECHOCTL)
+	{
+		if (tcgetattr(STDIN_FILENO, &termios))
+			return (false);
+		msh->termios = termios;
+		termios.c_lflag |= ECHOCTL;
+		if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios))
+			return (false);
+	}
+	else if (action == SET_BACK
+		&& tcsetattr(STDIN_FILENO, TCSAFLUSH, &msh->termios))
+		return (false);
+	return (true);
 }
 
 void	handle_signals(t_job job)

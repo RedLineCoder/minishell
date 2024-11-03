@@ -6,14 +6,13 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/31 19:19:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/03 15:19:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-/** Libraries **/
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -32,7 +31,6 @@
 # include "lib/readline/include/readline/history.h"
 # include "lib/readline/include/readline/readline.h"
 
-/** Macros **/
 # define SEP "|&()<> \t\n"
 # define OPERATOR "|&<>"
 # define SPACES " \t\n"
@@ -59,12 +57,10 @@
 # define EXIT_SIGINT 130
 # define EXIT_UNSET_INVALID_OPT 127
 
-/** Typdefinitions **/
 typedef struct s_cmd		t_cmd;
 typedef struct stat			t_stat;
 typedef struct termios		t_termios;
 
-/** Enums **/
 typedef enum e_cmdtype
 {
 	NONE,
@@ -132,7 +128,12 @@ typedef enum e_hdoc_action
 	CLOSE_PIPES_OUTPUT,
 }							t_hdoc_action;
 
-/** Structs **/
+typedef enum e_term_action
+{
+	SET_BACK,
+	ADD_ECHOCTL
+}							t_term_action;
+
 typedef struct s_msh
 {
 	int						exit_flag;
@@ -142,6 +143,7 @@ typedef struct s_msh
 	t_job					current_job;
 	t_list					*env;
 	t_cmd					*tree_root;
+	t_termios				termios;
 }							t_msh;
 
 typedef struct s_env
@@ -223,44 +225,15 @@ typedef struct s_write
 	char					qc;
 }							t_write;
 
-/** Prototypes **/
-
-/* Parser */
 int							parser(char *ps, char *pe, t_cmd **cmd);
-int							parse_redirs(char *ps, char *pe, int block,
+int							parse_redirs(char *ps, char *pe, int block, \
 								t_list **redirs);
 int							parse_args(char *ps, char *pe, t_list **args);
 int							init_pipes(char *ps, char *pe, t_list **pipelist);
-void						syntax_panic(char *ps);
-t_part						ft_divide(char *s, char *e, t_tokens tkn, int rev);
-
-/* Tokenizer */
 int							pass_block(char *bs, char **be, char *pe);
 int							pass_quote(char **qs, char *pe, char *quotes);
-t_tokens					get_token(char **ps, char **pe, char **ts,
-								char **te);
-t_tokens					peek(char *ps, char *pe, t_tokens token);
-
-/* Lexer */
-t_redir						get_redir(char *ts, char *te);
-t_logicop					get_logicop(char *ts, char *te);
-t_tokens					get_token_type(char *ts, char *te);
-
-/* Expander */
 int							is_expanded(t_list *explst, int index);
 int							set_exptrack(t_list **explst, int start, int end);
-int							expand_wildcard(t_list **expanded, t_list *explst,
-								char *arg);
-char						*expand_dollar(char *arg, t_list **explst,
-								t_msh *msh);
-char						track_quotes(t_write *wrt, t_list *explst,
-								char *arg);
-char						*unquote_arg(t_list *explst, char *arg);
-int							split_words(t_list **newargs, t_list *explst,
-								char *arg);
-t_list						*expander(t_list *args, t_msh *msh);
-
-/* Executor */
 int							execute_redir(t_redircmd *redir, t_msh *msh);
 int							execute_logic(t_logiccmd *opcmd, t_msh *msh);
 int							execute_exec(t_execcmd *exec, t_msh *msh,
@@ -278,19 +251,8 @@ int							mini_panic(char *title, char *content,
 								int exit_flag);
 int							get_redir_flags(t_redir type);
 int							handle_heredocs(t_cmd *root, t_msh *msh);
-char						*get_executable_path(char *command, t_list *env);
-char						**get_args_arr(t_list *arglist, t_msh *msh);
-char						**get_env_arr(t_list *mshenv);
-void						executor(t_cmd *block, t_msh *msh);
-void						close_pipe(int fd[2]);
-pid_t						execute_cmd(t_cmd *cmd, t_msh *msh, int *status,
-								int pipe[2]);
-
-/* Signals */
-void						handle_signals(t_job job);
-void						set_termflags(void);
-
-/* Builtins */
+int							expand_wildcard(t_list **expanded, t_list *explst,
+								char *arg);
 int							builtin_cd(int args_size, char **args, t_msh *msh);
 int							builtin_exit(int args_size, char **args,
 								t_msh *msh);
@@ -303,34 +265,52 @@ int							builtin_unset(int args_size, char **args,
 								t_msh *msh);
 int							builtin_env(int args_size, char **args, t_msh *msh);
 int							is_valid_identifier(char *str);
-void						print_env(t_list *lst, int quotes, int hide_null);
-
-/* Environment */
+int							set_termflags(t_msh *msh, t_term_action action);
+int							split_words(t_list **newargs, t_list *explst,
+								char *arg);
 int							unset_env(t_list **root, char *key);
 int							set_env(t_list **root, char *key, char *pair);
+int							wait_child_processes(int pid);
+int							str_arr_size(char **arr);
+int							str_append(char **s1, char const *s2);
+int							lst_addback_content(t_list **lst, void *content);
+int							tree_map(t_cmd *cmd, void *payload,
+								int (*f)(t_cmd *, void *));
+char						*expand_dollar(char *arg, t_list **explst,
+								t_msh *msh);
+char						track_quotes(t_write *wrt, t_list *explst,
+								char *arg);
+char						*unquote_arg(t_list *explst, char *arg);
+char						*get_executable_path(char *command, t_list *env);
+char						**get_args_arr(t_list *arglist, t_msh *msh);
+char						**get_env_arr(t_list *mshenv);
+void						executor(t_cmd *block, t_msh *msh);
+void						close_pipe(int fd[2]);
+void						syntax_panic(char *ps);
+void						handle_signals(t_job job);
+void						print_env(t_list *lst, int quotes, int hide_null);
 void						destroy_env(t_list *lst);
 void						destroy_environment(t_list *mshenv);
 void						init_environment(t_list **msh, char **env);
 char						*get_env(t_list *root, char *key);
-t_list						*get_env_node(t_list *lst, char *key);
-
-/* Process Utils */
-int							wait_child_processes(int pid);
 void						handle_sigint_output(void);
-pid_t						create_child(int pipe[2], int fd);
-
-/* String Utils */
-int							str_arr_size(char **arr);
-int							str_append(char **s1, char const *s2);
-int							lst_addback_content(t_list **lst, void *content);
 char						*str_include(const char *s, int c);
 void						free_string_array(char **arr);
-
-/* General Utils */
-int							tree_map(t_cmd *cmd, void *payload,
-								int (*f)(t_cmd *, void *));
 void						free_list(t_list *lst);
 void						clean_tree(void *cmd);
 void						clean_all(t_msh *msh, int exit);
+t_part						ft_divide(char *s, char *e, t_tokens tkn, int rev);
+t_list						*expander(t_list *args, t_msh *msh);
+pid_t						create_child(int pipe[2], int fd);
+pid_t						execute_cmd(t_cmd *cmd, t_msh *msh, int *status,
+								int pipe[2]);
+t_list						*get_env_node(t_list *lst, char *key);
+t_tokens					get_token(char **ps, char **pe, char **ts, \
+								char **te);
+t_tokens					peek(char *ps, char *pe, t_tokens token);
+
+t_redir						get_redir(char *ts, char *te);
+t_logicop					get_logicop(char *ts, char *te);
+t_tokens					get_token_type(char *ts, char *te);
 
 #endif

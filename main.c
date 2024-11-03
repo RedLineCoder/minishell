@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/11/03 14:43:27 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/03 15:13:56 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,14 +88,17 @@ int	readline_loop(t_msh *msh)
 
 int	main(int argc, char **argv, char **env)
 {
+	int				flags_set;
 	t_msh *const	msh = &(t_msh){0};
 
 	(void)argv, (void)argc;
-	set_termflags();
+	flags_set = set_termflags(msh, ADD_ECHOCTL);
 	init_environment(&msh->env, env);
 	if (!readline_loop(msh))
 		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
 	clean_all(msh, true);
+	if (flags_set)
+		set_termflags(msh, SET_BACK);
 	ft_putendl_fd("exit", 1);
 	return (msh->last_status);
 }
