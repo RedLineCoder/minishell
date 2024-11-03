@@ -1,5 +1,6 @@
 NAME = minishell
 
+READLINE_PATH = lib/readline
 READLINE = lib/readline/lib/libreadline.a
 RL_FLAGS = -I${PWD}/lib/readline/include/ -lreadline -L${PWD}/lib/readline/lib 
 	
@@ -50,12 +51,11 @@ $(GNL):
 		make -C $(GNL_PATH)
 
 clean:
-		make -C $(LIBFT_PATH) clean
-		make -C $(GNL_PATH) clean
+		make -C $(LIBFT_PATH) fclean
+		make -C $(GNL_PATH) fclean
+		$(RM) -rf $(READLINE_PATH)
 
 fclean: clean
 		$(RM) $(NAME)
-		make -C $(LIBFT_PATH) fclean
-		make -C $(GNL_PATH) fclean
 
 re: fclean all
