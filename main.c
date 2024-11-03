@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/31 15:27:00 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/03 14:43:27 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	readline_loop(t_msh *msh)
 			add_history(msh->line);
 			status = parser(msh->line, msh->line
 					+ ft_strlen(msh->line), &msh->tree_root);
-			if (!status)
+			if (!status && msh->tree_root)
 				executor(msh->tree_root, msh);
 			else
 				msh->last_status = status;
