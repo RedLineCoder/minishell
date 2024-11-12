@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 08:08:16 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 21:11:05 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/12 18:57:15 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,10 @@ int	wait_child_processes(int pid)
 
 	any_interrupted = false;
 	if (pid)
+	{
 		waitpid(pid, &requested_status, 0);
-	any_interrupted = WIFSIGNALED(requested_status);
+		any_interrupted = WIFSIGNALED(requested_status);
+	}
 	while (wait(&status) != -1)
 		if (!any_interrupted && WIFSIGNALED(status))
 			any_interrupted = true;
