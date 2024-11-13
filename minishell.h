@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/11/03 15:19:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/13 13:56:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,6 @@ typedef struct s_msh
 	int						exit_flag;
 	int						last_status;
 	char					*line;
-	char					*user;
-	t_job					current_job;
 	t_list					*env;
 	t_cmd					*tree_root;
 	t_termios				termios;
@@ -160,8 +158,6 @@ typedef struct s_cmd
 typedef struct s_blockcmd
 {
 	int						type;
-	int						out_file;
-	int						in_file;
 	t_cmd					*subshell;
 	t_list					*redirs;
 }							t_blockcmd;
@@ -169,8 +165,6 @@ typedef struct s_blockcmd
 typedef struct s_execcmd
 {
 	int						type;
-	int						out_file;
-	int						in_file;
 	t_list					*args;
 	t_list					*redirs;
 }							t_execcmd;
@@ -189,7 +183,6 @@ typedef struct s_redircmd
 typedef struct s_pipecmd
 {
 	int						type;
-	int						fd[2];
 	t_list					*pipelist;
 }							t_pipecmd;
 
