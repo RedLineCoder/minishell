@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/11/13 13:56:54 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/13 14:06:49 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,6 +263,7 @@ int							split_words(t_list **newargs, t_list *explst,
 								char *arg);
 int							unset_env(t_list **root, char *key);
 int							set_env(t_list **root, char *key, char *pair);
+int							get_status(int status);
 int							wait_child_processes(int pid);
 int							str_arr_size(char **arr);
 int							str_append(char **s1, char const *s2);

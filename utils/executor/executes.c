@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/31 19:01:40 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/13 14:08:02 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,17 +114,19 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 {
 	t_logicop const	op = logiccmd->op_type;
 	int				status;
-	int				code;
 	pid_t			pid;
 
 	pid = execute_cmd(logiccmd->left, msh, &status, NULL);
 	if (pid == -1)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	if (pid)
-		status = wait_child_processes(pid);
-	code = status << 8;
-	if (!WIFEXITED(code))
-		return (status);
+		waitpid(pid, &status, 0);
+	if (!WIFEXITED(status))
+	{
+		handle_sigint_output();
+		return (get_status(status));
+	}	
+	status = get_status(status);
 	if ((status && op == OP_OR) || (!status && op == OP_AND))
 	{
 		pid = execute_cmd(logiccmd->right, msh, &status, NULL);
