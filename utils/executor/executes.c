@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/13 14:08:02 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:12:47 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 	{
 		handle_sigint_output();
 		return (get_status(status));
-	}	
+	}
 	status = get_status(status);
 	if ((status && op == OP_OR) || (!status && op == OP_AND))
 	{

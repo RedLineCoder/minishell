@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:58:48 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 14:44:16 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:11:49 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	get_redir_flags(t_redir type)
 	if (type == REDIR_INPUT)
 		flags |= O_RDONLY;
 	if (type == REDIR_OUTPUT || type == REDIR_APPEND)
-		flags |= O_WRONLY;
+		flags |= O_WRONLY | O_TRUNC;
 	if (type == REDIR_APPEND)
 		flags |= O_APPEND;
 	if (type != REDIR_INPUT)
