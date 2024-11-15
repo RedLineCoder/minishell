@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 13:49:52 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 15:49:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,8 @@ int	execute_pipe(t_list *pipelist, t_msh *msh)
 		close_pipe(p);
 		pipelist = pipelist->next;
 	}
-	status = wait_child_processes(0);
 	close(STDIN_FILENO);
-	return (status);
+	return (wait_child_processes(pid));
 }
 
 int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
