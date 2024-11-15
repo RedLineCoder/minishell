@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 18:38:43 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 19:36:14 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,11 @@ int	check_executable(char *command, char *path)
 	t_stat			file;
 
 	if (!path || ft_strlen(command) == 0)
+	{
+		if (ft_strchr(command, '/'))
+			return (mini_panic(command, ERR_FILE_NOTFOUND, EXIT_CMD_NOTFOUND));
 		return (mini_panic(command, ERR_CMD_NOTFOUND, EXIT_CMD_NOTFOUND));
+	}
 	else if (!ft_strncmp(command, ".", 2))
 		return (mini_panic(command, ERR_CMD_ARGREQ, EXIT_ARG_REQUIRED));
 	else if (access(path, X_OK))
@@ -94,11 +98,11 @@ char	*get_executable_path(char *command, t_list *env)
 	char *const		pathenv = get_env(env, "PATH");
 	char **const	paths = ft_split(pathenv, ':');
 
-	if (pathenv && !relative_path)
+	path = NULL;
+	if (!relative_path)
 	{
 		if (!paths)
 			return (NULL);
-		path = NULL;
 		i = -1;
 		while (paths[++i])
 		{
@@ -110,7 +114,7 @@ char	*get_executable_path(char *command, t_list *env)
 			path = NULL;
 		}
 	}
-	else if (relative_path && !access(command, F_OK))
+	else if (!access(command, F_OK))
 		return (ft_strdup(command));
 	return (free_string_array(paths), path);
 }

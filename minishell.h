@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/11/15 18:41:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 19:34:22 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # define ERR_TOO_MANY_ARG "too many arguments\n"
 # define ERR_EXIT_NUM_REQUIRED "numeric argument required\n"
 # define ERR_CMD_NOTFOUND "command not found\n"
+# define ERR_FILE_NOTFOUND "No such file or directory\n"
 # define ERR_CMD_ISDIR "Is a directory\n"
 # define ERR_CMD_ARGREQ "filename argument required\n"
 # define ERR_CD_HOME_NOT_SET "HOME not set\n"
