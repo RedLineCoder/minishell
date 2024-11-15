@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 19:29:03 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 21:55:45 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,13 +117,9 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 	pid = execute_cmd(logiccmd->left, msh, &status, NULL);
 	if (pid == -1)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
-	if (pid)
-	{
-		waitpid(pid, &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-			handle_sigint_output();
-		status = get_status(status);
-	}
+	if (pid && waitpid(pid, &status, 0)
+		&& WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		handle_sigint_output();
 	if (!msh->exit_flag
 		&& (!pid || !(WIFSIGNALED(status) && WTERMSIG(status) == SIGINT))
 		&& ((status && op == OP_OR) || (!status && op == OP_AND)))
@@ -132,7 +128,9 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 		if (pid == -1)
 			return (mini_panic(NULL, NULL, EXIT_FAILURE));
 		if (pid)
-			status = wait_child_processes(pid);
+			return (wait_child_processes(pid));
 	}
+	if (pid)
+		return (WEXITSTATUS(status));
 	return (status);
 }
