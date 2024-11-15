@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 15:49:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 17:08:22 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,14 +118,17 @@ int	execute_logic(t_logiccmd *logiccmd, t_msh *msh)
 	if (pid == -1)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	if (pid)
-		waitpid(pid, &status, 0);
-	if (!WIFEXITED(status))
 	{
-		handle_sigint_output();
-		return (get_status(status));
+		waitpid(pid, &status, 0);
+		if (!WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			handle_sigint_output();
+			return (get_status(status));
+		}
+		status = get_status(status);	
 	}
-	status = get_status(status);
-	if ((status && op == OP_OR) || (!status && op == OP_AND))
+	if (!msh->exit_flag 
+		&& ((status && op == OP_OR) || (!status && op == OP_AND)))
 	{
 		pid = execute_cmd(logiccmd->right, msh, &status, NULL);
 		if (pid == -1)
