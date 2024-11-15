@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 06:55:00 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 18:41:04 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 19:42:08 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,10 @@ int	builtin_exit(int args_size, char **args, t_msh *msh)
 			exit_code = mini_panic("exit", ERR_EXIT_NUM_REQUIRED,
 					EXIT_ARG_REQUIRED);
 		else if (args_size >= 3)
+		{
+			msh->exit_flag = false;
 			exit_code = mini_panic("exit", ERR_TOO_MANY_ARG, EXIT_FAILURE);
+		}
 		else
 			exit_code = ft_atoi(status);
 	}
