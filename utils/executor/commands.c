@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/30 14:38:53 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:38:43 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,14 @@ char	**get_args_arr(t_list *arglist, t_msh *msh)
 	return (free_list(arglist), args);
 }
 
-int	handle_executable(char *command, char *path)
+int	check_executable(char *command, char *path)
 {
 	t_stat			file;
 
-	if (!path)
-	{
-		if (*command == '.' || *command == '/')
-			return (mini_panic(command, NULL, EXIT_CMD_NOTFOUND));
+	if (!path || ft_strlen(command) == 0)
 		return (mini_panic(command, ERR_CMD_NOTFOUND, EXIT_CMD_NOTFOUND));
-	}
+	else if (!ft_strncmp(command, ".", 2))
+		return (mini_panic(command, ERR_CMD_ARGREQ, EXIT_ARG_REQUIRED));
 	else if (access(path, X_OK))
 		return (mini_panic(command, NULL, EXIT_CMD_NOTEXECUTABLE));
 	else if (stat(path, &file))
@@ -90,30 +88,30 @@ int	handle_executable(char *command, char *path)
 
 char	*get_executable_path(char *command, t_list *env)
 {
-	int			i;
-	char		**paths;
-	char		*path;
-	const int	relative_path = *command == '.' || *command == '/';
-	char *const	pathenv = get_env(env, "PATH");
+	int				i;
+	char			*path;
+	const int		relative_path = ft_strchr(command, '/') && 1;
+	char *const		pathenv = get_env(env, "PATH");
+	char **const	paths = ft_split(pathenv, ':');
 
-	if ((relative_path || !pathenv) && !access(command, F_OK))
-		return (ft_strdup(command));
-	if (!pathenv || relative_path)
-		return (NULL);
-	paths = ft_split(pathenv, ':');
-	if (!paths)
-		return (NULL);
-	path = NULL;
-	i = -1;
-	while (paths[++i])
+	if (pathenv && !relative_path)
 	{
-		path = ft_strjoin(paths[i], "/");
-		if (!path
-			|| (str_append(&path, command) && !access(path, F_OK)))
-			break ;
-		free(path);
+		if (!paths)
+			return (NULL);
 		path = NULL;
+		i = -1;
+		while (paths[++i])
+		{
+			path = ft_strjoin(paths[i], "/");
+			if (!path
+				|| (str_append(&path, command) && !access(path, F_OK)))
+				break ;
+			free(path);
+			path = NULL;
+		}
 	}
+	else if (relative_path && !access(command, F_OK))
+		return (ft_strdup(command));
 	return (free_string_array(paths), path);
 }
 
@@ -126,10 +124,11 @@ int	run_command(char *command, char **args, t_list	*env)
 	if (!envarr)
 		return (mini_panic(command, NULL, EXIT_FAILURE));
 	path = get_executable_path(command, env);
-	status = handle_executable(command, path);
+	status = check_executable(command, path);
 	if (status == EXIT_SUCCESS)
 	{
 		execve(path, args, envarr);
+		free(path);
 		status = mini_panic(command, NULL, EXIT_FAILURE);
 	}
 	free(path);
