@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/11/13 14:06:49 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/15 18:41:33 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,14 @@
 # define ERR_EXIT_NUM_REQUIRED "numeric argument required\n"
 # define ERR_CMD_NOTFOUND "command not found\n"
 # define ERR_CMD_ISDIR "Is a directory\n"
+# define ERR_CMD_ARGREQ "filename argument required\n"
 # define ERR_CD_HOME_NOT_SET "HOME not set\n"
 # define ERR_CD_CANT_SET_OLDPWD "couldn't set oldpwd\n"
 # define ERR_CD_OLDPWD_NULL "coudln't retrieve oldpwd\n"
 # define ERR_INVALID_IDENTIFIER "not a valid identifier\n"
 # define ERR_HDOC_EOF "here-document delimited by end-of-file\n"
 # define EXIT_INVALID_IDENTIFIER 1
-# define EXIT_NUM_REQUIRED 2
+# define EXIT_ARG_REQUIRED 2
 # define EXIT_CMD_NOTFOUND 127
 # define EXIT_CMD_NOTEXECUTABLE 126
 # define EXIT_SIGINT 130

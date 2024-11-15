@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moztop <moztop@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 06:55:00 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/29 10:08:56 by moztop           ###   ########.fr       */
+/*   Updated: 2024/11/15 18:41:04 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	builtin_exit(int args_size, char **args, t_msh *msh)
 		status = args[1];
 		if (!is_valid_status(status))
 			exit_code = mini_panic("exit", ERR_EXIT_NUM_REQUIRED,
-					EXIT_NUM_REQUIRED);
+					EXIT_ARG_REQUIRED);
 		else if (args_size >= 3)
 			exit_code = mini_panic("exit", ERR_TOO_MANY_ARG, EXIT_FAILURE);
 		else
