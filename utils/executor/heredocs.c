@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 20:47:31 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/31 12:32:33 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/16 19:03:54 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,5 +108,6 @@ int	handle_heredocs(t_cmd *root, t_msh *msh)
 	handle_signals(EXECUTING_HDOC);
 	map_heredocs(msh, heredocs, RUN);
 	free_list(heredocs);
+	clean_all(msh, true);
 	exit(EXIT_SUCCESS);
 }

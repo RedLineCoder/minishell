@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/16 17:54:45 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/16 18:55:16 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ int	run_command(char *command, char **args, t_list	*env)
 	{
 		execve(path, args, envarr);
 		free(path);
+		free_string_array(envarr);
 		status = mini_panic(command, NULL, EXIT_FAILURE);
 	}
 	free(path);

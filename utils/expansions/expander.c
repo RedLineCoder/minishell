@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 16:54:41 by moztop            #+#    #+#             */
-/*   Updated: 2024/10/30 21:09:32 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/16 19:01:07 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	set_exptrack(t_list **explst, int start, int end)
 	t_list	*item;
 	int		*locs;
 
+	if (!explst)
+		return (1);
 	locs = ft_calloc(sizeof(int), 2);
 	if (!locs)
 		return (0);

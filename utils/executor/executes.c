@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 21:55:45 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/16 19:06:34 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 
 	if (!handle_redirects(exec->redirs, msh))
 	{
+		free_string_array(args);
 		handle_back_redirects(exec->redirs);
 		return (EXIT_FAILURE);
 	}
@@ -60,9 +61,9 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 		else
 			status = run_command(args[0], args, msh->env);
 	}
-	if (!handle_back_redirects(exec->redirs))
-		return (free(args), mini_panic(NULL, NULL, EXIT_FAILURE));
 	free_string_array(args);
+	if (!handle_back_redirects(exec->redirs))
+		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	return (status);
 }
 
