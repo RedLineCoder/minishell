@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 20:38:09 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 19:36:14 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/16 17:54:45 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ char	*get_executable_path(char *command, t_list *env)
 		}
 	}
 	else if (!access(command, F_OK))
-		return (ft_strdup(command));
+		return (free_string_array(paths), ft_strdup(command));
 	return (free_string_array(paths), path);
 }
 
