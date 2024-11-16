@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/14 20:11:56 by emyildir          #+#    #+#             */
-/*   Updated: 2024/10/31 11:25:24 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:41:39 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,9 +122,9 @@ int	init_pipes(char *ps, char *pe, t_list **pipelist)
 		status = parser(ln.lfts, ln.lfte, &cmd);
 		if (status)
 			return (status);
+		ft_lstadd_back(pipelist, ft_lstnew(cmd));
 		if (!peek(ln.rghts, ln.rghte, TKN_NONE))
 			return (syntax_panic(ln.rghts), 2);
-		ft_lstadd_back(pipelist, ft_lstnew(cmd));
 		status = init_pipes(ln.rghts, ln.rghte, pipelist);
 	}
 	else
