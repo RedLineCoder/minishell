@@ -33,7 +33,7 @@ CFLAGS= -Wall -Wextra -Werror -lncurses -D READLINE_LIBRARY=1
 all: $(NAME)
 
 $(NAME): $(LIBRARIES) $(SOURCES) $(HEADERS)
-		$(CC) $(SOURCES) $(LIBRARIES) -lncurses $(CFLAGS) -o ${NAME}
+		$(CC) $(SOURCES) $(LIBRARIES) $(CFLAGS) -o ${NAME}
 
 bonus: all
 
