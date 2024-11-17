@@ -28,7 +28,7 @@ SOURCES = main.c $(UTILS_SOURCES) $(HELPERS_SOURCES) $(BUILTINS)
 HEADERS = minishell.h
 
 CC = cc
-CFLAGS= -Wall -Wextra -Werror
+CFLAGS= -Wall -Wextra -Werror -lncurses -D READLINE_LIBRARY=1
 
 all: $(NAME)
 
