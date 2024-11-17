@@ -2,8 +2,7 @@ NAME = minishell
 
 READLINE_PATH = lib/readline
 READLINE = lib/readline/lib/libreadline.a
-RL_FLAGS = -I${PWD}/lib/readline/include/ -lreadline -L${PWD}/lib/readline/lib 
-	
+
 LIBFT_PATH = lib/libft
 LIBFT = $(LIBFT_PATH)/libft.a
 
@@ -29,12 +28,12 @@ SOURCES = main.c $(UTILS_SOURCES) $(HELPERS_SOURCES) $(BUILTINS)
 HEADERS = minishell.h
 
 CC = cc
-CFLAGS= -Wall -Wextra -Werror -lncurses -D READLINE_LIBRARY=1 
+CFLAGS= -Wall -Wextra -Werror
 
 all: $(NAME)
 
 $(NAME): $(LIBRARIES) $(SOURCES) $(HEADERS)
-		$(CC) $(SOURCES) $(LIBRARIES) ${RL_FLAGS} $(CFLAGS) -o ${NAME}
+		$(CC) $(SOURCES) $(LIBRARIES) -ltinfo $(CFLAGS) -o ${NAME}
 
 bonus: all
 

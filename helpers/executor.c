@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 07:59:05 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/15 13:46:02 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/17 11:19:29 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ void	executor(t_cmd *root, t_msh *msh)
 	pid_t	pid;
 	int		status;
 
+	if (!root)
+		return ;
 	status = handle_heredocs(root, msh);
 	if (status == EXIT_SUCCESS)
 	{
