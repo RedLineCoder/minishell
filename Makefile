@@ -33,7 +33,7 @@ CFLAGS= -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(LIBRARIES) $(SOURCES) $(HEADERS)
-		$(CC) $(SOURCES) $(LIBRARIES) -ltinfo $(CFLAGS) -o ${NAME}
+		$(CC) $(SOURCES) $(LIBRARIES) -lncurses $(CFLAGS) -o ${NAME}
 
 bonus: all
 
