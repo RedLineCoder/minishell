@@ -120,9 +120,9 @@ int	init_pipes(char *ps, char *pe, t_list **pipelist)
 		if (!peek(ln.lfts, ln.lfte, TKN_NONE))
 			return (syntax_panic(ln.lfte), 2);
 		status = parser(ln.lfts, ln.lfte, &cmd);
+		ft_lstadd_back(pipelist, ft_lstnew(cmd));
 		if (status)
 			return (status);
-		ft_lstadd_back(pipelist, ft_lstnew(cmd));
 		if (!peek(ln.rghts, ln.rghte, TKN_NONE))
 			return (syntax_panic(ln.rghts), 2);
 		status = init_pipes(ln.rghts, ln.rghte, pipelist);
