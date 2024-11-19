@@ -26,7 +26,6 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-# include "lib/gnl/get_next_line.h"
 # include "lib/libft/libft.h"
 # include "lib/readline/include/readline/history.h"
 # include "lib/readline/include/readline/readline.h"

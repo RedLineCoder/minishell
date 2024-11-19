@@ -24,7 +24,7 @@ int	get_explst_word(t_write *wrt, t_list *explst,
 		if (is_expanded(explst, wrt->e_i))
 		{
 			start = index;
-			while (is_expanded(explst, wrt->e_i))
+			while (is_expanded(explst, wrt->e_i) && arg[index])
 			{
 				wrt->e_i++;
 				index++;

@@ -6,10 +6,7 @@ READLINE = lib/readline/lib/libreadline.a
 LIBFT_PATH = lib/libft
 LIBFT = $(LIBFT_PATH)/libft.a
 
-GNL_PATH = lib/gnl
-GNL = $(GNL_PATH)/gnl.a
-
-LIBRARIES = $(GNL) $(LIBFT) $(READLINE)
+LIBRARIES =  $(LIBFT) $(READLINE)
 
 UTILS_PATH = utils
 UTILS_PARSER_PATH = $(UTILS_PATH)/parser
@@ -46,12 +43,8 @@ $(READLINE):
 $(LIBFT): 
 		make -C $(LIBFT_PATH) all bonus
 
-$(GNL):
-		make -C $(GNL_PATH)
-
 clean:
 		make -C $(LIBFT_PATH) fclean
-		make -C $(GNL_PATH) fclean
 		$(RM) -rf $(READLINE_PATH)
 
 fclean: clean
