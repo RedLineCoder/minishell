@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:05 by moztop            #+#    #+#             */
-/*   Updated: 2024/11/17 11:20:47 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/20 14:14:50 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	main(int argc, char **argv, char **env)
 	flags_set = set_termflags(msh, ADD_ECHOCTL);
 	init_environment(&msh->env, env);
 	if (!readline_loop(msh))
-		msh->last_status = mini_panic(ERR_TAG, NULL, EXIT_FAILURE);
+		msh->last_status = mini_panic(NULL, NULL, EXIT_FAILURE);
 	clean_all(msh, true);
 	if (flags_set)
 		set_termflags(msh, SET_BACK);
