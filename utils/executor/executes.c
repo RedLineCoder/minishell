@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 09:47:20 by emyildir          #+#    #+#             */
-/*   Updated: 2024/11/16 19:06:34 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:33:22 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	execute_redir(t_redircmd *redir, t_msh *msh)
 	if (!args)
 		return (mini_panic(NULL, NULL, false));
 	if (!*args || str_arr_size(args) > 1)
-		return (mini_panic("*", "ambiguous redirect\n", -1), \
+		return (mini_panic("*", ERR_REDIR_AMBIGUOUS, -1), \
 		free_string_array(args), false);
 	spec = args[0];
 	if (type == REDIR_HDOC)
@@ -53,7 +53,7 @@ int	execute_exec(t_execcmd *exec, t_msh *msh, int builtin)
 	}
 	status = EXIT_SUCCESS;
 	if (!args)
-		return (mini_panic(NULL, "malloc error\n", EXIT_FAILURE));
+		return (mini_panic(NULL, NULL, EXIT_FAILURE));
 	else if (*args)
 	{
 		if (builtin)
@@ -73,7 +73,7 @@ int	execute_block(t_blockcmd *block, t_msh *msh)
 	pid_t	pid;
 
 	if (!handle_redirects(block->redirs, msh))
-		return (mini_panic("block", "malloc error\n", EXIT_FAILURE));
+		return (EXIT_FAILURE);
 	pid = execute_cmd(block->subshell, msh, &status, NULL);
 	if (pid == -1)
 		return (mini_panic(NULL, NULL, EXIT_FAILURE));

@@ -6,7 +6,7 @@
 /*   By: emyildir <emyildir@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:17:12 by moztop            #+#    #+#             */
-/*   Updated: 2024/11/17 12:58:23 by emyildir         ###   ########.fr       */
+/*   Updated: 2024/11/20 13:33:13 by emyildir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@
 # define ERR_CD_OLDPWD_NULL "coudln't retrieve oldpwd\n"
 # define ERR_INVALID_IDENTIFIER "not a valid identifier\n"
 # define ERR_HDOC_EOF "here-document delimited by end-of-file\n"
+# define ERR_REDIR_AMBIGUOUS "ambiguous redirect\n"
 # define EXIT_INVALID_IDENTIFIER 1
 # define EXIT_ARG_REQUIRED 2
 # define EXIT_CMD_NOTFOUND 127
